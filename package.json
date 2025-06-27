@@ -1,5 +1,10 @@
 {
   "name": "snoop",
+  "private": true,
+  "workspaces": [
+    "client",
+    "server"
+  ],
   "version": "0.1.0",
   "description": "[S]earch & [N]avigate [O]ffers [O]n [P]latform",
   "author": "Doublelayer",
@@ -28,7 +33,7 @@
   },
   "homepage": "https://github.com/Doublelayer/snoop#readme",
   "scripts": {
-    "install:all": "npm install && npm --prefix client install && npm --prefix server install",
+    "install:all": "npm install",
     "clean:all": "rm -rf node_modules client/node_modules server/node_modules",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "start": "npm run dev",

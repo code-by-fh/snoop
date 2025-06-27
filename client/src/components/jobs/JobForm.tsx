@@ -18,8 +18,6 @@ const JobForm: React.FC<JobFormProps> = ({ onSubmit, isLoading, error, initialDa
   const [blacklistTerms, setBlacklistTerms] = useState(initialData?.blacklistTerms || []);
   const navigate = useNavigate();
 
-  console.log('JobForm initialData:', initialData);
-
   const {
     register,
     control,
@@ -64,7 +62,6 @@ const JobForm: React.FC<JobFormProps> = ({ onSubmit, isLoading, error, initialDa
     setValue('providers', initialData?.providers || []);
   }, [initialData, setValue]);
 
-  console.log('JobForm notificationAdapters:', notificationAdapters);
   return (
     <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-10 p-8 bg-white rounded-2xl shadow-xl max-w-4xl mx-auto dark:bg-gray-800">
       {error && (

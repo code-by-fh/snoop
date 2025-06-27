@@ -43,19 +43,25 @@ function getDirName() {
 }
 
 function buildHash(...inputs) {
-    if (inputs == null) {
-        return null;
-    }
-    const cleaned = inputs.filter(i => i != null && i.length > 0);
-    if (cleaned.length === 0) {
-        return null;
-    }
+    if (!inputs || inputs.length === 0) return null;
+
+    const cleaned = inputs
+        .filter(i =>
+            i !== null &&
+            i !== undefined &&
+            !(typeof i === 'string' && i.trim() === '') &&
+            !(Array.isArray(i) && i.length === 0)
+        )
+        .map(i => typeof i === 'object' ? JSON.stringify(i) : String(i));
+
+    if (cleaned.length === 0) return null;
+
     return createHash('sha256')
         .update(cleaned.join(','))
         .digest('hex');
 }
 
-export { buildHash, duringWorkingHoursOrNotSet, getDirName, inDevMode, isOneOf, nullOrEmpty};
+export { buildHash, duringWorkingHoursOrNotSet, getDirName, inDevMode, isOneOf, nullOrEmpty };
 export default {
     isOneOf,
     nullOrEmpty,

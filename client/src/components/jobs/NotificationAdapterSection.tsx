@@ -22,9 +22,6 @@ const NotificationAdapterSection: React.FC<NotificationAdapterSectionProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [editMode, setEditMode] = useState(false);
 
-  console.log('Available notification adapters:', notificationAdapters);
-  console.log('Pre-defined notification adapters:', preDefinedNotificationAdapters);
-
   useEffect(() => {
     getAvailableNotificationAdapters()
       .then((res) => setNotificationAdapters(res.data || []))

@@ -1,4 +1,7 @@
 {
+  "name": "snoop-api",
+  "version": "1.0.0",
+  "private": true,
   "type": "module",
   "scripts": {
     "lint": "eslint .",
@@ -22,6 +25,7 @@
     "marked": "^15.0.12",
     "mongoose": "^7.5.3",
     "node-mailjet": "^6.0.8",
+    "puppeteer": "^24.11.1",
     "puppeteer-extra": "^3.3.6",
     "puppeteer-extra-plugin-stealth": "^2.11.2",
     "query-string": "^9.2.1",

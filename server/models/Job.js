@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import { v4 as uuidv4 } from 'uuid';
+import { leanTransformPlugin } from './leanTransformPlugin.js';
 
 const JobSchema = new mongoose.Schema({
   _id: {
@@ -58,68 +59,35 @@ const JobSchema = new mongoose.Schema({
 
 
 JobSchema.statics.addListingsIds = async function (listingIds, jobId, providerId) {
-  const job = await this.findById(jobId);
-  if (!job) return false;
-  const provider = job.providers.find(p => p.id === providerId);
-  if (!provider) return false;
-  provider.listings = [...provider.listings, ...listingIds];
-  await job.save();
-  return true;
+  const result = await this.updateOne(
+    { _id: jobId, 'providers.id': providerId },
+    { $addToSet: { 'providers.$.listings': { $each: listingIds } } }
+  );
+  return result.modifiedCount > 0;
 };
 
 JobSchema.statics.getActiveJobs = async function () {
-  return await this.find({ isActive: true })
-    .lean()
-    .then(jobs => jobs.map(job => {
-      job.id = job._id;
-      delete job._id;
-      delete job.__v;
-      return job;
-    }));
+  return await this.find({ isActive: true }).lean();
 };
 
 JobSchema.statics.getAllJobs = async function (filter) {
-  const jobs = await this.find(filter)
-    .populate({
-      path: 'providers.listings',
-      model: 'Listing'
-    })
-    .lean();
-
-  return jobs.map(job => {
-    job.id = job._id;
-    delete job._id;
-    delete job.__v;
-    return job;
-  });
+  return await this.find(filter).lean();
 };
 
 JobSchema.statics.getJob = async function (id, filter = {}) {
-  const job = await this.findById(id, filter).lean();
-
-  if (!job) return null;
-
-  job.id = job._id;
-  delete job._id;
-  delete job.__v;
-  return job;
+  return await this.findOne({ _id: id, ...filter }).lean();
 };
 
 JobSchema.statics.getJobWithListings = async function (id, filter = {}) {
-
-  const job = await this.findById(id, filter)
+  return await this.findOne({ _id: id, ...filter })
     .populate({
       path: 'providers.listings',
       model: 'Listing'
     })
     .lean();
-
-  if (!job) return null;
-
-  job.id = job._id;
-  delete job._id;
-  delete job.__v;
-  return job;
 };
+
+JobSchema.plugin(leanTransformPlugin);
+
 
 export default mongoose.model('Job', JobSchema);
