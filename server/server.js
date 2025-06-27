@@ -22,8 +22,6 @@ import notificationAdapterRoutes from './routes/notificationAdapterRoutes.js';
 import providerRoutes from './routes/providerRoutes.js';
 import statsRoutes from './routes/statsRoutes.js';
 
-// Load environment variables
-
 // Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => logger.info('MongoDB connected successfully'))

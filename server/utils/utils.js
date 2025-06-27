@@ -2,10 +2,6 @@ import { createHash } from 'crypto';
 import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-function removeDoubleSlashes(url) {
-    return url?.replace(/(https?:\/\/)?\/{2,}/g, '/');
-}
-
 function inDevMode() {
     return process.env.NODE_ENV == null || process.env.NODE_ENV !== 'production';
 }

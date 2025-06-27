@@ -13,25 +13,25 @@ export function generateUsers() {
     role: 'admin'
   });
 
-  // users.push({
-  //   username: 'user',
-  //   email: 'user@snnop.com',
-  //   password: 'user123',
-  //   firstName: 'User',
-  //   lastName: 'User',
-  //   role: 'user'
-  // });
+  users.push({
+    username: 'user',
+    email: 'user@snnop.com',
+    password: 'user123',
+    firstName: 'User',
+    lastName: 'User',
+    role: 'user'
+  });
 
-  // for (let i = 0; i < SEED_CONFIG.users - 1; i++) {
-  //   users.push({
-  //     username: faker.internet.userName(),
-  //     email: faker.internet.email(),
-  //     password: "Password123!",
-  //     firstName: faker.person.firstName(),
-  //     lastName: faker.person.lastName(),
-  //     role: 'user'
-  //   });
-  // }
+  for (let i = 0; i < SEED_CONFIG.users - 1; i++) {
+    users.push({
+      username: faker.internet.userName(),
+      email: faker.internet.email(),
+      password: "Password123!",
+      firstName: faker.person.firstName(),
+      lastName: faker.person.lastName(),
+      role: 'user'
+    });
+  }
 
   return users;
 }
