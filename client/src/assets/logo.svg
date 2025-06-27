@@ -1,0 +1,21 @@
+<svg width="320" height="100" viewBox="0 0 320 100" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    .main { font: bold 40px 'Segoe UI', sans-serif; fill: #1A1A1A; }
+    .slogan { font: 12px 'Segoe UI', sans-serif; fill: #555; }
+    .accent { fill: #4A90E2; }
+  </style>
+
+  <!-- Text: SNOOP -->
+  <text x="10" y="50" class="main">SN</text>
+
+  <!-- O with magnifying glass -->
+  <g transform="translate(65, 15)">
+    <circle cx="20" cy="20" r="18" stroke="#4A90E2" stroke-width="4" fill="none"></circle>
+    <line x1="32" y1="34" x2="45" y2="48" stroke="#4A90E2" stroke-width="4" stroke-linecap="round"></line>
+  </g>
+
+  <text x="110" y="50" class="main">OP</text>
+
+  <!-- Slogan -->
+  <text x="10" y="85" class="slogan">Search &amp; Navigate Offers On Platform</text>
+</svg>

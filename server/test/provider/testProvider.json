@@ -1,0 +1,51 @@
+{
+  "einsAImmobilien": {
+    "url": "https://www.1a-immobilienmarkt.de/suchen/duesseldorf/wohnung-kaufen.html?search=yes&cfid=98b39c7e-b403-4764-8f3c-57bf590923d0&data_hash=f46f89548257740094dd708996adcd68&sort_type=newest",
+    "IsActive": true,
+    "id": "einsAImmobilien"
+  },
+  "immobilienDe": {
+    "url": "https://www.immobilien.de/Wohnen/Suchergebnisse-51797.html?search._digest=true&search._filter=wohnen&search.flaeche_von=50&search.objektart=wohnung&search.preis_bis=1200&search.typ=mieten&search.umkreis=15&search.wo=district%3A2434%2C2695%2C2621%2C2700%2C2967%2C2734%2C2909%2C2955%2C2392%2C2746%2C2767%2C2982%2C2904%2C2612%2C2892%2C2587%2C2871%2C2975%2C2591%2C2887%2C2569%2C2640%2C2735&sort_col=*created_ts&sort_dir=desc",
+    "IsActive": true
+  },
+  "immonet": {
+    "url": "https://www.immonet.de/classified-search?distributionTypes=Buy,Buy_Auction,Compulsory_Auction&estateTypes=House,Apartment&locations=AD08DE2112&order=Default&m=homepage_new_search_classified_search_result",
+    "IsActive": true
+  },
+  "immowelt": {
+    "url": "https://www.immowelt.de/classified-search?distributionTypes=Buy,Buy_Auction,Compulsory_Auction&estateTypes=House,Apartment&locations=AD08DE2350",
+    "IsActive": true
+  },
+  "immoscout": {
+    "url": "https://www.immobilienscout24.de/Suche/de/nordrhein-westfalen/duesseldorf/wohnung-mieten?enteredFrom=one_step_search",
+    "IsActive": true
+  },
+  "immoswp": {
+    "url": "https://immo.swp.de/suchergebnisse?l=M%C3%BCnchen&r=0km&_multiselect_r=0km&ut=private&t=apartment%3Arental&a=de.muenchen&pf=&pt=&rf=0&rt=0&sf=50&st=&yf=&yt=&ff=&ft=&s=most_recently_updated_first&pa=&o=&ad=&u=",
+    "IsActive": true
+  },
+  "kalaydo": {
+    "url": "https://www.kalaydo.de/immobilien/eigentumswohnung-kaufen/o/duesseldorf/4/?attr_gt_estate_size_living_area=90.0&attr_gt_no_of_rooms=3.5&maxPrice=420000.00&radius=5&resultsPerPage=50&sorting=-date",
+    "IsActive": true
+  },
+  "kleinanzeigen": {
+    "url": "https://www.kleinanzeigen.de/s-immobilien/duesseldorf/anzeige:angebote/wohnung/k0c195l2068r5",
+    "IsActive": true
+  },
+  "neubauKompass": {
+    "url": "https://www.neubaukompass.de/neubau-immobilien/duesseldorf-region/eigentumswohnung/",
+    "IsActive": true
+  },
+  "wgGesucht": {
+    "url": "https://www.wg-gesucht.de/wg-zimmer-in-Duesseldorf.30.0.1.0.html?offer_filter=1&noDeact=1&city_id=30&category=0&rent_type=0&rMax=5000",
+    "IsActive": true
+  },
+  "wohungsboerse": {
+    "url": "https://www.wohnungsboerse.net/searches/index?estate_marketing_types=miete%2C1&marketing_type=miete&estate_types%5B0%5D=1&is_rendite=0&estate_id=&zipcodes%5B%5D=&cities%5B%5D=Berlin&districts%5B%5D=&term=Berlin&umkreiskm=&pricetext=&minprice=&maxprice=&sizetext=&minsize=&maxsize=&roomstext=&minrooms=&maxrooms=",
+    "IsActive": true
+  },
+  "ohneMakler": {
+    "url": "https://www.ohne-makler.net/immobilien/wohnung-mieten/berlin/berlin/",
+    "IsActive": true
+  }
+}

@@ -1,0 +1,49 @@
+# === Node.js / Express ===
+node_modules/
+.env
+.env.*.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+package-lock.json
+yarn.lock
+.pnpm-debug.log
+
+# Logs
+logs/
+*.log
+*.log.*
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage (e.g. nyc)
+coverage/
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# === Vite / Frontend ===
+dist/
+.vite/
+.cache/
+*.local
+*.tsbuildinfo
+
+# Vite preview build
+*.preview.cjs
+
+# === Editor / IDE files ===
+.vscode/
+.idea/
+*.sw?
+
+# === Optional: test-related ===
+coverage/
+jest-output/
+test-results/

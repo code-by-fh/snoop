@@ -1,0 +1,40 @@
+{
+  "type": "module",
+  "scripts": {
+    "lint": "eslint .",
+    "dev": "nodemon server.js",
+    "seed": "node seed/index.js",
+    "test": "mocha --loader=esmock --timeout 3000000 test/**/*.test.js",
+    "test2": "mocha --loader=esmock --timeout 3000000 test/**/utils.test.js"
+  },
+  "dependencies": {
+    "@faker-js/faker": "^9.8.0",
+    "bcryptjs": "^2.4.3",
+    "cheerio": "^1.1.0",
+    "cors": "^2.8.5",
+    "date-fns": "^4.1.0",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "from": "^0.1.7",
+    "handlebars": "^4.7.8",
+    "helmet": "^8.1.0",
+    "import": "^0.0.6",
+    "jsonwebtoken": "^9.0.2",
+    "marked": "^15.0.12",
+    "mongoose": "^7.5.3",
+    "node-mailjet": "^6.0.8",
+    "puppeteer-extra": "^3.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2",
+    "query-string": "^9.2.1",
+    "slack": "^11.0.2",
+    "string-similarity": "^4.0.4",
+    "uuid": "^9.0.1",
+    "winston": "^3.17.0"
+  },
+  "devDependencies": {
+    "chai": "^5.2.0",
+    "esmock": "^2.7.0",
+    "mocha": "^11.7.1",
+    "nodemon": "^3.0.1"
+  }
+}

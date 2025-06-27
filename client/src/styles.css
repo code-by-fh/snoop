@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom global styles */
+body {
+  @apply bg-gray-50 text-gray-900;
+}
+
+/* Additional global resets and custom styles */
+* {
+  @apply transition-all duration-300 ease-in-out;
+}
+
+.btn-primary {
+  @apply inline-flex items-center px-4 py-2 bg-blue-600 dark:bg-blue-500 text-white rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors shadow-sm;
+}
+
+.btn-cancel {
+  @apply inline-flex items-center px-5 py-2.5 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-300;
+}
