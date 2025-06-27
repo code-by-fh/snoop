@@ -1,7 +1,7 @@
 # 🏠 Snoop – [S]earch & [N]avigate [O]ffers [O]n [P]latform
 
-Snoop is a modern, full-featured real estate platform that offers a seamless experience for property search, management, and analytics.
-It is highly inspired by by [Fredy](https://github.com/orangecoding/fredy), a well-known real estate crawler, but takes it a significant step further with a modern tech stack, improved usability, and extended functionality.
+Snoop is a modern, full-featured platform that offers a seamless experience for property search, management, and analytics.
+It is highly inspired by [Fredy](https://github.com/orangecoding/fredy), a well-known real estate crawler, but takes it a significant step further with a modern tech stack, improved usability, and extended functionality.
 
 Snoop scrapes multiple services (Immonet, Immowelt etc.) and send new listings to you once they become available. The list of available services can easily be extended. For your convenience, Snoop has a UI to help you configure your search jobs.
 
@@ -124,7 +124,7 @@ fredy_rebrand/
    ```
 
 2. Access the application:
-   - Frontend: http://localhost:5173
+   - Frontend: http://localhost:3000
    - Backend: http://localhost:5000
 
 ### Testing
@@ -134,25 +134,6 @@ Run the test suite:
 cd server
 npm test
 ```
-
-## API Documentation
-
-### Authentication
-- **POST /api/auth/register** - User registration
-- **POST /api/auth/login** - User login
-
-### Properties
-- **GET /api/properties** - List properties
-- **POST /api/properties** - Create property
-- **GET /api/properties/:id** - Get property details
-- **PUT /api/properties/:id** - Update property
-- **DELETE /api/properties/:id** - Delete property
-
-### Users
-- **GET /api/users** - List users
-- **GET /api/users/:id** - Get user details
-- **PUT /api/users/:id** - Update user
-- **DELETE /api/users/:id** - Delete user
 
 ## Creating a New Provider
 

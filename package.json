@@ -1,11 +1,44 @@
 {
+  "name": "snoop",
+  "version": "0.1.0",
+  "description": "[S]earch & [N]avigate [O]ffers [O]n [P]latform",
+  "author": "Doublelayer",
+  "keywords": [
+    "flat",
+    "flatfinder",
+    "fredy",
+    "real estates",
+    "germany",
+    "apartment",
+    "house",
+    "rent",
+    "immoscout",
+    "scraper",
+    "immonet",
+    "immowelt",
+    "immobilienscout24"
+  ],
+  "bugs": {
+    "url": "https://github.com/Doublelayer/snoop/issues"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Doublelayer/snoop.git"
+  },
+  "homepage": "https://github.com/Doublelayer/snoop#readme",
   "scripts": {
-    "install:all": "npm install && cd client && npm install && cd ../server && npm install && cd ..",
+    "install:all": "npm install && npm --prefix client install && npm --prefix server install",
+    "clean:all": "rm -rf node_modules client/node_modules server/node_modules",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "start": "npm run dev",
     "client": "npm --prefix client start",
     "server": "npm --prefix server run dev"
   },
   "devDependencies": {
     "concurrently": "^9.2.0"
+  },
+  "engines": {
+    "node": ">=18"
   }
 }
