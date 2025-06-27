@@ -1,17 +1,19 @@
 import { faker } from '@faker-js/faker';
 import { SEED_CONFIG } from './config.js';
 
-export function generateUsers() {
-  const users = [];
-
-  users.push({
+export const adminUser = {
     username: 'admin',
     email: 'admin@snnop.com',
     password: 'admin123',
     firstName: 'Admin',
     lastName: 'User',
     role: 'admin'
-  });
+  }
+
+export function generateUsers() {
+  const users = [];
+
+  users.push(adminUser);
 
   users.push({
     username: 'user',

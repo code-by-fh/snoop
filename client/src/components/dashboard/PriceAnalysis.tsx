@@ -24,7 +24,7 @@ const PriceAnalysis: React.FC<PriceAnalysisProps> = ({ listingsByPrice }) => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-blue-600 dark:text-blue-400">Average Price</p>
-              <p className="text-2xl font-bold text-blue-900 dark:text-blue-100">€{listingsByPrice.priceStats.averagePrice.toLocaleString()}</p>
+              <p className="text-2xl font-bold text-blue-900 dark:text-blue-100">€{listingsByPrice.priceStats.averagePrice?.toLocaleString()}</p>
               <div className="flex items-center mt-1">
                 <TrendingUp className="w-4 h-4 text-green-500 mr-1" />
                 <span className="text-sm font-medium text-green-600">{listingsByPrice.priceStats.priceChange}</span>
@@ -40,7 +40,7 @@ const PriceAnalysis: React.FC<PriceAnalysisProps> = ({ listingsByPrice }) => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-green-600 dark:text-green-400">Median Price</p>
-              <p className="text-2xl font-bold text-green-900 dark:text-green-100">€{listingsByPrice.priceStats.medianPrice.toLocaleString()}</p>
+              <p className="text-2xl font-bold text-green-900 dark:text-green-100">€{listingsByPrice.priceStats.medianPrice?.toLocaleString()}</p>
               <div className="flex items-center mt-1">
                 <TrendingUp className="w-4 h-4 text-green-500 mr-1" />
                 <span className="text-sm font-medium text-green-600 line-through">+6.1%</span>

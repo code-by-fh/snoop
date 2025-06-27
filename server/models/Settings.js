@@ -8,7 +8,7 @@ const SettingsSchema = new mongoose.Schema({
     },
     queryInterval: {
         type: Number,
-        default: 300000, // Default to 5 minutes
+        default: 60,
     },
     port: {
         type: Number,

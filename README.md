@@ -109,11 +109,7 @@ fredy_rebrand/
    ```bash
    cd snoop
    npm install
-   cd client
-   npm install
-   cd ../server
-   npm install
-   cd ..
+   npm run install:all
    ```
 
 3. Set up environment variables:
