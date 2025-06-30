@@ -1,5 +1,6 @@
-import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
+import mongoose from 'mongoose';
+import { leanTransformPlugin } from './leanTransformPlugin.js';
 
 const UserSchema = new mongoose.Schema({
   username: {
@@ -43,44 +44,37 @@ const UserSchema = new mongoose.Schema({
     type: Date,
     default: Date.now
   }
-});
-
-UserSchema.set('toJSON', {
-  virtuals: true,
+}, {
+  timestamps: true,
   versionKey: false,
-  transform: function (doc, ret) {
-    ret.id = ret._id;
-    delete ret._id;
-    delete ret.password; 
+  toJSON: {
+    transform: (doc, ret) => {
+      ret.id = ret._id;
+      delete ret._id;
+      delete ret.__v;
+      return ret;
+    }
   }
 });
 
-// Hash password before saving
-UserSchema.pre('save', async function(next) {
-  // Only hash the password if it has been modified (or is new)
+UserSchema.pre('save', async function (next) {
   if (!this.isModified('password')) return next();
 
   try {
-    // Generate a salt
     const salt = await bcrypt.genSalt(10);
-    
-    // Hash the password along with our new salt
     this.password = await bcrypt.hash(this.password, salt);
-    
-    // Update the updated_at timestamp
     this.updated_at = Date.now();
-    
     next();
   } catch (error) {
     next(error);
   }
 });
 
-// Method to compare password
-UserSchema.methods.comparePassword = async function(candidatePassword) {
+UserSchema.methods.comparePassword = async function (candidatePassword) {
   return bcrypt.compare(candidatePassword, this.password);
 };
 
-const User = mongoose.model('User', UserSchema);
+UserSchema.plugin(leanTransformPlugin);
 
-export default User;
+export default mongoose.model('User', UserSchema);
+

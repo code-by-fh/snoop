@@ -24,7 +24,6 @@ const EditJobPage: React.FC = () => {
         setIsLoading(true);
         const response = await getJobById(id);
         const fetchedJob = response.data as Job;
-        console.log('Fetched job:', fetchedJob);
         if (fetchedJob) {
           setJob(fetchedJob);
         } else {
