@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import { v4 as uuidv4 } from 'uuid';
+import Listing from './Listing.js'
 import { leanTransformPlugin } from './leanTransformPlugin.js';
 
 const JobSchema = new mongoose.Schema({
@@ -79,12 +80,15 @@ JobSchema.statics.getJob = async function (id, filter = {}) {
 };
 
 JobSchema.statics.getJobWithListings = async function (id, filter = {}) {
-  return await this.findOne({ _id: id, ...filter })
-    .populate({
-      path: 'providers.listings',
-      model: 'Listing'
-    })
-    .lean();
+const job = await this.findOne({ _id: id, ...filter }).lean();
+
+for (const provider of job.providers) {
+  provider.listings = await Listing.find({
+    _id: { $in: provider.listings }
+  }).lean();
+}
+
+return job;
 };
 
 JobSchema.plugin(leanTransformPlugin);

@@ -20,7 +20,7 @@ function normalize(o) {
     ...(o.city && { city: o.city })
   };
   const shortLink = shortenLink(o.url);
-  const url = `https://www.immobilien.de/${shortLink}`;
+  const url = `https://www.immobilien.de${shortLink}`;
   const id = buildHash(parseId(shortLink), o.price);
   const imageUrl = o.imageUrl ? `${metaInformation.baseUrl}${o.imageUrl}` : null;
   return Object.assign(o, { id, price, size, title, url, imageUrl, rooms, location });
