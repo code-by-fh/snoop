@@ -3,7 +3,7 @@ import { faker } from '@faker-js/faker';
 const today = new Date();
 
 function randomCreatedAt() {
-  return Math.random() < 0.3 ? today : faker.date.recent({ days: 120 });
+  return Math.random() < 0.3 ? today : faker.date.recent({ days: 50 });
 }
 
 export function generateListings(jobId, count) {

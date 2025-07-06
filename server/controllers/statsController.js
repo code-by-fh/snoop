@@ -59,31 +59,6 @@ function countByWeekday(listings) {
             : 0,
     }));
 }
-function generateListingsOverTimeBySource(listings) {
-    // Sicherstellen, dass Listings vorhanden sind
-    if (!Array.isArray(listings) || listings.length === 0) {
-        throw new Error("Es wurden keine Listings übergeben.");
-    }
-
-    // Wir gruppieren die Listings nach der Job-ID (quelle)
-    const groupedListings = listings.reduce((acc, listing) => {
-        const job = listing.job;  // Quelle (Job-ID)
-
-        // Wenn diese Quelle noch nicht im Accumulator ist, initialisieren wir sie
-        if (!acc[job]) {
-            acc[job] = [];
-        }
-
-        // Das Listing der entsprechenden Quelle hinzufügen
-        acc[job].push(listing);
-
-        return acc;
-    }, {});
-
-    return groupedListings;
-}
-
-
 
 function buildSourceStats(jobs, adapters) {
     const providerMap = {};
@@ -207,6 +182,62 @@ function generatePriceStats(listings, buckets) {
     };
 }
 
+function getPeakHour(listings) {
+    const hours = Array(24).fill(0);
+    listings.forEach(listing => {
+        const raw = listing.createdAt?.$date || listing.createdAt;
+        const hour = new Date(raw).getHours();
+        hours[hour]++;
+    });
+
+    const peak = hours.reduce((max, count, hour) =>
+        count > max.count ? { hour, count } : max, { hour: 0, count: 0 });
+
+    return `${peak.hour.toString().padStart(2, '0')}:00`;
+}
+
+function getPeakDay(listings) {
+    const weekdays = Array(7).fill(0);
+    listings.forEach(listing => {
+        const raw = listing.createdAt?.$date || listing.createdAt;
+        const day = new Date(raw).getDay();
+        weekdays[day]++;
+    });
+
+    const labels = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const peakIndex = weekdays.indexOf(Math.max(...weekdays));
+    return labels[peakIndex];
+}
+
+function getAvgListingsPerDay(listings) {
+    const timestamps = listings.map(l => new Date(l.createdAt?.$date || l.createdAt).getTime());
+    const minTime = Math.min(...timestamps);
+    const maxTime = Math.max(...timestamps);
+
+    const diffDays = Math.max(1, (maxTime - minTime) / (1000 * 60 * 60 * 24));
+    return Math.round(listings.length / diffDays);
+}
+
+function getGrowthRate(listings) {
+    const now = Date.now();
+    const msDay = 86400 * 1000;
+
+    let current = 0;
+    let previous = 0;
+
+    listings.forEach(listing => {
+        const time = new Date(listing.createdAt?.$date || listing.createdAt).getTime();
+        const diff = now - time;
+
+        if (diff <= 7 * msDay) current++;
+        else if (diff <= 14 * msDay) previous++;
+    });
+
+    if (previous === 0) return '+∞%';
+    const growth = ((current - previous) / previous) * 100;
+    return `${growth >= 0 ? '+' : ''}${growth.toFixed(1)}%`;
+}
+
 function buildTimeStats(listings) {
     return {
         daily: groupListingsByTime(listings, 'yyyy-MM-dd'),
@@ -214,10 +245,10 @@ function buildTimeStats(listings) {
         weekly: countByWeekday(listings),
         monthly: groupListingsByTime(listings, 'yyyy-MM'),
         timeStats: {
-            peakHour: '12:00 PM', // Dummy
-            peakDay: 'Wednesday', // Dummy
-            avgListingsPerDay: Math.round(listings.length / 30),
-            growthRate: '+15.2%' // Dummy
+            peakHour: getPeakHour(listings),
+            peakDay: getPeakDay(listings),
+            avgListingsPerDay: getAvgListingsPerDay(listings),
+            growthRate: getGrowthRate(listings)
         }
     };
 }

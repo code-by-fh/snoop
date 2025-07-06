@@ -1,7 +1,7 @@
 export const SEED_CONFIG = {
   users: 5,
-  jobsPerUser: 11,
-  listingsPerJob: 1,
+  jobsPerUser: 5,
+  listingsPerJob: 50,
   providersConfig: [
     {
       id: 'einsAImmobilien',
