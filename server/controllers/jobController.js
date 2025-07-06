@@ -42,7 +42,7 @@ export const addCommonAttributes = (job, userId) => {
   }).length;
 
   return {
-    ...job.toJSON(),
+    ...job,
     totalListings,
     newListings,
     progress: Math.floor(Math.random() * 101),
@@ -78,7 +78,7 @@ export const createJob = async (req, res) => {
 export const getJobs = async (req, res) => {
   try {
     const filter = req.user.role === 'admin' ? {} : { user: req.user.id };
-    let jobs = await Job.find(filter);
+    let jobs = await Job.getAllJobs(filter);
 
     const formattedJobs = jobs.map(job => addCommonAttributes(job, req.user.id));
 

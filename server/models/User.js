@@ -1,6 +1,5 @@
 import bcrypt from 'bcryptjs';
 import mongoose from 'mongoose';
-import { leanTransformPlugin } from './leanTransformPlugin.js';
 
 const UserSchema = new mongoose.Schema({
   username: {
@@ -73,8 +72,6 @@ UserSchema.pre('save', async function (next) {
 UserSchema.methods.comparePassword = async function (candidatePassword) {
   return bcrypt.compare(candidatePassword, this.password);
 };
-
-UserSchema.plugin(leanTransformPlugin);
 
 export default mongoose.model('User', UserSchema);
 

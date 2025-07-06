@@ -1,7 +1,5 @@
 import mongoose from 'mongoose';
 import { v4 as uuidv4 } from 'uuid';
-import Listing from './Listing.js'
-import { leanTransformPlugin } from './leanTransformPlugin.js';
 
 const JobSchema = new mongoose.Schema({
   _id: {
@@ -68,30 +66,32 @@ JobSchema.statics.addListingsIds = async function (listingIds, jobId, providerId
 };
 
 JobSchema.statics.getActiveJobs = async function () {
-  return await this.find({ isActive: true }).lean();
+  const jobs = await this.find({ isActive: true });
+  return jobs.map(job => job.toJSON());
 };
 
 JobSchema.statics.getAllJobs = async function (filter) {
-  return await this.find(filter).lean();
+  const jobs = await this.find(filter)
+    .populate({
+      path: 'providers.listings',
+      model: 'Listing'
+    });
+  return jobs.map(job => job.toJSON());
 };
 
 JobSchema.statics.getJob = async function (id, filter = {}) {
-  return await this.findOne({ _id: id, ...filter }).lean();
+  const job = await this.findOne({ _id: id, ...filter });
+  return job.toJSON()
 };
 
 JobSchema.statics.getJobWithListings = async function (id, filter = {}) {
-const job = await this.findOne({ _id: id, ...filter }).lean();
-
-for (const provider of job.providers) {
-  provider.listings = await Listing.find({
-    _id: { $in: provider.listings }
-  }).lean();
-}
-
-return job;
+  const job = await this.findOne({ _id: id, ...filter })
+    .populate({
+      path: 'providers.listings',
+      model: 'Listing'
+    });
+  return job.toJSON()
 };
-
-JobSchema.plugin(leanTransformPlugin);
 
 
 export default mongoose.model('Job', JobSchema);

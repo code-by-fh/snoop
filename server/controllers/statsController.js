@@ -180,8 +180,9 @@ export const getDashboardStats = async (req, res) => {
 
         const allListings = jobs.flatMap(job => job.providers?.flatMap(p => p.listings || []) || []);
 
-        const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
-        const newListingsToday = allListings.filter(l => new Date(l.createdAt) > oneDayAgo).length;
+        const todayMidnight = new Date();
+        todayMidnight.setHours(0, 0, 0, 0);
+        const newListingsToday = allListings.filter(l => new Date(l.createdAt) >= todayMidnight);
 
         const priceBuckets = [
             { range: '0-500', min: 0, max: 500 },
@@ -210,16 +211,16 @@ export const getDashboardStats = async (req, res) => {
         const newListingsTodayStats = buildMonthlyComparisonStats({
             items: allListings,
             dateKey: 'createdAt',
-            filterFn: l => new Date(l.createdAt) > oneDayAgo
+            filterFn: l => new Date(l.createdAt) > todayMidnight
         });
 
         const stats = {
             totalJobs: jobs.length,
             activeJobs: jobs.filter(job => job.isActive).length,
             totalListings: allListings.length,
-            newListingsToday,
-            listingsBySource: buildSourceStats(jobs, adapters),
+            newListingsToday: newListingsToday.length,
             listingsByPrice: generatePriceStats(allListings, priceBuckets),
+            listingsBySource: buildSourceStats(jobs, adapters),
             listingsByDate: buildTimeStats(allListings),
             meta: {
                 totalJobsChange: totalJobsStats.change,

@@ -1,6 +1,5 @@
 import mongoose from 'mongoose';
 import { v4 as uuidv4 } from 'uuid';
-import { leanTransformPlugin } from './leanTransformPlugin.js';
 
 const ListingSchema = new mongoose.Schema({
   _id: {
@@ -96,7 +95,5 @@ ListingSchema.statics.saveListings = async function (newListings, jobId) {
 
   return savedListings;
 };
-
-ListingSchema.plugin(leanTransformPlugin);
 
 export default mongoose.model('Listing', ListingSchema);

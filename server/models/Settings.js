@@ -1,6 +1,5 @@
 import mongoose from 'mongoose';
 import { v4 as uuidv4 } from 'uuid';
-import { leanTransformPlugin } from './leanTransformPlugin.js';
 
 const SettingsSchema = new mongoose.Schema({
     _id: {
@@ -24,8 +23,5 @@ const SettingsSchema = new mongoose.Schema({
         default: '17:00',
     },
 });
-
-SettingsSchema.plugin(leanTransformPlugin);
-
 
 export default mongoose.model('Settings', SettingsSchema);

@@ -7,7 +7,6 @@ const cache = {};
 export const initCache = async (settings) => {
   const intervalInMs = settings.queryInterval * 60 * 1000;
 
-  // Wenn Intervall kleiner gleich Retention, dann halbieren
   retention = intervalInMs <= retention ? Math.floor(intervalInMs / 2) : retention;
 
   intervalId = setInterval(() => {
