@@ -36,7 +36,8 @@ export interface SourcePerformance {
 }
 
 export interface ListingsByPrice {
-  range: PriceRange[];
+  range: PriceRange;
+  mostCommonRange: PriceRange
   price: PriceTrend[];
   priceDistribution: PriceDistribution[];
   priceStats: PriceStats;
@@ -44,8 +45,9 @@ export interface ListingsByPrice {
 }
 
 export interface PriceRange {
-  range: string;
-  count: number;
+  min: string;
+  max: string;
+  count: number
 }
 
 export interface PriceTrend {
@@ -63,8 +65,8 @@ export interface PriceDistribution {
 export interface PriceStats {
   averagePrice: number;
   medianPrice: number;
-  priceChange: string;
-  trend: "up" | "down";
+  averageChange: string;
+  medianChange: string;
 }
 
 export interface ListingsByDate {

@@ -59,16 +59,31 @@ function countByWeekday(listings) {
             : 0,
     }));
 }
+function generateListingsOverTimeBySource(listings) {
+    // Sicherstellen, dass Listings vorhanden sind
+    if (!Array.isArray(listings) || listings.length === 0) {
+        throw new Error("Es wurden keine Listings übergeben.");
+    }
 
-function calculatePriceDistribution(listings, buckets) {
-    const validPrices = listings.map(l => l.price).filter(p => typeof p === 'number' && !isNaN(p));
+    // Wir gruppieren die Listings nach der Job-ID (quelle)
+    const groupedListings = listings.reduce((acc, listing) => {
+        const job = listing.job;  // Quelle (Job-ID)
 
-    return buckets.map(bucket => {
-        const count = validPrices.filter(p => p >= bucket.min && p < bucket.max).length;
-        const percentage = validPrices.length ? Math.round((count / validPrices.length) * 100) : 0;
-        return { range: bucket.range, count, percentage };
-    });
+        // Wenn diese Quelle noch nicht im Accumulator ist, initialisieren wir sie
+        if (!acc[job]) {
+            acc[job] = [];
+        }
+
+        // Das Listing der entsprechenden Quelle hinzufügen
+        acc[job].push(listing);
+
+        return acc;
+    }, {});
+
+    return groupedListings;
 }
+
+
 
 function buildSourceStats(jobs, adapters) {
     const providerMap = {};
@@ -98,22 +113,97 @@ function buildSourceStats(jobs, adapters) {
     return { providers, sourcePerformance: performance };
 }
 
+
+function findMostCommonPriceRange(listings, buckets) {
+    const bucketStats = buckets.map(bucket => {
+        const count = listings.filter(l => l.price >= bucket.min && l.price < bucket.max).length;
+        return {
+            min: bucket.min,
+            max: bucket.max,
+            count
+        };
+    });
+
+    const mostCommon = bucketStats.reduce((a, b) => (a.count > b.count ? a : b));
+
+    return {
+        min: mostCommon.min,
+        max: mostCommon.max,
+        count: mostCommon.count
+    };
+}
+
+function generatePriceTrends(listings) {
+    const byMonth = {};
+
+    listings.forEach(listing => {
+        if (!listing.createdAt || typeof listing.price !== 'number') return;
+
+        const date = new Date(listing.createdAt);
+        const month = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+
+        if (!byMonth[month]) byMonth[month] = [];
+        byMonth[month].push(listing.price);
+    });
+
+    const result = Object.entries(byMonth)
+        .sort(([a], [b]) => new Date(a) - new Date(b))
+        .map(([month, prices]) => {
+            const avg = prices.reduce((sum, p) => sum + p, 0) / prices.length;
+            const median = getMedian(prices);
+            return {
+                month,
+                avgPrice: Math.round(avg),
+                medianPrice: median
+            };
+        });
+
+    return result;
+}
+
 function generatePriceStats(listings, buckets) {
     const avgPrice = Math.floor(listings.reduce((sum, l) => sum + (l.price || 0), 0) / listings.length || 0);
     const medianPrice = getMedian(listings.map(l => l.price).filter(Boolean));
 
+    const allPrices = listings.map(l => l.price).filter(Boolean);
+    const minPrice = Math.min(...allPrices);
+    const maxPrice = Math.max(...allPrices);
+
+    const priceTrends = generatePriceTrends(listings);
+
+    const latest = priceTrends[priceTrends.length - 1];
+    const previous = priceTrends[priceTrends.length - 2];
+
+    let averageChange = null;
+    let medianChange = null;
+
+    if (latest && previous) {
+        if (previous.avgPrice > 0) {
+            const diff = latest.avgPrice - previous.avgPrice;
+            averageChange = ((diff / previous.avgPrice) * 100).toFixed(1) + '%';
+        }
+
+        if (previous.medianPrice > 0) {
+            const diff = latest.medianPrice - previous.medianPrice;
+            medianChange = ((diff / previous.medianPrice) * 100).toFixed(1) + '%';
+        }
+    }
+
     return {
-        range: buckets.map(bucket => ({
-            range: bucket.range,
-            count: listings.filter(l => l.price >= bucket.min && l.price < bucket.max).length
-        })),
+        range: {
+            min: minPrice,
+            max: maxPrice
+        },
+        mostCommonRange: findMostCommonPriceRange(listings, buckets),
         priceStats: {
             averagePrice: avgPrice,
             medianPrice,
-            priceChange: '+8.2%', // Dummy
-            trend: 'up'
+            averageChange,
+            medianChange
         },
-        priceDistribution: calculatePriceDistribution(listings, buckets)
+        priceDistribution: buckets,
+        priceTrends: generatePriceTrends(listings)
+
     };
 }
 
@@ -168,6 +258,49 @@ function buildMonthlyComparisonStats({
     };
 }
 
+export function generateDynamicPriceBuckets(listings, bucketCount = 5) {
+    const prices = listings
+        .map(l => l.price)
+        .filter(p => typeof p === 'number' && !isNaN(p));
+
+    const total = prices.length;
+    if (total === 0) return [];
+
+    const min = Math.min(...prices);
+    const max = Math.max(...prices);
+
+    if (min === max) {
+        return [{
+            min,
+            max,
+            range: `${min}`,
+            count: total,
+            percentage: 100
+        }];
+    }
+
+    const step = Math.ceil((max - min) / bucketCount);
+    const buckets = [];
+
+    for (let i = 0; i < bucketCount; i++) {
+        const bucketMin = min + i * step;
+        const bucketMax = bucketMin + step;
+
+        const count = prices.filter(p => p >= bucketMin && p < bucketMax).length;
+
+        buckets.push({
+            min: bucketMin.toLocaleString(),
+            max: bucketMax.toLocaleString(),
+            range: `${bucketMin.toLocaleString()} – ${bucketMax.toLocaleString()} €`,
+            count,
+            percentage: +(count / total * 100).toFixed(1)
+        });
+    }
+
+    return buckets;
+}
+
+
 // ────────────────────────────────────────────────────────────────────────────────
 // Main Controllers
 // ────────────────────────────────────────────────────────────────────────────────
@@ -184,13 +317,7 @@ export const getDashboardStats = async (req, res) => {
         todayMidnight.setHours(0, 0, 0, 0);
         const newListingsToday = allListings.filter(l => new Date(l.createdAt) >= todayMidnight);
 
-        const priceBuckets = [
-            { range: '0-500', min: 0, max: 500 },
-            { range: '500-1000', min: 500, max: 1000 },
-            { range: '1000-1500', min: 1000, max: 1500 },
-            { range: '1500-2000', min: 1500, max: 2000 },
-            { range: '2000+', min: 2000, max: Infinity }
-        ];
+        const priceBuckets = generateDynamicPriceBuckets(allListings);
 
         const totalJobsStats = buildMonthlyComparisonStats({
             items: jobs,
@@ -200,7 +327,7 @@ export const getDashboardStats = async (req, res) => {
         const activeJobsStats = buildMonthlyComparisonStats({
             items: jobs,
             dateKey: 'createdAt',
-            filterFn: job => job.isActive
+            filterFn: job => job.isActiveB
         });
 
         const totalListingsStats = buildMonthlyComparisonStats({
@@ -220,7 +347,7 @@ export const getDashboardStats = async (req, res) => {
             totalListings: allListings.length,
             newListingsToday: newListingsToday.length,
             listingsByPrice: generatePriceStats(allListings, priceBuckets),
-            listingsBySource: buildSourceStats(jobs, adapters),
+            listingsBySource: buildSourceStats(jobs, adapters, allListings),
             listingsByDate: buildTimeStats(allListings),
             meta: {
                 totalJobsChange: totalJobsStats.change,

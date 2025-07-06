@@ -24,10 +24,10 @@ const PriceAnalysis: React.FC<PriceAnalysisProps> = ({ listingsByPrice }) => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-blue-600 dark:text-blue-400">Average Price</p>
-              <p className="text-2xl font-bold text-blue-900 dark:text-blue-100">€{listingsByPrice.priceStats.averagePrice?.toLocaleString()}</p>
+              <p className="text-2xl font-bold text-blue-900 dark:text-blue-100">{listingsByPrice.priceStats.averagePrice?.toLocaleString()} €</p>
               <div className="flex items-center mt-1">
                 <TrendingUp className="w-4 h-4 text-green-500 mr-1" />
-                <span className="text-sm font-medium text-green-600">{listingsByPrice.priceStats.priceChange}</span>
+                <span className="text-sm font-medium text-green-600">{listingsByPrice.priceStats.averageChange}</span>
               </div>
             </div>
             <div className="p-3 bg-blue-100 dark:bg-blue-800 rounded-full">
@@ -40,10 +40,10 @@ const PriceAnalysis: React.FC<PriceAnalysisProps> = ({ listingsByPrice }) => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-green-600 dark:text-green-400">Median Price</p>
-              <p className="text-2xl font-bold text-green-900 dark:text-green-100">€{listingsByPrice.priceStats.medianPrice?.toLocaleString()}</p>
+              <p className="text-2xl font-bold text-green-900 dark:text-green-100">{listingsByPrice.priceStats.medianPrice?.toLocaleString()} €</p>
               <div className="flex items-center mt-1">
                 <TrendingUp className="w-4 h-4 text-green-500 mr-1" />
-                <span className="text-sm font-medium text-green-600 line-through">+6.1%</span>
+                <span className="text-sm font-medium text-green-600">{listingsByPrice.priceStats.medianChange}</span>
               </div>
             </div>
             <div className="p-3 bg-green-100 dark:bg-green-800 rounded-full">
@@ -56,9 +56,9 @@ const PriceAnalysis: React.FC<PriceAnalysisProps> = ({ listingsByPrice }) => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-purple-600 dark:text-purple-400">Price Range</p>
-              <p className="text-2xl font-bold text-purple-900 dark:text-purple-100 line-through">€500-2000+</p>
+              <p className="text-2xl font-bold text-purple-900 dark:text-purple-100">{listingsByPrice.range.min?.toLocaleString()} - {listingsByPrice.range.max?.toLocaleString()} €</p>
               <div className="flex items-center mt-1">
-                <span className="text-sm text-gray-600 dark:text-gray-400 line-through">Most common: €1000-1500</span>
+                <span className="text-sm text-gray-600 dark:text-gray-400">Most common: {listingsByPrice.mostCommonRange.min?.toLocaleString()} - {listingsByPrice.mostCommonRange.max?.toLocaleString()} €</span>
               </div>
             </div>
             <div className="p-3 bg-purple-100 dark:bg-purple-800 rounded-full">
@@ -74,7 +74,7 @@ const PriceAnalysis: React.FC<PriceAnalysisProps> = ({ listingsByPrice }) => {
           <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">Price Distribution</h3>
           <div className="h-80">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={listingsByPrice.range} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+              <BarChart data={listingsByPrice.priceDistribution} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
                 <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
                 <XAxis
                   dataKey="range"
@@ -123,7 +123,7 @@ const PriceAnalysis: React.FC<PriceAnalysisProps> = ({ listingsByPrice }) => {
                     color: 'white'
                   }}
                   formatter={(value: any, name: string) => [
-                    `€${value}`,
+                    `${value?.toLocaleString()} €`,
                     name === 'avgPrice' ? 'Average Price' : 'Median Price'
                   ]}
                 />
@@ -174,7 +174,7 @@ const PriceAnalysis: React.FC<PriceAnalysisProps> = ({ listingsByPrice }) => {
               {listingsByPrice.priceDistribution.map((item, index) => (
                 <tr key={index}>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
-                    €{item.range}
+                    {item.range}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                     {item.count}
