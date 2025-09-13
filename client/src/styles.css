@@ -19,3 +19,45 @@ body {
 .btn-cancel {
   @apply inline-flex items-center px-5 py-2.5 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-300;
 }
+
+@layer components {
+  .card-base {
+    @apply rounded-2xl border bg-white dark:bg-gray-900 dark:border-gray-700 shadow-md hover:shadow-lg transition-all duration-300 hover:scale-[1.01];
+  }
+
+  .card-section {
+    @apply p-4;
+  }
+
+  .card-footer {
+    @apply mt-auto px-4 py-3 bg-gray-50 dark:bg-gray-800 border-t border-gray-100 dark:border-gray-700;
+  }
+
+  .btn {
+    @apply inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-1;
+  }
+
+  .table-container {
+    @apply bg-white dark:bg-gray-900 shadow rounded-xl overflow-hidden border border-gray-100 dark:border-gray-700;
+  }
+
+  .table-head {
+    @apply bg-gray-50 dark:bg-gray-800;
+  }
+
+  .table-head-cell {
+    @apply px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400;
+  }
+
+  .table-row {
+    @apply transition-colors duration-150 hover:bg-gray-50 dark:hover:bg-gray-800/50;
+  }
+
+  .table-cell {
+    @apply px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300;
+  }
+
+  .btn-icon {
+    @apply inline-flex items-center p-1.5 rounded-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-1;
+  }
+}
