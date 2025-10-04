@@ -1,9 +1,13 @@
-import { Filter, MapPin, Search, SortAsc, SortDesc } from 'lucide-react';
+import ListingsGridView from '@/components/listings/ListingsGridView';
+import ListingsListView from '@/components/listings/ListingsListView';
+import ListingsMapView from '@/components/listings/ListingsMapView';
+import ListingsViewToggle from '@/components/listings/ListingsViewToggle';
+import { Filter, Search, SortAsc, SortDesc, X } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { getListings } from '../api';
-import ListingsView from '../components/listings/ListingsView';
-import MapModal from '../components/listings/MapModal';
+import { useListingsViewPreference } from '../hooks/useListingsViewPreference';
 import { Listing } from '../types';
+import SearchInput from '@/components/common/SearchInput';
 
 const ListingsPage: React.FC = () => {
   const [listings, setListings] = useState<Listing[]>([]);
@@ -20,10 +24,10 @@ const ListingsPage: React.FC = () => {
     minArea: '',
     location: '',
   });
-  const [isMapModalOpen, setIsMapModalOpen] = useState(false);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalListings, setTotalListings] = useState(0);
+  const [viewMode, setViewMode] = useListingsViewPreference('grid');
 
   useEffect(() => {
     const fetchListings = async () => {
@@ -65,54 +69,124 @@ const ListingsPage: React.FC = () => {
     setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
   };
 
-  const handleMapView = () => {
-    setIsMapModalOpen(true);
-  };
-
   return (
     <div className="space-y-6">
-<div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
-  <div>
-    <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-400">Property Listings</h1>
-    <p className="text-gray-600 dark:text-gray-400 mt-1">
-      Explore and filter property listings, with the option to view them on the map.
-    </p>
-  </div>
-  <div className="flex gap-2">  
-    <button
-      onClick={() => setSortBy('date')}
-      className={`px-3 py-1 text-sm rounded-md ${sortBy === 'date' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
-    >
-      Date
-    </button>
-    <button
-      onClick={() => setSortBy('price')}
-      className={`px-3 py-1 text-sm rounded-md ${sortBy === 'price' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
-    >
-      Price
-    </button>
-    <button
-      onClick={toggleSortOrder}
-      className="p-1 bg-gray-100 rounded-md hover:bg-gray-200"
-      title={sortOrder === 'asc' ? 'Ascending' : 'Descending'}
-    >
-      {sortOrder === 'asc' ? (
-        <SortAsc className="w-5 h-5 text-gray-700" />
-      ) : (
-        <SortDesc className="w-5 h-5 text-gray-700" />
+      {/* Header + Search + Buttons */}
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Property Listings - Showing {totalListings} Results</h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-1">
+            Explore and filter property listings, with the option to view them on the map.
+          </p>
+        </div>
+
+        <ListingsViewToggle
+          currentView={viewMode}
+          onViewChange={setViewMode}
+        />
+
+      </div>
+
+      {/* Search + Buttons */}
+      <div className="flex flex-1 sm:flex-none gap-2 items-center">
+        <SearchInput
+          value={searchTerm}
+          onChange={(val) => { setSearchTerm(val); setPage(1); }}
+          placeholder="Search listings..."
+        />
+
+        {/* Filter/Sort Buttons */}
+        <button
+          onClick={() => setSortBy('date')}
+          className={`px-3 py-2 text-sm rounded-md border ${sortBy === 'date' ? 'bg-blue-100 border-blue-300 text-blue-800' : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-700'
+            }`}
+        >
+          Date
+        </button>
+        <button
+          onClick={() => setSortBy('price')}
+          className={`px-3 py-2 text-sm rounded-md border ${sortBy === 'price' ? 'bg-blue-100 border-blue-300 text-blue-800' : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-700'
+            }`}
+        >
+          Price
+        </button>
+        <button
+          onClick={toggleSortOrder}
+          className="px-3 py-2 text-sm rounded-md border bg-white border-gray-300 text-gray-700 hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-700"
+          title={sortOrder === 'asc' ? 'Ascending' : 'Descending'}
+        >
+          {sortOrder === 'asc' ? <SortAsc className="w-4 h-4 inline" /> : <SortDesc className="w-4 h-4 inline" />}
+        </button>
+        <button
+          onClick={() => setFilterOpen(!filterOpen)}
+          className={`px-3 py-2 text-sm rounded-md border ${filterOpen ? 'bg-blue-100 border-blue-300 text-blue-800' : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-700'
+            }`}
+          title="Filter"
+        >
+          <Filter className="w-4 h-4 inline" />
+        </button>
+      </div>
+
+      {/* Filters Panel */}
+      {filterOpen && (
+        <div className="bg-gray-50 p-4 rounded-lg border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+          <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
+            <input
+              type="number"
+              name="minPrice"
+              value={filters.minPrice}
+              onChange={handleFilterChange}
+              className="block w-full px-3 py-2 border border-gray-300 rounded-md bg-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:bg-gray-700 dark:text-gray-200"
+              placeholder="Min €"
+            />
+            <input
+              type="number"
+              name="maxPrice"
+              value={filters.maxPrice}
+              onChange={handleFilterChange}
+              className="block w-full px-3 py-2 border border-gray-300 rounded-md bg-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:bg-gray-700 dark:text-gray-200"
+              placeholder="Max €"
+            />
+            <input
+              type="number"
+              name="minRooms"
+              value={filters.minRooms}
+              onChange={handleFilterChange}
+              className="block w-full px-3 py-2 border border-gray-300 rounded-md bg-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:bg-gray-700 dark:text-gray-200"
+              placeholder="Min rooms"
+            />
+            <input
+              type="number"
+              name="minArea"
+              value={filters.minArea}
+              onChange={handleFilterChange}
+              className="block w-full px-3 py-2 border border-gray-300 rounded-md bg-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:bg-gray-700 dark:text-gray-200"
+              placeholder="Min m²"
+            />
+            <input
+              type="text"
+              name="location"
+              value={filters.location}
+              onChange={handleFilterChange}
+              className="block w-full px-3 py-2 border border-gray-300 rounded-md bg-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:bg-gray-700 dark:text-gray-200"
+              placeholder="City, district..."
+            />
+            <button
+              onClick={() =>
+                setFilters({ minPrice: '', maxPrice: '', minRooms: '', minArea: '', location: '' })
+              }
+              className="flex items-center justify-center px-3 py-2 border border-gray-300 rounded-md bg-white text-gray-500 hover:text-gray-700 hover:bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200 dark:hover:text-white dark:hover:bg-gray-600 focus:outline-none transition"
+              title="Reset Filters"
+            >
+              <X className="w-4 h-4 mr-1" />
+              Reset
+            </button>
+          </div>
+        </div>
+
       )}
-    </button>
-    <button
-      onClick={() => setFilterOpen(!filterOpen)}
-      className={`p-1 rounded-md ${filterOpen ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
-      title="Filter"
-    >
-      <Filter className="w-5 h-5" />
-    </button>
-  </div>
-</div>
 
-
+      {/* Error Message */}
       {error && (
         <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded">
           <div className="flex">
@@ -128,100 +202,20 @@ const ListingsPage: React.FC = () => {
         </div>
       )}
 
-      <div className="relative">
-        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-          <Search className="h-5 w-5 text-gray-400" />
-        </div>
-        <input
-          type="text"
-          className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:bg-dark-input text-light-text dark:text-dark-text"
-          placeholder="Search listings..."
-          value={searchTerm}
-          onChange={(e) => {
-            setSearchTerm(e.target.value);
-            setPage(1);
-          }}
-        />
-      </div>
-
-      {filterOpen && (
-        <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-          <h3 className="text-lg font-medium text-gray-900 mb-3">Filters</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-            <input
-              type="number"
-              id="minPrice"
-              name="minPrice"
-              value={filters.minPrice}
-              onChange={handleFilterChange}
-              className="block w-full px-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-              placeholder="Min €"
-            />
-            <input
-              type="number"
-              id="maxPrice"
-              name="maxPrice"
-              value={filters.maxPrice}
-              onChange={handleFilterChange}
-              className="block w-full px-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-              placeholder="Max €"
-            />
-            <input
-              type="number"
-              id="minRooms"
-              name="minRooms"
-              value={filters.minRooms}
-              onChange={handleFilterChange}
-              className="block w-full px-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-              placeholder="Min rooms"
-            />
-            <input
-              type="number"
-              id="minArea"
-              name="minArea"
-              value={filters.minArea}
-              onChange={handleFilterChange}
-              className="block w-full px-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-              placeholder="Min m²"
-            />
-            <input
-              type="text"
-              id="location"
-              name="location"
-              value={filters.location}
-              onChange={handleFilterChange}
-              className="block w-full px-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-              placeholder="City, district..."
-            />
-          </div>
-          <div className="mt-4 flex justify-end">
-            <button
-              onClick={() => {
-                setFilters({
-                  minPrice: '',
-                  maxPrice: '',
-                  minRooms: '',
-                  minArea: '',
-                  location: '',
-                });
-                setPage(1);
-              }}
-              className="px-4 py-2 text-sm text-gray-700 hover:text-gray-900"
-            >
-              Reset
-            </button>
-          </div>
-        </div>
-      )}
-
+      {/* Listings */}
       {isLoading ? (
         <div className="flex justify-center items-center h-64">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
         </div>
       ) : (
-        <ListingsView listings={listings} onMapView={handleMapView} totalListings={totalListings} />
+        <div className="space-y-6">
+          {viewMode === 'grid' && <ListingsGridView listings={listings} />}
+          {viewMode === 'list' && <ListingsListView listings={listings} />}
+          {viewMode === 'map' && <ListingsMapView listings={listings} />}
+        </div>
       )}
 
+      {/* Pagination */}
       {totalPages > 1 && (
         <div className="flex justify-center space-x-2 mt-6">
           <button
@@ -231,7 +225,7 @@ const ListingsPage: React.FC = () => {
           >
             Previous
           </button>
-          <span className="px-4 py-2 text-gray-700">Page {page} of {totalPages}</span>
+          <span className="px-4 py-2 text-gray-700 dark:text-gray-200">Page {page} of {totalPages}</span>
           <button
             onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))}
             disabled={page === totalPages}
@@ -241,12 +235,6 @@ const ListingsPage: React.FC = () => {
           </button>
         </div>
       )}
-
-      <MapModal
-        isOpen={isMapModalOpen}
-        onClose={() => setIsMapModalOpen(false)}
-        listings={listings}
-      />
     </div>
   );
 };

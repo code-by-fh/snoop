@@ -6,8 +6,6 @@ import Map from '../map/Map';
 
 
 interface MapModalProps {
-  isOpen: boolean;
-  onClose: () => void;
   listings: Listing[];
 }
 

@@ -11,13 +11,15 @@ interface NotificationIndicatorsProps {
   size?: 'sm' | 'md' | 'lg';
   showLabels?: boolean;
   maxDisplay?: number;
+  isJobInactive?: boolean;
 }
 
 const NotificationIndicators: React.FC<NotificationIndicatorsProps> = ({
   adapters,
   size = 'sm',
   showLabels = false,
-  maxDisplay = 3
+  maxDisplay = 3,
+  isJobInactive = false
 }) => {
   const activeAdapters = adapters.filter(adapter => adapter);
 
@@ -34,6 +36,9 @@ const NotificationIndicators: React.FC<NotificationIndicatorsProps> = ({
   };
 
   const getAdapterColor = (type: string) => {
+    if(isJobInactive) {
+      return 'bg-gray-200 text-gray-500 border-gray-300';
+    }
     switch (type) {
       case 'console':
         return 'bg-blue-100 text-blue-700 border-blue-200';
