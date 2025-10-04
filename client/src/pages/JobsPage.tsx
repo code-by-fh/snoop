@@ -199,7 +199,7 @@ const JobsPage: React.FC = () => {
           {viewMode === 'grid' ? (
             <div>
               <div className="mb-4 text-sm text-gray-600">
-                Showing {filteredJobs.length} jobs in <strong>Grid View</strong>
+                Showing {filteredJobs.length} jobs
               </div>
               <JobGridView
                 jobs={filteredJobs}
@@ -211,7 +211,7 @@ const JobsPage: React.FC = () => {
           ) : (
             <div>
               <div className="mb-4 text-sm text-gray-600">
-                Showing {filteredJobs.length} jobs in <strong>List View</strong>
+                Showing {filteredJobs.length} jobs
               </div>
               <JobListView
                 jobs={filteredJobs}

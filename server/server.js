@@ -22,6 +22,7 @@ import listingRoutes from './routes/listingRoutes.js';
 import notificationAdapterRoutes from './routes/notificationAdapterRoutes.js';
 import providerRoutes from './routes/providerRoutes.js';
 import statsRoutes from './routes/statsRoutes.js';
+import healthRouter from "./routes/healthRouter.js";
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI)
@@ -61,6 +62,7 @@ app.use('/api/listings', authMiddleware, listingRoutes);
 app.use('/api/statistics', authMiddleware, statsRoutes);
 app.use('/api/admin/users', adminUserRoutes);
 app.use('/api/admin/settings', adminSettingsRoutes);
+app.use("/health", healthRouter);
 
 app.use(errorHandler);
 

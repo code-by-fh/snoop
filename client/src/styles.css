@@ -46,7 +46,7 @@ body {
   }
 
   .table-head-cell {
-    @apply px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400;
+    @apply px-6 py-3 text-left text-xs font-semibold tracking-wide text-gray-900 dark:text-gray-400;
   }
 
   .table-row {

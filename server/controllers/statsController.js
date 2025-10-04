@@ -99,12 +99,14 @@ function findMostCommonPriceRange(listings, buckets) {
         };
     });
 
-    const mostCommon = bucketStats.reduce((a, b) => (a.count > b.count ? a : b));
+    if(bucketStats.length === 0) return {};
+
+    const mostCommon = bucketStats?.reduce((a, b) => (a.count > b.count ? a : b));
 
     return {
-        min: mostCommon.min,
-        max: mostCommon.max,
-        count: mostCommon.count
+        min: mostCommon?.min,
+        max: mostCommon?.max,
+        count: mostCommon?.count
     };
 }
 

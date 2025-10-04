@@ -1,8 +1,7 @@
-import mongoose from 'mongoose';
 import Job from '../models/Job.js';
 import Listing from '../models/Listing.js';
-import logger from "../utils/logger.js";
 import { executeJob } from "../services/runtime/JobRunner.js";
+import logger from "../utils/logger.js";
 
 const validateJobData = (data) => {
   const { name, providers, notificationAdapters } = data;

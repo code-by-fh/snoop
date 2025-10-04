@@ -87,9 +87,8 @@ const JobListView: React.FC<JobListViewProps> = ({ jobs, onDelete, onJobRun, onT
               <th className="table-head-cell">Notifications</th>
               <th className="table-head-cell"><SortButton field="createdAt">Created</SortButton></th>
               <th className="table-head-cell"><SortButton field="updatedAt">Last Run</SortButton></th>
-              <th className="table-head-cell"><SortButton field="progress">Progress</SortButton></th>
               <th className="table-head-cell">Results</th>
-              <th className="table-head-cell text-center">Actions</th>
+              <th className="table-head-cell">Actions</th>
             </tr>
           </thead>
           <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
@@ -117,7 +116,7 @@ const JobListView: React.FC<JobListViewProps> = ({ jobs, onDelete, onJobRun, onT
                   </span>
                 </td>
                 <td className="table-cell">
-                  <NotificationIndicators adapters={job.notificationAdapters || []} size="sm" maxDisplay={2} />
+                  <NotificationIndicators adapters={job.notificationAdapters || []} size="sm" maxDisplay={3} />
                 </td>
                 <td className="table-cell">
                   <div>{format(new Date(job.createdAt), 'MMM dd, yyyy')}</div>
@@ -126,17 +125,6 @@ const JobListView: React.FC<JobListViewProps> = ({ jobs, onDelete, onJobRun, onT
                 <td className="table-cell">
                   <div>{format(new Date(job.updatedAt), 'MMM dd, yyyy')}</div>
                   <div className="text-xs text-gray-400">{formatDistanceToNow(new Date(job.updatedAt), { addSuffix: true })}</div>
-                </td>
-                <td className="table-cell">
-                  <div className="flex items-center">
-                    <div className="w-16 bg-gray-200 dark:bg-gray-700 rounded-full h-2 mr-2">
-                      <div
-                        className={`h-2 rounded-full transition-all duration-300 ${job.isActive ? 'bg-blue-600 dark:bg-blue-500' : 'bg-gray-400 dark:bg-gray-500'}`}
-                        style={{ width: `${job.progress}%` }}
-                      />
-                    </div>
-                    <span className="text-sm">{job.progress}%</span>
-                  </div>
                 </td>
                 <td className="table-cell">
                   <div className="flex space-x-4">
@@ -150,8 +138,8 @@ const JobListView: React.FC<JobListViewProps> = ({ jobs, onDelete, onJobRun, onT
                     </div>
                   </div>
                 </td>
-                <td className="table-cell text-center">
-                  <div className="flex justify-center space-x-2">
+                <td className="table-cell">
+                  <div className="flex justify-start space-x-2">
                     <button
                       onClick={() => handleEditClick(job.id)}
                       className="btn-icon bg-blue-100 text-blue-700 hover:bg-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:hover:bg-blue-900/50"
