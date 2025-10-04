@@ -92,7 +92,7 @@ const JobCard: React.FC<JobCardProps> = ({ job, onDelete, onJobRun, onToggleActi
         </div>
 
         {/* Created / Last Run */}
-        <div className="text-xs text-gray-500 dark:text-gray-400">
+        <div className="text-xs text-gray-500 dark:text-gray-400 text-center space-y-1">
           <p>Created {formatDistanceToNow(new Date(job.createdAt), { addSuffix: true })}</p>
           <p>Last Run: {format(new Date(job.updatedAt), "MMM dd, yyyy HH:mm")}</p>
         </div>

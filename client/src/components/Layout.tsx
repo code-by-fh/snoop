@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
-import Logo from '../assets/logo.svg';
+import Logo from '../assets/logo.png';
 import { useAuth } from '../context/AuthContext';
 import ThemeSwitcher from './ThemeSwitcher';
 
@@ -74,7 +74,7 @@ const Layout: React.FC = () => {
         className={`
           fixed md:relative top-0 left-0 h-full z-50 bg-gray-50 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700
           flex flex-col transition-all duration-300
-          ${isMobile ? `w-64 transform ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}` : isCollapsed ? 'w-20' : 'w-64'}
+          ${isMobile ? `w-full transform ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}` : isCollapsed ? 'w-20' : 'w-64'}
         `}
       >
         {/* Logo */}
@@ -131,6 +131,7 @@ const Layout: React.FC = () => {
             {!isCollapsed && 'Logout'}
           </button>
           {/* Collapse / Expand Button unter Logout */}
+          {!isMobile && (
           <button
             onClick={toggleSidebarCollapse}
             className={`flex items-center justify-center w-full p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition ${isCollapsed ? 'justify-center' : ''}`}
@@ -138,6 +139,7 @@ const Layout: React.FC = () => {
           >
             {isCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
           </button>
+          )}
         </div>
       </aside>
 
