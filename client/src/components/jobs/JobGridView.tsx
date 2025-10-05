@@ -9,13 +9,14 @@ import JobCard from './JobCard';
 
 interface JobGridViewProps {
   jobs: Job[];
+  jobsStatus: any;
   onDelete: (id: string) => void;
   onJobRun: (id: string) => void;
   onToggleActive: (id: string, isActive: boolean) => void;
 }
 
-const JobGridView: React.FC<JobGridViewProps> = ({ jobs, onDelete, onJobRun, onToggleActive }) => {
-
+const JobGridView: React.FC<JobGridViewProps> = ({ jobs, jobsStatus, onDelete, onJobRun, onToggleActive }) => {
+  console.log("JobGridView - jobsStatus:", jobsStatus);
   return (
     <div className="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-6">
       {jobs.map((job) => (
@@ -25,6 +26,7 @@ const JobGridView: React.FC<JobGridViewProps> = ({ jobs, onDelete, onJobRun, onT
           onDelete={onDelete}
           onJobRun={onJobRun}
           onToggleActive={onToggleActive}
+          jobStatus={jobsStatus[job.id]}
         />
       ))}
     </div>

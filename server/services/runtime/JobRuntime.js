@@ -10,26 +10,28 @@ import * as similarityCache from "./similarity-check/similarityCache.js";
 
 class JobRuntime {
   /**
- *
- * @param provider the provider to run
- * @param notificationConfig the config for all notifications
- * @param jobId key of the job that is currently running (from within the config)
- * @param knownListingsIds the ids of the listings that are already known to the provider
- */
-  constructor(provider, notificationConfig, jobId, knownListingsIds) {
-    this._provider = provider;
+   *
+   * @param providerConfig the config for the specific provider, we're going to query at the moment
+   * @param notificationConfig the config for all notifications
+   * @param providerId the id of the provider currently in use
+   * @param jobKey key of the job that is currently running (from within the config)
+   * @param knownListingsIds the ids of the listings that are already known to the provider
+   */
+  constructor(providerConfig, notificationConfig, providerId, jobKey, knownListingsIds) {
+    this._providerConfig = providerConfig;
     this._notificationConfig = notificationConfig;
-    this._jobId = jobId
+    this._providerId = providerId;
+    this._jobKey = jobKey;
     this._knownListingsIds = knownListingsIds || [];
   }
 
   execute() {
-    logger.info(`Starting job for provider: ${this._provider.metaInformation.id}, jobKey: ${this._jobId}`);
+    logger.info(`Starting '${this._providerId}' job '${this._jobKey}'`);
     return (
       //modify the url to make sure search order is correctly set
-      Promise.resolve(urlModifier(this._provider.config.url, this._provider.config.sortByDateParam, this._provider.config.urlParamsToRemove))
+      Promise.resolve(urlModifier(this._providerConfig.url, this._providerConfig.sortByDateParam, this._providerConfig.urlParamsToRemove))
         //scraping the site and try finding new listings
-        .then(this._provider.config.getListings?.bind(this) ?? this._getListings.bind(this))
+        .then(this._providerConfig.getListings?.bind(this) ?? this._getListings.bind(this))
         //bring them in a proper form (dictated by the provider)
         .then(this._normalize.bind(this))
         //filter listings with stuff tagged by the blacklist of the provider
@@ -53,35 +55,35 @@ class JobRuntime {
     const extractor = new Extractor();
     return new Promise((resolve, reject) => {
       extractor
-        .execute(url, this._provider.config.waitForSelector)
+        .execute(url, this._providerConfig.waitForSelector)
         .then(() => {
           const listings = extractor.parseResponseText(
-            this._provider.config.crawlContainer,
-            this._provider.config.crawlFields,
+            this._providerConfig.crawlContainer,
+            this._providerConfig.crawlFields,
             url,
           );
           resolve(listings == null ? [] : listings);
         })
         .catch((err) => {
           reject(err);
-          logger.error({ err }, `Error while fetching listings for provider: ${this._provider.metaInformation.id}, jobKey: ${this._jobId}`);
+          logger.error({ err }, `Error while fetching listings for provider: ${this._providerId}, jobKey: ${this._jobKey}`);
         });
     });
   }
 
   _normalize(listings) {
-    return listings.map(this._provider.config.normalize);
+    return listings.map(this._providerConfig.normalize);
   }
 
   _filter(listings) {
-    const filteredListings = listings.filter(this._provider.config.filter);
-    logger.info(`${filteredListings.length} listings after filtering for provider: ${this._provider.metaInformation.id}, jobKey: ${this._jobId}`);
+    const filteredListings = listings.filter(this._providerConfig.filter);
+    logger.info(`${filteredListings.length} listings after filtering for provider: ${this._providerId}, jobKey: ${this._jobKey}`);
     return filteredListings;
   }
 
   async _findNew(listings) {
     const newListings = listings.filter(o => !this._knownListingsIds.includes(o.id));
-    logger.info(`${newListings.length} of ${listings.length} listing new for provider: ${this._provider.metaInformation.id}, jobKey: ${this._jobId}`);
+    logger.info(`${newListings.length} of ${listings.length} listing new for provider: ${this._providerId}, jobKey: ${this._jobKey}`);
     if (newListings.length === 0) {
       throw new NoNewListingsWarning();
     }
@@ -89,11 +91,12 @@ class JobRuntime {
   }
 
   _notify(newListings) {
-    if (newListings.length === 0) {
-      throw new NoNewListingsWarning();
-    }
-    const sendNotifications = notify.send(this._provider.metaInformation.name, newListings, this._notificationConfig, this._jobId);
-    return Promise.all(sendNotifications).then(() => newListings);
+    return newListings;
+    // if (newListings.length === 0) {
+      // throw new NoNewListingsWarning();
+    // }
+    // const sendNotifications = notify.send(this._providerId, newListings, this._notificationConfig, this._jobKey);
+    // return Promise.all(sendNotifications).then(() => newListings);
   }
 
   async _addGeoCoordinates(newListings) {
@@ -110,21 +113,23 @@ class JobRuntime {
   }
 
   _save(newListings) {
-    return Listing.saveListings(newListings, this._jobId, this._provider.metaInformation.id)
-      .then(savedListings => {
-        return Job.addListingsIds(savedListings.map(l => l.id), this._jobId, this._provider.metaInformation.id).then(() => savedListings);
-      });
+    return newListings;
+
+    // return Listing.saveListings(newListings, this._jobKey, this._providerId)
+      // .then(savedListings => {
+        // return Job.addListingsIds(savedListings.map(l => l.id), this._jobKey, this._providerId).then(() => savedListings);
+      // });
   }
 
   _filterBySimilarListings(listings) {
     const filteredList = listings.filter((listing) => {
-      const similar = similarityCache.hasSimilarEntries(this._jobId, listing.title);
+      const similar = similarityCache.hasSimilarEntries(this._jobKey, listing.title);
       if (similar) {
-        logger.info(`Filtering similar entry for job ${this._provider.metaInformation.id} with jobKey ${this._jobId} and title: ${listing.title}`);
+        logger.info(`Filtering similar entry for job ${this._providerId} with jobKey ${this._jobKey} and title: ${listing.title}`);
       }
       return !similar;
     });
-    filteredList.forEach((filter) => similarityCache.addCacheEntry(this._jobId, filter.title));
+    filteredList.forEach((filter) => similarityCache.addCacheEntry(this._jobKey, filter.title));
     return filteredList;
   }
 

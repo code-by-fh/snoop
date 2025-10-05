@@ -24,6 +24,7 @@ import notificationAdapterRoutes from './routes/notificationAdapterRoutes.js';
 import providerRoutes from './routes/providerRoutes.js';
 import statsRoutes from './routes/statsRoutes.js';
 import healthRouter from "./routes/healthRouter.js";
+import { setupSocketServer } from './services/socket/socketServer.js';
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI)
@@ -35,6 +36,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 await initDatabase();
+await setupSocketServer();
 
 const settings = await Settings.findOne({})
   .then((settings) => settings.toJSON())

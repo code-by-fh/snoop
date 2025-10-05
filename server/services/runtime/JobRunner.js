@@ -1,44 +1,72 @@
 import Job from "../../models/Job.js";
 import { getAvailableProviders } from "../../provider/index.js";
+import logger from "../../utils/logger.js";
+import jobEvents from './JobEvents.js';
 import JobRuntime from "./JobRuntime.js";
 
-export async function executeJob(job) {
-  const availableProviders = getAvailableProviders();
+const availableProviders = getAvailableProviders();
 
-  const jobExecutions = job.providers.map((jobProvider) => {
-    const providerImpl = availableProviders[jobProvider.id];
+async function executeJob(job) {
+  logger.info(`Running job with id: ${job.id}`);
+  jobEvents.emit('jobStatusEvent', { jobId: job.id, jobName: job.name, status: 'running' });
 
-    providerImpl.init(jobProvider, job.blacklistTerms);
+  const jobExecutions = [];
 
+  for (const prov of job.providers) {
+    const providerModule = availableProviders[prov.id];
+    if (!providerModule) {
+      logger.warn(`Provider with id: ${prov.id} not found for job id: ${job.id}`);
+      continue;
+    }
 
-    return async () => new JobRuntime(
-      providerImpl,
-      job.notificationAdapters,
-      job.id,
-      jobProvider.listings
-    ).execute();
+    providerModule.init(prov, job.blacklist);
+
+    jobExecutions.push(async () => {
+      await new JobRuntime(providerModule.config, job.notificationAdapters, prov.id, job.id, prov.listings).execute();
+      // await setLastJobExecution(job.id);
+    });
+  }
+
+  logger.info(`Job with id: ${job.id} has ${jobExecutions.length} executions.`);
+  // await jobExecutions.reduce((prev, jobFunc) => prev.then(jobFunc), Promise.resolve());
+
+  await new Promise((resolve) => {
+    setTimeout(() => {
+      logger.info(`Job ${job.id} executed`);
+      resolve();
+    }, 7000);
   });
-
-  await jobExecutions.reduce((prev, fn) => prev.then(fn), Promise.resolve());
-  await setLastExecutionTime(job);
+  jobEvents.emit('jobStatusEvent', { jobId: job.id, jobName: job.name, status: 'finished' });
 }
 
-async function setLastExecutionTime(job) {
-  await Job.findByIdAndUpdate(job.id, {
-    $set: { lastExecution: Date.now() },
-  });
-}
+export async function runJobs(socketServer) {
+  const enabledJobs = Job.getJobs().filter((job) => job.enabled);
 
-export async function runAll() {
-  const jobs = await Job.getActiveJobs();
-  for (const job of jobs) {
-    await executeJob(job);
+  for (const job of enabledJobs) {
+    await runJob(job.id, socketServer);
   }
 }
 
 export async function runJob(jobId) {
-  const job = await Job.findById(jobId);
-  if (job) {
+  const job = await Job.getJob(jobId);
+
+  try {
     await executeJob(job);
+
+    return {
+      jobId,
+      jobName: job.name,
+      status: 'finished'
+    };
+  } catch (err) {
+    logger.error(`Error executing job with id: ${job.id}`, err);
+    jobEvents.emit('jobStatusEvent', { jobId: job.id, jobName: job.name, status: 'failed' });
+
+    return {
+      jobId,
+      jobName: job.name,
+      status: 'failed',
+      error: err.message
+    };
   }
 }

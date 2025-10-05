@@ -1,4 +1,6 @@
 import {
+  ChevronLeft,
+  ChevronRight,
   Hammer,
   LayoutDashboard,
   List,
@@ -7,11 +9,10 @@ import {
   Settings,
   UserCircle,
   Users,
-  X,
-  ChevronLeft,
-  ChevronRight
+  X
 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
+import { Toaster } from 'react-hot-toast';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import Logo from '../assets/logo.png';
 import { useAuth } from '../context/AuthContext';
@@ -152,6 +153,12 @@ const Layout: React.FC = () => {
           <Outlet />
         </div>
       </div>
+
+      <Toaster
+        position="bottom-right"
+        gutter={8}
+        toastOptions={{ duration: 5000, className: 'modern-toast', }}
+      />
     </div>
   );
 };

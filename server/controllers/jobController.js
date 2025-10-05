@@ -1,6 +1,6 @@
 import Job from '../models/Job.js';
 import Listing from '../models/Listing.js';
-import { executeJob } from "../services/runtime/JobRunner.js";
+import { runJob } from "../services/runtime/JobRunner.js";
 import logger from "../utils/logger.js";
 
 const validateJobData = (data) => {
@@ -180,6 +180,6 @@ export const execute = async (req, res) => {
   if (!job) {
     return res.status(404).json({ message: 'Job not found' });
   }
-  executeJob(job);
+  runJob(job.id);
   res.status(200).json({ message: 'Job execution started' });
 }

@@ -5,15 +5,17 @@ import { useNavigate } from "react-router-dom";
 import { Job } from "../../types";
 import JobToggleSwitch from "./JobToggleSwitch";
 import NotificationIndicators from "./NotificationIndicators";
+import { isFailed, isRunning, isIdle } from "../../utils/job";
 
 interface JobCardProps {
   job: Job;
+  jobStatus: any;
   onDelete: (id: string) => void;
   onJobRun: (id: string) => void;
   onToggleActive: (id: string, isActive: boolean) => void;
 }
 
-const JobCard: React.FC<JobCardProps> = ({ job, onDelete, onJobRun, onToggleActive }) => {
+const JobCard: React.FC<JobCardProps> = ({ job, jobStatus, onDelete, onJobRun, onToggleActive }) => {
   const navigate = useNavigate();
 
   const handleEditClick = () => navigate(`/jobs/${job.id}`);
@@ -23,9 +25,9 @@ const JobCard: React.FC<JobCardProps> = ({ job, onDelete, onJobRun, onToggleActi
 
   return (
     <div
-      className={`flex flex-col rounded-xl overflow-hidden border shadow-md transition-shadow duration-300
+      className={`flex flex-col rounded-xl overflow-hidden shadow-md transition-shadow duration-300 border
         ${isInactive ? "bg-gray-100 dark:bg-gray-600 border-gray-300 dark:border-gray-700" : "bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 hover:shadow-lg"}
-        ${job.status === "failed" ? "ring-2 ring-red-200 dark:ring-red-400" : ""}
+        ${isIdle(jobStatus) ? "" : ""}
         ${job.owner === false ? "bg-yellow-50 dark:bg-yellow-900/20" : ""}
       `}
     >
@@ -37,7 +39,7 @@ const JobCard: React.FC<JobCardProps> = ({ job, onDelete, onJobRun, onToggleActi
               jobId={job.id}
               isActive={job.isActive}
               onToggleActive={onToggleActive}
-              jobStatus={job.status}
+              jobStatus={jobStatus}
               size="sm"
             />
             <h3
@@ -104,9 +106,15 @@ const JobCard: React.FC<JobCardProps> = ({ job, onDelete, onJobRun, onToggleActi
             <Edit className="w-5 h-5" />
           </button>
           <button
+            disabled={isRunning(jobStatus) || isFailed(jobStatus)}
             onClick={() => onJobRun(job.id)}
-            className={`btn-icon bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300 hover:bg-green-200 dark:hover:bg-green-800`}
-          >
+            className={`
+                    btn-icon 
+                    transition-colors duration-200
+                    ${isRunning(jobStatus) || isFailed(jobStatus)
+                                ? 'bg-green-200 text-green-400 dark:bg-green-900/20 dark:text-green-700 cursor-not-allowed opacity-60 hover:bg-green-200 dark:hover:bg-green-900/20'
+                                : 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300 hover:bg-green-200 dark:hover:bg-green-800'}
+                  `}>
             <Play className="w-5 h-5" />
           </button>
           <button

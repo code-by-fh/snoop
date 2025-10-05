@@ -10,8 +10,28 @@ import JobGridView from '../components/jobs/JobGridView';
 import JobListView from '../components/jobs/JobListView';
 import { useViewPreference } from '../hooks/useViewPreference';
 import { Job } from '../types';
+import toast from 'react-hot-toast';
+import { io } from 'socket.io-client';
+
+const socket = io('http://localhost:8888');
+
+const getToastIcon = (status: string) => {
+  switch (status) {
+    case 'running':
+      return '🏃‍♂️';
+    case 'success':
+      return '✅';
+    case 'finished':
+      return '🎉';
+    case "failed":
+      return '❌';
+    default:
+      return 'ℹ️';
+  }
+};
 
 const JobsPage: React.FC = () => {
+  const [jobsStatus, setJobsStatus] = useState({});
   const [isAdmin, setIsAdmin] = useState(false);
   const [jobs, setJobs] = useState<Job[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -24,6 +44,29 @@ const JobsPage: React.FC = () => {
     isActive: null,
     onlyMyJobs: false,
   });
+
+
+
+  useEffect(() => {
+    socket.emit('get-all-jobs-status');
+
+    socket.on('all-jobs-status', (statuses) => {
+      const statusMap = Object.fromEntries(
+        Object.entries(statuses).map(([jobId, data]) => [jobId, data.status])
+      );
+      setJobsStatus(statusMap);
+    });
+
+    socket.on('job-status', (summary) => {
+      toast(`Job ${summary.jobName} is ${summary.status}`, { icon: getToastIcon(summary.status) });
+      setJobsStatus((prev) => ({ ...prev, [summary.jobId]: summary.status }));
+    });
+
+    return () => {
+      socket.off('all-jobs-status');
+      socket.off('job-status');
+    };
+  }, []);
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -227,6 +270,7 @@ const JobsPage: React.FC = () => {
         <div className="transition-all duration-300 ease-in-out">
           {viewMode === 'grid' ? (
             <JobGridView
+              jobsStatus={jobsStatus}
               jobs={filteredJobs}
               onDelete={handleDeleteJobClick}
               onJobRun={onJobRun}
