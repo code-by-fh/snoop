@@ -6,6 +6,7 @@ import { Job } from '../../types';
 import BlacklistSection from './JobFormBlacklist';
 import NotificationAdapterSection from './JobFormNotificationAdapters';
 import ProviderSection from './JobFormProviders';
+import toast from 'react-hot-toast';
 
 interface JobFormProps {
   onSubmit: (data: Job) => void;
@@ -53,6 +54,7 @@ const JobForm: React.FC<JobFormProps> = ({ onSubmit, isLoading, error, initialDa
   });
 
   const handleFormSubmit = (data: Job) => {
+    toast('Job saved...Let\'s go!', { icon: '💾' });
     onSubmit({ ...data, blacklistTerms });
   };
 

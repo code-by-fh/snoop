@@ -5,6 +5,7 @@ import ConfirmationModal from '../components/modals/ConfirmationModal';
 import UserFormModal from '../components/users/UserFormModal';
 import UserTable from '../components/users/UserTable';
 import { User, UserCreate, UserUpdate } from '../types/user';
+import toast from 'react-hot-toast';
 
 const UsersPage: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
@@ -73,6 +74,7 @@ const UsersPage: React.FC = () => {
     try {
       await deleteUser(userToDeleteId);
       fetchUsers();
+      toast('User deleted successfully!', { icon: '🗑️' });
     } catch (err: any) {
       setError(err.response?.data?.message || 'Failed to delete user');
     } finally {

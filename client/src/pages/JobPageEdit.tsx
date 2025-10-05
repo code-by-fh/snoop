@@ -99,7 +99,7 @@ const EditJobPage: React.FC = () => {
   }
 
   return (
-    <div >
+    <div>
       <div className="flex items-center mb-6">
         <button
           onClick={() => navigate(-1)}

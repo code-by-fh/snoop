@@ -105,6 +105,7 @@ const JobsPage: React.FC = () => {
     if (!jobToDelete) return;
 
     try {
+      toast('Job deleted successfully!', { icon: '🗑️' });
       await deleteJob(jobToDelete.id);
       setJobs(jobs.filter((job) => job.id !== jobToDelete.id));
       setIsDeleteModalOpen(false);
