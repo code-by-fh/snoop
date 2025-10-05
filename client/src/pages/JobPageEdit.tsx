@@ -99,7 +99,7 @@ const EditJobPage: React.FC = () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+    <div >
       <div className="flex items-center mb-6">
         <button
           onClick={() => navigate(-1)}
@@ -107,7 +107,7 @@ const EditJobPage: React.FC = () => {
         >
           <ArrowLeft className="w-5 h-5 text-gray-500" />
         </button>
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-400">Edit Crawl Job: {job.id}</h1>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-400">Edit Crawl Job</h1>
       </div>
 
       <JobForm

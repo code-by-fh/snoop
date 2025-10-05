@@ -131,9 +131,9 @@ const UsersPage: React.FC = () => {
         onClose={() => setIsConfirmModalOpen(false)}
         onConfirm={handleConfirmDelete}
         title="Delete User"
-        message="Are you sure you want to delete this user? This action cannot be undone."
+        message="Are you sure you want to delete this User? This action cannot be undone."
         confirmText="Delete"
-        isDestructive
+        variant="alert"
       />
     </div>
   );

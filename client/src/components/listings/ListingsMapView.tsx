@@ -2,6 +2,7 @@ import { ExternalLink, X } from "lucide-react";
 import React, { useState } from "react";
 import { Listing } from "../../types";
 import Map from "../map/Map";
+import { formatPrice } from "@/utils/formatters";
 
 interface ListingsMapViewProps {
   listings: Listing[];
@@ -9,17 +10,6 @@ interface ListingsMapViewProps {
 
 const ListingsMapView: React.FC<ListingsMapViewProps> = ({ listings }) => {
   const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
-
-  const formatPrice = (price: number | undefined) => {
-    if (typeof price === "number") {
-      return new Intl.NumberFormat("de-DE", {
-        style: "currency",
-        currency: "EUR",
-        maximumFractionDigits: 0,
-      }).format(price);
-    }
-    return "Price on request";
-  };
 
   return (
     <div className="w-full h-screen flex flex-col bg-gray-100 dark:bg-gray-900">

@@ -1,4 +1,4 @@
-import { Globe, Plus, Trash2 } from 'lucide-react';
+import { Globe, Plus, Trash2,Info } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { getProviders } from '../../api';
 import { Provider } from '../../types';
@@ -60,8 +60,14 @@ const ProviderSection: React.FC<ProviderSectionProps> = ({
   };
 
   return (
-    <div className="space-y-4 p-6 bg-white rounded-lg shadow-md dark:bg-gray-700">
-      <h3 className="text-2xl font-bold text-gray-900 border-b pb-3 mb-4">Provider Configuration</h3>
+    <div className="bg-white dark:bg-gray-900 rounded-xl shadow-md p-6 border border-gray-200 dark:border-gray-700 space-y-4">
+      <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 border-b pb-3 mb-4">Provider Configuration</h3>
+      <div className="flex items-center space-x-2 text-gray-600 bg-blue-50 dark:bg-gray-800 p-3 rounded-md border border-blue-200 dark:border-gray-600">
+        <Info className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+        <p className="text-sm dark:text-gray-300">
+          You can add multiple providers to diversify your data sources. Make sure to configure each provider with a valid URL.
+        </p>
+      </div>
 
       <button
         type="button"
@@ -80,14 +86,14 @@ const ProviderSection: React.FC<ProviderSectionProps> = ({
         </div>
       ) : (
         <div className="mt-6 space-y-3">
-          <h4 className="text-lg font-semibold text-gray-800">Configured Providers</h4>
+          <h4 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Configured Providers</h4>
           {providers.map((provider, index) => (
             <div
               key={index}
-              className="flex justify-between items-center bg-gray-50 p-4 rounded-lg border hover:shadow-sm"
+              className="flex justify-between items-center dark:text-gray-100 bg-gray-200 dark:bg-gray-800 p-4 rounded-lg border hover:shadow-sm"
             >
               <div className="flex-grow">
-                <span className="font-bold text-gray-900 text-lg">{availableProviders.find(p => p.id === provider.id)?.name}</span>
+                <span className="font-bold text-gray-900 dark:text-gray-100 text-lg">{availableProviders.find(p => p.id === provider.id)?.name}</span>
               </div>
               <a
                 href={provider.url}

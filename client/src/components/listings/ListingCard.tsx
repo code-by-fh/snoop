@@ -1,24 +1,14 @@
-import { format } from 'date-fns';
 import { Calendar, Home, MapPin } from 'lucide-react';
 import React from 'react';
 import { Listing } from '../../types';
+import { formatDate, formatPrice } from '@/utils/formatters';
 
 interface ListingCardProps {
   listing: Listing;
 }
 
 const ListingCard: React.FC<ListingCardProps> = ({ listing }) => {
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('de-DE', {
-      style: 'currency',
-      currency: 'EUR',
-      maximumFractionDigits: 0,
-    }).format(price);
-  };
 
-  const formatDate = (dateString: string) => {
-    return format(new Date(dateString), 'MMM d, yyyy');
-  };
 
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200 transition-transform hover:scale-[1.02] hover:shadow-lg dark:bg-gray-800 dark:border-gray-700">

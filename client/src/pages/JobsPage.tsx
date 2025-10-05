@@ -1,12 +1,12 @@
 import SearchInput from '@/components/common/SearchInput';
-import { Plus } from 'lucide-react';
+import ListingsViewToggle from '@/components/common/ViewToggle';
+import ConfirmationModal from '@/components/modals/ConfirmationModal';
+import { Grid3X3, List, Plus } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { deleteJob, getJobs, runJob, updateJob } from '../api';
 import JobGridView from '../components/jobs/JobGridView';
 import JobListView from '../components/jobs/JobListView';
-import ViewToggle from '../components/jobs/ViewToggle';
-import DeleteJobModal from '../components/modals/DeleteJobModal';
 import { useViewPreference } from '../hooks/useViewPreference';
 import { Job } from '../types';
 
@@ -15,10 +15,9 @@ const JobsPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [viewMode, setViewMode] = useViewPreference('grid');
+  const [viewMode, setViewMode] = useViewPreference('grid', 'jobs-view-preference');
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [jobToDelete, setJobToDelete] = useState<Job | null>(null);
-  const [isDeleting, setIsDeleting] = useState(false);
   const [filters, setFilters] = useState<{ isActive: boolean | null }>({
     isActive: null,
   });
@@ -50,7 +49,6 @@ const JobsPage: React.FC = () => {
   const handleConfirmDeleteJob = async () => {
     if (!jobToDelete) return;
 
-    setIsDeleting(true);
     try {
       await deleteJob(jobToDelete.id);
       setJobs(jobs.filter((job) => job.id !== jobToDelete.id));
@@ -59,15 +57,12 @@ const JobsPage: React.FC = () => {
       setError(null);
     } catch (err: any) {
       setError(err.response?.data?.message || 'Failed to delete job');
-    } finally {
-      setIsDeleting(false);
     }
   };
 
   const handleCloseDeleteModal = () => {
     setIsDeleteModalOpen(false);
     setJobToDelete(null);
-    setIsDeleting(false);
   };
 
   const onJobRun = async (id: string) => {
@@ -132,7 +127,15 @@ const JobsPage: React.FC = () => {
           </p>
         </div>
         <div className="flex items-center space-x-4">
-          <ViewToggle currentView={viewMode} onViewChange={setViewMode} />
+          <ListingsViewToggle
+            currentView={viewMode}
+            localStorageKey="jobs-view-preference"
+            onViewChange={setViewMode}
+            viewConfigs={[
+              { mode: 'grid', label: 'Grid', icon: Grid3X3, ariaLabel: 'Grid view' },
+              { mode: 'list', label: 'List', icon: List, ariaLabel: 'List view' },
+            ]}
+          />
         </div>
       </div>
 
@@ -207,13 +210,14 @@ const JobsPage: React.FC = () => {
         </div>
       )}
 
-      {/* Delete Confirmation Modal */}
-      <DeleteJobModal
+      <ConfirmationModal
         isOpen={isDeleteModalOpen}
         onClose={handleCloseDeleteModal}
         onConfirm={handleConfirmDeleteJob}
-        job={jobToDelete}
-        isLoading={isDeleting}
+        title={`Delete "${jobToDelete?.name}" ?`}
+        message={`Are you sure you want to delete this Job? This action cannot be undone and ${jobToDelete?.totalListings} Listings will be removed.`}
+        confirmText="Delete"
+        variant="alert"
       />
     </div>
   );

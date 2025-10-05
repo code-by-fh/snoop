@@ -15,7 +15,6 @@ interface JobGridViewProps {
 }
 
 const JobGridView: React.FC<JobGridViewProps> = ({ jobs, onDelete, onJobRun, onToggleActive }) => {
-  const navigate = useNavigate();
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-6">

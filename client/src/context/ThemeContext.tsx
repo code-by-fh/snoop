@@ -1,11 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
-export type Theme = 'light' | 'dark';
-
-interface ThemeContextType {
-  theme: Theme;
-  toggleTheme: () => void;
-}
+import { Theme, ThemeContextType } from '../types/theme';
+import { setAppTheme } from '@/utils/theme';
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
@@ -16,7 +12,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   });
 
   useEffect(() => {
-    localStorage.setItem('app-theme', theme);
+    setAppTheme(theme)
     document.documentElement.classList.toggle('dark', theme === 'dark');
   }, [theme]);
 

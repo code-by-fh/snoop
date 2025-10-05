@@ -1,13 +1,13 @@
+import SearchInput from '@/components/common/SearchInput';
 import ListingsGridView from '@/components/listings/ListingsGridView';
 import ListingsListView from '@/components/listings/ListingsListView';
 import ListingsMapView from '@/components/listings/ListingsMapView';
-import ListingsViewToggle from '@/components/listings/ListingsViewToggle';
-import { Filter, Search, SortAsc, SortDesc, X } from 'lucide-react';
+import ListingsViewToggle from '@/components/common/ViewToggle';
+import { Filter, Grid3X3, List, Map, SortAsc, SortDesc, X } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { getListings } from '../api';
-import { useListingsViewPreference } from '../hooks/useListingsViewPreference';
+import { useViewPreference } from '../hooks/useViewPreference';
 import { Listing } from '../types';
-import SearchInput from '@/components/common/SearchInput';
 
 const ListingsPage: React.FC = () => {
   const [listings, setListings] = useState<Listing[]>([]);
@@ -27,7 +27,7 @@ const ListingsPage: React.FC = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalListings, setTotalListings] = useState(0);
-  const [viewMode, setViewMode] = useListingsViewPreference('grid');
+  const [viewMode, setViewMode] = useViewPreference('grid', 'listings-view-preference');
 
   useEffect(() => {
     const fetchListings = async () => {
@@ -81,8 +81,14 @@ const ListingsPage: React.FC = () => {
         </div>
 
         <ListingsViewToggle
+          localStorageKey="listings-view-preference"
           currentView={viewMode}
           onViewChange={setViewMode}
+          viewConfigs={[
+            { mode: 'grid', label: 'Grid', icon: Grid3X3, ariaLabel: 'Grid view' },
+            { mode: 'list', label: 'List', icon: List, ariaLabel: 'List view' },
+            { mode: 'map', label: 'View on Map', icon: Map, ariaLabel: 'View on map' },
+          ]}
         />
 
       </div>

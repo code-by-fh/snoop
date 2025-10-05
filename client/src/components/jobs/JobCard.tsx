@@ -24,7 +24,7 @@ const JobCard: React.FC<JobCardProps> = ({ job, onDelete, onJobRun, onToggleActi
   return (
     <div
       className={`flex flex-col rounded-xl overflow-hidden border shadow-md transition-shadow duration-300
-        ${isInactive ? "bg-gray-100 dark:bg-gray-800/40 border-gray-300 dark:border-gray-700" : "bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 hover:shadow-lg"}
+        ${isInactive ? "bg-gray-100 dark:bg-gray-600 border-gray-300 dark:border-gray-700" : "bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 hover:shadow-lg"}
         ${job.status === "failed" ? "ring-2 ring-red-200 dark:ring-red-400" : ""}
         ${job.owner === false ? "bg-yellow-50 dark:bg-yellow-900/20" : ""}
       `}

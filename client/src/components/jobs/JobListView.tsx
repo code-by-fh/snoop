@@ -87,7 +87,10 @@ const JobListView: React.FC<JobListViewProps> = ({ jobs, onDelete, onJobRun, onT
             return (
               <tr
                 key={job.id}
-                className={`transition-shadow duration-300 hover:shadow-md rounded-xl border ${isInactive ? "bg-gray-100 dark:bg-gray-800/40 border-gray-300 dark:border-gray-700" : "bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700"} ${ownerClass} ${failedClass}`}
+                className={`transition-shadow duration-300 hover:shadow-md rounded-xl border 
+                  ${isInactive ? "bg-gray-100 dark:bg-gray-800/40 border-gray-300 dark:border-gray-700" : "bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700"} 
+                  ${ownerClass} 
+                  ${failedClass}`}
               >
                 <td className='px-6 py-4'>
                   <JobToggleSwitch

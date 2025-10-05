@@ -1,24 +1,17 @@
 import { useEffect, useState } from 'react';
-import { ViewMode } from '../components/jobs/ViewToggle';
+import { ViewMode } from '../components/common/ViewToggle';
 
-const VIEW_PREFERENCE_KEY = 'jobs-view-preference';
-
-export const useViewPreference = (defaultView: ViewMode = 'grid') => {
+export const useViewPreference = (defaultView: ViewMode = 'grid', localStorageKey: string) => {
   const [viewMode, setViewMode] = useState<ViewMode>(() => {
-    try {
-      const saved = localStorage.getItem(VIEW_PREFERENCE_KEY);
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem(localStorageKey);
       return (saved as ViewMode) || defaultView;
-    } catch {
-      return defaultView;
     }
+    return defaultView;
   });
 
   useEffect(() => {
-    try {
-      localStorage.setItem(VIEW_PREFERENCE_KEY, viewMode);
-    } catch (error) {
-      console.warn('Failed to save view preference to localStorage:', error);
-    }
+    localStorage.setItem(localStorageKey, viewMode);
   }, [viewMode]);
 
   return [viewMode, setViewMode] as const;

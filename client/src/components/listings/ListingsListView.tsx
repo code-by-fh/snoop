@@ -2,24 +2,13 @@ import { format } from 'date-fns';
 import { Calendar, DollarSign, ExternalLink, Home, MapPin } from 'lucide-react';
 import React from 'react';
 import { Listing } from '../../types';
+import { formatDate, formatPrice } from '@/utils/formatters';
 
 interface ListingsListViewProps {
   listings: Listing[];
 }
 
 const ListingsListView: React.FC<ListingsListViewProps> = ({ listings }) => {
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('de-DE', {
-      style: 'currency',
-      currency: 'EUR',
-      maximumFractionDigits: 0,
-    }).format(price);
-  };
-
-  const formatDate = (dateString: string) => {
-    return format(new Date(dateString), 'MMM d, yyyy');
-  };
-
   return (
     <div className="space-y-4">
       {listings.map((listing) => (
