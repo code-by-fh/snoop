@@ -101,22 +101,25 @@ const Layout: React.FC = () => {
 
         {/* Navigation */}
         <nav className="flex-1 overflow-y-auto p-2">
-          {navItems.filter(item => item.allowedRoles.includes(user?.role || '')).map(item => (
-            <Link
-              key={item.path}
-              to={item.path}
-              className={`
-                flex items-center p-3 mb-2 rounded-lg transition-all duration-300
-                ${location.pathname === item.path
-                  ? 'bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 font-semibold'
-                  : 'hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300'}
-                ${isCollapsed ? 'justify-center' : ''}
-              `}
-            >
-              <item.icon className="w-5 h-5 transition-colors duration-300" />
-              {!isCollapsed && <span className="ml-3">{item.label}</span>}
-            </Link>
-          ))}
+          {navItems
+            .filter(item => item.allowedRoles.includes(user?.role || ''))
+            .map(item => (
+              <Link
+                key={item.path}
+                to={item.path}
+                onClick={() => { if (isMobile) closeMobileMenu(); }}
+                className={`
+          flex items-center p-3 mb-2 rounded-lg transition-all duration-300
+          ${location.pathname === item.path
+                    ? 'bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 font-semibold'
+                    : 'hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300'}
+          ${isCollapsed ? 'justify-center' : ''}
+        `}
+              >
+                <item.icon className="w-5 h-5 transition-colors duration-300" />
+                {!isCollapsed && <span className="ml-3">{item.label}</span>}
+              </Link>
+            ))}
         </nav>
 
         {/* Bottom Section */}
@@ -132,13 +135,13 @@ const Layout: React.FC = () => {
           </button>
           {/* Collapse / Expand Button unter Logout */}
           {!isMobile && (
-          <button
-            onClick={toggleSidebarCollapse}
-            className={`flex items-center justify-center w-full p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition ${isCollapsed ? 'justify-center' : ''}`}
-            title={isCollapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
-          >
-            {isCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
-          </button>
+            <button
+              onClick={toggleSidebarCollapse}
+              className={`flex items-center justify-center w-full p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition ${isCollapsed ? 'justify-center' : ''}`}
+              title={isCollapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
+            >
+              {isCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
+            </button>
           )}
         </div>
       </aside>

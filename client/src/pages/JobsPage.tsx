@@ -1,16 +1,18 @@
 import SearchInput from '@/components/common/SearchInput';
 import ListingsViewToggle from '@/components/common/ViewToggle';
+import JobToggleSwitch from '@/components/jobs/JobToggleSwitch';
 import ConfirmationModal from '@/components/modals/ConfirmationModal';
 import { Grid3X3, List, Plus } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { deleteJob, getJobs, runJob, updateJob } from '../api';
+import { deleteJob, getJobs, getUserProfile, runJob, updateJob } from '../api';
 import JobGridView from '../components/jobs/JobGridView';
 import JobListView from '../components/jobs/JobListView';
 import { useViewPreference } from '../hooks/useViewPreference';
 import { Job } from '../types';
 
 const JobsPage: React.FC = () => {
+  const [isAdmin, setIsAdmin] = useState(false);
   const [jobs, setJobs] = useState<Job[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -18,18 +20,28 @@ const JobsPage: React.FC = () => {
   const [viewMode, setViewMode] = useViewPreference('grid', 'jobs-view-preference');
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [jobToDelete, setJobToDelete] = useState<Job | null>(null);
-  const [filters, setFilters] = useState<{ isActive: boolean | null }>({
+  const [filters, setFilters] = useState<{ isActive: boolean | null; onlyMyJobs: boolean }>({
     isActive: null,
+    onlyMyJobs: false,
   });
 
   useEffect(() => {
-    fetchJobs();
+    const fetchUserProfile = async () => {
+      const response = await getUserProfile();
+      setIsAdmin(response.data.role.includes('admin'));
+    };
+
+    fetchUserProfile();
   }, []);
+
+  useEffect(() => {
+    fetchJobs();
+  }, [filters]);
 
   const fetchJobs = async () => {
     try {
       setIsLoading(true);
-      const response = await getJobs();
+      const response = await getJobs(filters);
       setJobs(response.data);
     } catch (err: any) {
       setError(err.response?.data?.message || 'Failed to fetch jobs');
@@ -94,7 +106,7 @@ const JobsPage: React.FC = () => {
     e: React.ChangeEvent<HTMLSelectElement>
   ) => {
     const value = e.target.value;
-    setFilters({ isActive: value === '' ? null : value === 'true' });
+    setFilters(prev => ({ ...prev, isActive: value === '' ? null : value === 'true' }));
   };
 
   const filteredJobs = jobs
@@ -116,26 +128,15 @@ const JobsPage: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Header Section with View Toggle */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-400">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
             Crawl Jobs - Showing {filteredJobs.length} Results
           </h1>
           <p className="text-gray-600 dark:text-gray-400 mt-1">
             Manage, search, and filter your job listings with ease, and choose
             between grid or list view.
           </p>
-        </div>
-        <div className="flex items-center space-x-4">
-          <ListingsViewToggle
-            currentView={viewMode}
-            localStorageKey="jobs-view-preference"
-            onViewChange={setViewMode}
-            viewConfigs={[
-              { mode: 'grid', label: 'Grid', icon: Grid3X3, ariaLabel: 'Grid view' },
-              { mode: 'list', label: 'List', icon: List, ariaLabel: 'List view' },
-            ]}
-          />
         </div>
       </div>
 
@@ -165,24 +166,56 @@ const JobsPage: React.FC = () => {
 
       {/* Search & Active Filter */}
       <div className="flex flex-col sm:flex-row gap-2 items-center">
+        <ListingsViewToggle
+          currentView={viewMode}
+          localStorageKey="jobs-view-preference"
+          onViewChange={setViewMode}
+          viewConfigs={[
+            { mode: 'grid', label: 'Grid', icon: Grid3X3, ariaLabel: 'Grid view' },
+            { mode: 'list', label: 'List', icon: List, ariaLabel: 'List view' },
+          ]}
+        />
         <SearchInput
           value={searchTerm}
           onChange={setSearchTerm}
           placeholder="Search by job title..."
         />
+
         <select
           value={filters.isActive === null ? '' : filters.isActive.toString()}
           onChange={handleIsActiveFilterChange}
-          className="block w-48 px-3 py-2 border border-gray-300 rounded-md bg-white dark:bg-dark-input text-gray-900 dark:text-dark-text placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+          className="block w-full sm:w-48 px-3 py-2 border border-gray-300 rounded-md bg-white dark:bg-dark-input text-gray-900 dark:text-dark-text placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
         >
           <option value="">All Status</option>
           <option value="true">Active</option>
           <option value="false">Inactive</option>
         </select>
-        <Link to="/jobs/new" className="btn-primary">
+
+        {isAdmin && (
+          <div className="flex items-center justify-between w-full sm:w-auto border border-gray-300 rounded-md bg-white dark:bg-dark-input text-gray-900 dark:text-dark-text px-3 py-2">
+            <span className="text-gray-700 dark:text-gray-300 mr-3">
+              Show Only My Jobs
+            </span>
+            <JobToggleSwitch
+              jobId="admin-filter"
+              isActive={filters.onlyMyJobs || false}
+              onToggleActive={(_, isActive) =>
+                setFilters((prev) => ({ ...prev, onlyMyJobs: isActive }))
+              }
+              size="md"
+              showLabel={false}
+            />
+          </div>
+        )}
+
+        <Link
+          to="/jobs/new"
+          className="btn-primary block w-full sm:w-auto text-center items-center justify-center"
+        >
           <Plus className="w-4 h-4 mr-2" />
           New Job
         </Link>
+
       </div>
 
       {/* Jobs Content */}

@@ -76,13 +76,13 @@ export const createJob = async (req, res) => {
 
 export const getJobs = async (req, res) => {
   try {
-    const filter = req.user.role === 'admin' ? {} : { user: req.user.id };
+    logger.debug({ jobData: req.body }, 'Fetching jobs with filters:');
+    const filter = req.user.role === 'admin' && req.query.onlyMyJobs !== 'true' ? {} : { user: req.user.id };
     let jobs = await Job.getAllJobs(filter);
-
     const formattedJobs = jobs.map(job => addCommonAttributes(job, req.user.id));
-
     res.json(formattedJobs);
   } catch (error) {
+    logger.error({ error: error.stack }, 'Error fetching jobs:');
     res.status(500).json({ message: error.message });
   }
 };

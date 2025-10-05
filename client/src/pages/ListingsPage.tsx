@@ -1,8 +1,8 @@
 import SearchInput from '@/components/common/SearchInput';
+import ListingsViewToggle from '@/components/common/ViewToggle';
 import ListingsGridView from '@/components/listings/ListingsGridView';
 import ListingsListView from '@/components/listings/ListingsListView';
 import ListingsMapView from '@/components/listings/ListingsMapView';
-import ListingsViewToggle from '@/components/common/ViewToggle';
 import { Filter, Grid3X3, List, Map, SortAsc, SortDesc, X } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { getListings } from '../api';
@@ -79,6 +79,10 @@ const ListingsPage: React.FC = () => {
             Explore and filter property listings, with the option to view them on the map.
           </p>
         </div>
+      </div>
+
+      {/* Search + Buttons */}
+      <div className="flex flex-col sm:flex-row gap-2 items-center">
 
         <ListingsViewToggle
           localStorageKey="listings-view-preference"
@@ -91,10 +95,6 @@ const ListingsPage: React.FC = () => {
           ]}
         />
 
-      </div>
-
-      {/* Search + Buttons */}
-      <div className="flex flex-1 sm:flex-none gap-2 items-center">
         <SearchInput
           value={searchTerm}
           onChange={(val) => { setSearchTerm(val); setPage(1); }}
@@ -102,35 +102,52 @@ const ListingsPage: React.FC = () => {
         />
 
         {/* Filter/Sort Buttons */}
-        <button
-          onClick={() => setSortBy('date')}
-          className={`px-3 py-2 text-sm rounded-md border ${sortBy === 'date' ? 'bg-blue-100 border-blue-300 text-blue-800' : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-700'
-            }`}
-        >
-          Date
-        </button>
-        <button
-          onClick={() => setSortBy('price')}
-          className={`px-3 py-2 text-sm rounded-md border ${sortBy === 'price' ? 'bg-blue-100 border-blue-300 text-blue-800' : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-700'
-            }`}
-        >
-          Price
-        </button>
-        <button
-          onClick={toggleSortOrder}
-          className="px-3 py-2 text-sm rounded-md border bg-white border-gray-300 text-gray-700 hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-700"
-          title={sortOrder === 'asc' ? 'Ascending' : 'Descending'}
-        >
-          {sortOrder === 'asc' ? <SortAsc className="w-4 h-4 inline" /> : <SortDesc className="w-4 h-4 inline" />}
-        </button>
-        <button
-          onClick={() => setFilterOpen(!filterOpen)}
-          className={`px-3 py-2 text-sm rounded-md border ${filterOpen ? 'bg-blue-100 border-blue-300 text-blue-800' : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-700'
-            }`}
-          title="Filter"
-        >
-          <Filter className="w-4 h-4 inline" />
-        </button>
+        <div className="w-full grid grid-cols-2 gap-2 sm:flex sm:space-x-2 sm:w-auto">
+          <button
+            onClick={() => setSortBy('date')}
+            className={`px-3 py-2 text-sm rounded-md border text-center 
+      flex-1 sm:flex-none
+      ${sortBy === 'date'
+                ? 'bg-blue-100 border-blue-300 text-blue-800'
+                : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-700'
+              }`}
+          >
+            Date
+          </button>
+
+          <button
+            onClick={() => setSortBy('price')}
+            className={`px-3 py-2 text-sm rounded-md border text-center 
+      flex-1 sm:flex-none
+      ${sortBy === 'price'
+                ? 'bg-blue-100 border-blue-300 text-blue-800'
+                : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-700'
+              }`}
+          >
+            Price
+          </button>
+
+          <button
+            onClick={toggleSortOrder}
+            className="px-3 py-2 text-sm rounded-md border text-center flex-1 sm:flex-none bg-white border-gray-300 text-gray-700 hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-700"
+            title={sortOrder === 'asc' ? 'Ascending' : 'Descending'}
+          >
+            {sortOrder === 'asc' ? <SortAsc className="w-4 h-4 inline" /> : <SortDesc className="w-4 h-4 inline" />}
+          </button>
+
+          <button
+            onClick={() => setFilterOpen(!filterOpen)}
+            className={`px-3 py-2 text-sm rounded-md border text-center 
+      flex-1 sm:flex-none
+      ${filterOpen
+                ? 'bg-blue-100 border-blue-300 text-blue-800'
+                : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-700'
+              }`}
+            title="Filter"
+          >
+            <Filter className="w-4 h-4 inline" />
+          </button>
+        </div>
       </div>
 
       {/* Filters Panel */}

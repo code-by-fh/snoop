@@ -23,7 +23,7 @@ api.interceptors.request.use(
 );
 
 // Job-related API methods
-export const getJobs = () => api.get<Job[]>('/jobs');
+export const getJobs = (filters: { isActive: boolean | null; onlyMyJobs: boolean }) => api.get<Job[]>('/jobs', { params: filters });
 export const createJob = (jobData: Partial<Job>) => api.post<Job>('/jobs', jobData);
 export const getJobById = (id: string) => api.get<Job>(`/jobs/${id}`);
 export const updateJob = (id: string, jobData: Partial<Job>) => api.put<Job>(`/jobs/${id}`, jobData);
@@ -51,11 +51,14 @@ export const deleteListing = (id: string) => api.delete(`/listings/${id}`);
 export const getSettings = () => api.get<Settings>('/admin/settings');
 export const putSettings = (data: Settings) => api.put<Settings>('/admin/settings', data);
 
-// User-related API methods
+// User-related Admin API methods
 export const getUsers = () => api.get<User[]>('/admin/users');
 export const createUser = (userData: Partial<User>) => api.post<User>('/admin/users', userData);
 export const updateUser = (id: string, userData: Partial<User>) => api.put<User>(`/admin/users/${id}`, userData);
 export const deleteUser = (id: string) => api.delete(`/admin/users/${id}`);
+
+// user profile API methods
+export const getUserProfile = () => api.get<User>('/me');
 
 // Statistics-related API methods
 export const getdStats = () => api.get<Statistics>('/statistics');

@@ -16,6 +16,7 @@ import { initDatabase } from './seed/init.js'
 // Import routes
 import adminSettingsRoutes from './routes/adminSettingsRoutes.js';
 import adminUserRoutes from './routes/adminUserRoutes.js';
+import userRoutes from './routes/userRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 import jobRoutes from './routes/jobRoutes.js';
 import listingRoutes from './routes/listingRoutes.js';
@@ -61,6 +62,7 @@ app.use('/api/providers', providerRoutes);
 app.use('/api/listings', authMiddleware, listingRoutes);
 app.use('/api/statistics', authMiddleware, statsRoutes);
 app.use('/api/admin/users', adminUserRoutes);
+app.use('/api/me', userRoutes);
 app.use('/api/admin/settings', adminSettingsRoutes);
 app.use("/health", healthRouter);
 
