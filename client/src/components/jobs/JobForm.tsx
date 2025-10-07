@@ -1,12 +1,13 @@
-import { AlertCircle, X, Info } from 'lucide-react';
+import { AlertCircle, Info, X } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
+import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import { Job } from '../../types';
 import BlacklistSection from './JobFormBlacklist';
 import NotificationAdapterSection from './JobFormNotificationAdapters';
 import ProviderSection from './JobFormProviders';
-import toast from 'react-hot-toast';
+import JobToggleSwitch from './JobToggleSwitch';
 
 interface JobFormProps {
   onSubmit: (data: Job) => void;
@@ -78,7 +79,7 @@ const JobForm: React.FC<JobFormProps> = ({ onSubmit, isLoading, error, initialDa
           <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 border-b pb-3 mb-4">Job Name</h3>
           <div className="flex items-center space-x-2 text-gray-600 bg-blue-50 dark:bg-gray-800 p-3 rounded-md border border-blue-200 dark:border-gray-600">
             <Info className="h-5 w-5 text-blue-600 dark:text-blue-400" />
-            <p className="text-sm">
+            <p className="text-sm dark:text-gray-300">
               Provide a descriptive name for your job to easily identify it later.
             </p>
           </div>
@@ -125,17 +126,12 @@ const JobForm: React.FC<JobFormProps> = ({ onSubmit, isLoading, error, initialDa
             control={control}
             render={({ field: { value, onChange } }) => (
               <div className="flex items-center">
-                <button
-                  type="button"
-                  onClick={() => onChange(!value)}
-                  className={`relative inline-flex h-7 w-12 rounded-full border-2 transition-colors duration-200 ${value ? 'bg-blue-600 border-blue-500' : 'bg-gray-300 border-gray-400'
-                    }`}
-                >
-                  <span
-                    className={`inline-block h-6 w-6 transform rounded-full bg-white shadow transition-transform duration-200 ${value ? 'translate-x-5' : 'translate-x-0'
-                      }`}
-                  />
-                </button>
+                <JobToggleSwitch
+                  jobId="new-job-toggle"
+                  isActive={value}
+                  onToggleActive={(_, newValue) => onChange(newValue)}
+                  size="md"
+                />
                 <span className="ml-3 font-medium text-gray-900 dark:text-gray-100">
                   {value ? 'Job Active' : 'Job Inactive'}
                 </span>

@@ -9,13 +9,14 @@ import User from '../models/User.js';
 import Job from '../models/Job.js';
 import Listing from '../models/Listing.js';
 import Settings from '../models/Settings.js';
+import logger from '#utils/logger.js';
 
 dotenv.config();
 
 async function seedDatabase() {
     try {
         await mongoose.connect(process.env.MONGODB_URI);
-        console.log('Connected to MongoDB.');
+        logger.info('Connected to MongoDB.');
 
         await Promise.all([
             Listing.deleteMany({}),
@@ -25,17 +26,17 @@ async function seedDatabase() {
 
         if (await Settings.countDocuments() === 0) {
             await Settings.create({});
-            console.log('Default settings created.');
+            logger.info('Default settings created.');
         }
 
         const users = await User.create(generateUsers());
-        console.log(`Created ${users.length} users`);
+        logger.info(`Created ${users.length} users`);
 
         for (const user of users) {
             for (const provider of SEED_CONFIG.providersConfig) {
 
                 const job = await Job.create(generateJob(user._id, provider));
-                console.log(`Created job "${job.name}" for ${user.username}`);
+                logger.info(`Created job "${job.name}" for ${user.username}`);
 
                 const listings = await Listing.create(generateListings(job._id, SEED_CONFIG.listingsPerJob));
                 const listingIds = listings.map(listing => listing._id);
@@ -54,17 +55,17 @@ async function seedDatabase() {
                     }
                 );
 
-                console.log(
+                logger.info(
                     `Added "${listingIds.length}" listings to provider "${provider.id}" in job "${job.name}"`
                 );
             }
         }
 
 
-        console.log('✅ Database seeding complete!');
+        logger.info('✅ Database seeding complete!');
         await mongoose.disconnect();
     } catch (err) {
-        console.error('Seeding failed:', err);
+        logger.error('Seeding failed:', err);
         process.exit(1);
     }
 }

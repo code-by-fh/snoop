@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import url from 'url';
-import logger from '../utils/logger.js';
+import logger from "../utils/logger.js";
 
 const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
 const providerDir = path.join(__dirname, './');

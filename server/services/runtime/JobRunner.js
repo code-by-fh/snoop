@@ -1,6 +1,6 @@
+import logger from '#utils/logger.js';
 import Job from "../../models/Job.js";
 import { getAvailableProviders } from "../../provider/index.js";
-import logger from "../../utils/logger.js";
 import jobEvents from './JobEvents.js';
 import JobRuntime from "./JobRuntime.js";
 
@@ -8,7 +8,7 @@ const availableProviders = getAvailableProviders();
 
 async function executeJob(job) {
   logger.info(`Running job with id: ${job.id}`);
-  jobEvents.emit('jobStatusEvent', { jobId: job.id, jobName: job.name, status: 'running' });
+  jobEvents.emit('jobStatusEvent', { ...job, status: 'running' });
 
   const jobExecutions = [];
 
@@ -28,22 +28,22 @@ async function executeJob(job) {
   }
 
   logger.info(`Job with id: ${job.id} has ${jobExecutions.length} executions.`);
-  // await jobExecutions.reduce((prev, jobFunc) => prev.then(jobFunc), Promise.resolve());
+  await jobExecutions.reduce((prev, jobFunc) => prev.then(jobFunc), Promise.resolve());
 
-  await new Promise((resolve) => {
-    setTimeout(() => {
-      logger.info(`Job ${job.id} executed`);
-      resolve();
-    }, 7000);
-  });
-  jobEvents.emit('jobStatusEvent', { jobId: job.id, jobName: job.name, status: 'finished' });
+  // await new Promise((resolve) => {
+  //   setTimeout(() => {
+  //     logger.info(`Job ${job.id} executed`);
+  //     resolve();
+  //   }, 7000);
+  // });
+  jobEvents.emit('jobStatusEvent', { ...job, status: 'finished' });
 }
 
-export async function runJobs(socketServer) {
-  const enabledJobs = Job.getJobs().filter((job) => job.enabled);
+export async function runJobs() {
+  const enabledJobs = (await Job.getAllJobs()).filter((job) => job.enabled);
 
   for (const job of enabledJobs) {
-    await runJob(job.id, socketServer);
+    await runJob(job.id);
   }
 }
 
@@ -60,7 +60,7 @@ export async function runJob(jobId) {
     };
   } catch (err) {
     logger.error(`Error executing job with id: ${job.id}`, err);
-    jobEvents.emit('jobStatusEvent', { jobId: job.id, jobName: job.name, status: 'failed' });
+    jobEvents.emit('jobStatusEvent', { ...job, status: 'failed' });
 
     return {
       jobId,

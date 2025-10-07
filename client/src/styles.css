@@ -117,3 +117,17 @@ body {
     box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.2);
   }
 }
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.animate-shimmer {
+  animation: shimmer 1s infinite linear;
+  background-size: 200% 100%;
+}

@@ -12,7 +12,7 @@ const ListingsMapView: React.FC<ListingsMapViewProps> = ({ listings }) => {
   const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
 
   return (
-    <div className="w-full h-screen flex flex-col bg-gray-100 dark:bg-gray-900">
+    <div className="w-full h-[50vh] sm:h-[77vh] flex flex-col bg-gray-100 dark:bg-gray-900">
       <div className="flex flex-1 relative overflow-hidden h-full">
         {/* Map Area */}
         <div
@@ -20,7 +20,7 @@ const ListingsMapView: React.FC<ListingsMapViewProps> = ({ listings }) => {
             selectedListing ? "md:w-[calc(100%-24rem)]" : "w-full"
           } h-full`}
         >
-          <Map listings={listings} onSelect={setSelectedListing} />
+          <Map listings={listings} onSelect={setSelectedListing} selectedListing={selectedListing} />
         </div>
 
         {/* Desktop Sidebar */}

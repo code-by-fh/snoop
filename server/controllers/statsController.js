@@ -2,6 +2,7 @@ import { format } from 'date-fns';
 import { getAvailableNotificators } from "../notification/adapter/index.js";
 import { getAvailableProviders } from "../provider/index.js";
 import Job from '../models/Job.js';
+import logger from '#utils/logger.js';
 
 
 // ────────────────────────────────────────────────────────────────────────────────
@@ -392,7 +393,7 @@ export const getDashboardStats = async (req, res) => {
 
         res.json(stats);
     } catch (error) {
-        console.error('Error generating dashboard stats:', error);
+        logger.error('Error generating dashboard stats:', error);
         res.status(500).json({ message: error.message });
     }
 };
@@ -439,7 +440,7 @@ export const getJobStats = async (req, res) => {
             })),
         });
     } catch (error) {
-        console.error('Error generating job stats:', error);
+        logger.error('Error generating job stats:', error);
         res.status(500).json({ message: error.message });
     }
 };

@@ -1,11 +1,11 @@
 export const isFailed = (status: string) => {
-  return status === "failed";
+  return status && status.toLowerCase() === "failed";
 };
 
 export const isRunning = (status: string) => {
-  return status === "running";
+  return status && status.toLowerCase() === "running";
 };
 
-export const isIdle = (status: string) => {
-  return status === undefined;
+export const isFinished = (status: string) => {
+  return status && status.toLowerCase() === "finished";
 };

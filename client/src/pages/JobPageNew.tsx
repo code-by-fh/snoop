@@ -14,7 +14,6 @@ const NewJobPage: React.FC = () => {
     try {
       setIsLoading(true);
       setError(null);
-      console.log('Submitting job data:', data);
       await createJob(data);
       navigate('/jobs');
     } catch (err: any) {

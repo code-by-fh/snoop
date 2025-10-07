@@ -15,6 +15,7 @@ import React, { useEffect, useState } from 'react';
 import { Toaster } from 'react-hot-toast';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import Logo from '../assets/logo.png';
+import Logo_Small from '../assets/logo_small.png';
 import { useAuth } from '../context/AuthContext';
 import ThemeSwitcher from './ThemeSwitcher';
 
@@ -81,9 +82,9 @@ const Layout: React.FC = () => {
         {/* Logo */}
         <div className="flex items-center justify-center p-4 border-b border-gray-100 dark:border-gray-700">
           <img
-            src={Logo}
+            src={isCollapsed ? Logo_Small : Logo}
             alt="SNOOP Logo"
-            className={`h-12 w-auto transition-all duration-300 ${isCollapsed ? 'h-12 w-12' : 'h-12 w-auto'}`}
+            className={`h-12 w-auto transition-all duration-300 ${isCollapsed ? 'h-8 w-8' : 'h-12 w-auto'}`}
           />
         </div>
 

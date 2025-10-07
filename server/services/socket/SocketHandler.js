@@ -1,5 +1,5 @@
 import jobEvents from '../runtime/JobEvents.js';
-import logger from '../../utils/logger.js';
+import logger from '#utils/logger.js';
 
 const jobStatuses = {};
 
@@ -11,10 +11,10 @@ export function setupSocket(io) {
             socket.emit('all-jobs-status', jobStatuses);
         });
 
-        const handleJobStatusEvent = (data) => {
-            logger.debug(`Job status event received: ${data.jobId} - ${data.status}`);
-            jobStatuses[data.jobId] = data;
-            socket.emit('job-status', data);
+        const handleJobStatusEvent = (job) => {
+            logger.debug(`Job status event received for id: ${job.id} - ${job.status}`);
+            jobStatuses[job.id] = job;
+            socket.emit('job-status', job);
         };
 
         jobEvents.on('jobStatusEvent', handleJobStatusEvent);

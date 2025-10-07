@@ -9,9 +9,9 @@ import authMiddleware from './middleware/authMiddleware.js';
 import { errorHandler } from "./middleware/errorHandler.js";
 import Settings from "./models/Settings.js";
 import { startRuntime } from './services/runtime/scheduler.js';
-import logger from './utils/logger.js';
 import { requestLogger } from './middleware/requestLogger.js';
 import { initDatabase } from './seed/init.js'
+import logger from '#utils/logger.js';
 
 // Import routes
 import adminSettingsRoutes from './routes/adminSettingsRoutes.js';
@@ -31,7 +31,7 @@ mongoose.connect(process.env.MONGODB_URI)
   .then(() => logger.info('MongoDB connected successfully'))
   .catch((err) => logger.error('MongoDB connection error:', err));
 
-if (process.env.NODE_ENV !== 'production') {
+if (process.env.NODE_ENV !== 'production' && process.env.MONGO_DB_DEBUG === 'true') {
   mongoose.set('debug', true);
 }
 
@@ -41,7 +41,7 @@ await setupSocketServer();
 const settings = await Settings.findOne({})
   .then((settings) => settings.toJSON())
   .catch((err) => {
-    console.error('Error fetching settings:', err);
+    logger.error('Error fetching settings:', err);
     return null;
   });
 

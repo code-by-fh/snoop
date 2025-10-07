@@ -1,9 +1,8 @@
 import { markdown2Html } from "../../services/markdown.js";
+import logger from '#utils/logger.js';
 
 export const send = ({ serviceName, newListings, jobKey }) => {
-  /* eslint-disable no-console */
-  return [Promise.resolve(console.info(`Found entry from service ${serviceName}, Job: ${jobKey}:`, newListings))];
-  /* eslint-enable no-console */
+  return [Promise.resolve(logger.info(`Found entry from service ${serviceName}, Job: ${jobKey}:`, newListings))];
 };
 
 export const config = {

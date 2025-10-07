@@ -2,7 +2,7 @@ import { inDevMode } from '../../../utils/utils.js';
 import { loadParser, parse } from './parser/parser.js';
 import puppeteerExtractor from './puppeteerExtractor.js';
 import { setDebug } from './utils.js';
-import logger from "../../../utils/logger.js";
+import logger from '#utils/logger.js';
 
 const DEFAULT_OPTIONS = {
   debug: inDevMode(),

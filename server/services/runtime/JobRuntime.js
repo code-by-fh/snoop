@@ -1,12 +1,11 @@
-import Job from "../../models/Job.js";
-import Listing from "../../models/Listing.js";
-import * as notify from "../../notification/notify.js";
-import logger from "../../utils/logger.js";
+import logger from '#utils/logger.js';
 import { NoNewListingsWarning } from "./errors.js";
 import Extractor from './extractor/extractor.js';
 import urlModifier from "./queryStringMutator.js";
 import * as reverseGeoCoder from "./reverseGeoCoder.js";
 import * as similarityCache from "./similarity-check/similarityCache.js";
+import Listing from "../../models/Listing.js";
+import Job from "../../models/Job.js";
 
 class JobRuntime {
   /**
@@ -93,7 +92,7 @@ class JobRuntime {
   _notify(newListings) {
     return newListings;
     // if (newListings.length === 0) {
-      // throw new NoNewListingsWarning();
+    // throw new NoNewListingsWarning();
     // }
     // const sendNotifications = notify.send(this._providerId, newListings, this._notificationConfig, this._jobKey);
     // return Promise.all(sendNotifications).then(() => newListings);
@@ -113,12 +112,10 @@ class JobRuntime {
   }
 
   _save(newListings) {
-    return newListings;
-
-    // return Listing.saveListings(newListings, this._jobKey, this._providerId)
-      // .then(savedListings => {
-        // return Job.addListingsIds(savedListings.map(l => l.id), this._jobKey, this._providerId).then(() => savedListings);
-      // });
+    return Listing.saveListings(newListings, this._jobKey, this._providerId)
+      .then(savedListings => {
+        return Job.addListingsIds(savedListings.map(l => l.id), this._jobKey, this._providerId).then(() => savedListings);
+      });
   }
 
   _filterBySimilarListings(listings) {

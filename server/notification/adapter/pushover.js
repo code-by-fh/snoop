@@ -1,4 +1,3 @@
-import logger from "../../utils/logger.js";
 import { markdown2Html } from "../../services/markdown.js";
 
 import { Buffer } from "buffer";

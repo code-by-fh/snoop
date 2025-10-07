@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
+import logger from '#utils/logger.js';
 
 export const me = async (req, res) => {
     try {
@@ -29,7 +30,7 @@ export const me = async (req, res) => {
         if (error.name === 'TokenExpiredError') {
             return res.status(401).json({ message: 'Token expired' });
         }
-        console.error('Token verification error:', error);
+        logger.error('Token verification error:', error);
         res.status(500).json({ message: 'Server error during token verification' });
     }
 };
@@ -39,7 +40,7 @@ export const login = async (req, res) => {
     try {
         const { username, password } = req.body;
 
-        console.log('Login attempt with:', { username, password });
+        logger.info('Login attempt with:', { username, password });
 
         const user = await User.findOne({ username });
 
@@ -75,7 +76,7 @@ export const login = async (req, res) => {
             user: userResponse
         });
     } catch (error) {
-        console.error('Login error:', error);
+        logger.error('Login error:', error);
         res.status(500).json({
             message: 'Server error during login',
             error: error.message

@@ -1,6 +1,7 @@
 import Job from '../models/Job.js';
 import Listing from '../models/Listing.js';
 import User from '../models/User.js';
+import logger from '#utils/logger.js';
 
 export const getUsers = async (req, res) => {
     if (req.user.role !== 'admin') {
@@ -11,6 +12,7 @@ export const getUsers = async (req, res) => {
         const users = await User.find({}).select('-password');
         res.json(users);
     } catch (error) {
+        logger.error('Error fetching users:', error);
         res.status(500).json({ message: 'Error fetching users', error: error.message });
     }
 }
@@ -21,7 +23,7 @@ export const createUser = async (req, res) => {
     }
 
     try {
-        console.log('Creating user with body:', req.body);
+        logger.info('Creating user with body:', req.body);
         const { username, email, password, role, firstName, lastName } = req.body;
 
         const existingUser = await User.findOne({ $or: [{ email }, { username }] });
@@ -82,7 +84,7 @@ export const deleteUser = async (req, res) => {
 
         res.json({ message: 'User, jobs, and related listings deleted successfully.' });
     } catch (error) {
-        console.error('Error deleting user:', error);
+        logger.error('Error deleting user:', error);
         res.status(500).json({ message: 'Error deleting user', error: error.message });
     }
 };

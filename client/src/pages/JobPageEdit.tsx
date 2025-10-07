@@ -42,7 +42,6 @@ const EditJobPage: React.FC = () => {
   const handleSubmit = async (data: Job) => {
     if (!id) return;
     try {
-      console.log('Submitting job data:', data);
       setIsSaving(true);
       setError(null);
       await updateJob(id, data);

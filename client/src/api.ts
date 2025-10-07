@@ -23,7 +23,7 @@ api.interceptors.request.use(
 );
 
 // Job-related API methods
-export const getJobs = (filters: { isActive: boolean | null; onlyMyJobs: boolean }) => api.get<Job[]>('/jobs', { params: filters });
+export const getJobs = (filters?: { isActive?: boolean | null; onlyMyJobs?: boolean | null }) => api.get<Job[]>('/jobs', { params: filters });
 export const createJob = (jobData: Partial<Job>) => api.post<Job>('/jobs', jobData);
 export const getJobById = (id: string) => api.get<Job>(`/jobs/${id}`);
 export const updateJob = (id: string, jobData: Partial<Job>) => api.put<Job>(`/jobs/${id}`, jobData);

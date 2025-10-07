@@ -1,7 +1,6 @@
 import Job from '../models/Job.js';
 import Settings from '../models/Settings.js';
-import logger from '../utils/logger.js';
-
+import logger from "../utils/logger.js";
 
 export const health = async (req, res) => {
     const statusList = await getJobStatus();
