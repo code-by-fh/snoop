@@ -34,7 +34,6 @@ const LoginForm: React.FC = () => {
 
     try {
       await login(username, password);
-
       const origin = location.state?.from?.pathname || '/dashboard';
       navigate(origin, { replace: true });
     } catch (err: any) {
@@ -45,38 +44,47 @@ const LoginForm: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-blue-300 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8 bg-white p-10 rounded-2xl shadow-2xl border border-gray-100 transform transition-all hover:scale-[1.01]">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-100 via-white to-indigo-200 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8 bg-white/80 dark:bg-gray-800/80 backdrop-blur-md p-10 rounded-3xl shadow-2xl border border-gray-100 dark:border-gray-700">
         <div className="text-center">
           <div className="flex justify-center mb-4">
-            <Home className="h-12 w-12 text-blue-900 animate-pulse" />
+            <Home className="h-12 w-12 text-blue-600 dark:text-indigo-400 animate-bounce" />
           </div>
-          <h2 className="text-3xl font-extrabold text-gray-900 tracking-tight">
-            Sign in to your account
+          <h2 className="text-3xl font-extrabold text-gray-900 dark:text-gray-100">
+            Welcome back
           </h2>
+          <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+            Please sign in to continue
+          </p>
         </div>
 
         {error && (
-          <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-r-lg animate-shake">
+          <div className="bg-red-50 dark:bg-red-900/30 border-l-4 border-red-500 p-4 rounded-lg shadow-sm animate-shake">
             <div className="flex items-center">
               <AlertCircle className="h-5 w-5 text-red-500 mr-2" />
-              <p className="text-sm text-red-700">{error}</p>
+              <p className="text-sm text-red-700 dark:text-red-300">{error}</p>
             </div>
           </div>
         )}
 
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div className="rounded-md shadow-sm space-y-4">
+          <div className="space-y-5">
             <div className="relative">
+              <label
+                htmlFor="username"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+              >
+                Username
+              </label>
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <User className="h-5 w-5 text-gray-400" />
+                <User className="h-5 w-5 text-gray-400 dark:text-gray-500" />
               </div>
               <input
                 id="username"
                 name="username"
                 required
-                className="appearance-none block w-full px-10 py-3 border border-gray-300 rounded-lg placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300"
-                placeholder="Username or Email"
+                className="appearance-none block w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg placeholder-gray-400 dark:placeholder-gray-500 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
+                placeholder="Enter your username"
                 value={username}
                 onChange={(e) => {
                   setUsername(e.target.value);
@@ -84,17 +92,24 @@ const LoginForm: React.FC = () => {
                 }}
               />
             </div>
+
             <div className="relative">
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+              >
+                Password
+              </label>
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Lock className="h-5 w-5 text-gray-400" />
+                <Lock className="h-5 w-5 text-gray-400 dark:text-gray-500" />
               </div>
               <input
                 id="password"
                 name="password"
                 type="password"
                 required
-                className="appearance-none block w-full px-10 py-3 border border-gray-300 rounded-lg placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300"
-                placeholder="Password"
+                className="appearance-none block w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg placeholder-gray-400 dark:placeholder-gray-500 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
+                placeholder="Enter your password"
                 value={password}
                 onChange={(e) => {
                   setPassword(e.target.value);
@@ -108,10 +123,11 @@ const LoginForm: React.FC = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className={`group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white ${isLoading
-                ? 'bg-blue-400 cursor-not-allowed'
-                : 'bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
-                } transition-all duration-300 ease-in-out`}
+              className={`w-full flex justify-center py-3 px-4 border border-transparent text-sm font-semibold rounded-lg shadow-md text-white transition-all duration-300 ease-in-out ${
+                isLoading
+                  ? 'bg-blue-600 cursor-not-allowed dark:bg-blue-500'
+                  : 'bg-gradient-to-r from-blue-600 to-blue-600 hover:from-blue-600 hover:to-blue-700 dark:from-blue-600 dark:to-blue-700 dark:hover:from-blue-700 dark:hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
+              }`}
             >
               {isLoading ? (
                 <div className="flex items-center">

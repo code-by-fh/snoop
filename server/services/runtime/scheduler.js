@@ -1,7 +1,7 @@
-import logger from '../../utils/logger.js';
 import { duringWorkingHoursOrNotSet } from "../../utils/utils.js";
 import * as JobRunner from"./JobRunner.js";
 import * as similarityCache from "./similarity-check/similarityCache.js";
+import logger from '#utils/logger.js';
 
 export async function startRuntime(settings) {
     const INTERVAL = settings?.queryInterval * 60 * 1000 || 60000;
@@ -10,7 +10,7 @@ export async function startRuntime(settings) {
         try {
             const isDuringWorkingHoursOrNotSet = duringWorkingHoursOrNotSet(settings, Date.now());
             if (isDuringWorkingHoursOrNotSet) {
-                await JobRunner.runAll();
+                await JobRunner.runJobs();
                 settings.lastRun = Date.now();
             } else {
                 logger.info("Working hours set. Skipping as outside of working hours.");

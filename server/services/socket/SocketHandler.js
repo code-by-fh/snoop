@@ -1,5 +1,5 @@
 import jobEvents from '../runtime/JobEvents.js';
-import logger from '../../utils/logger.js';
+import logger from '#utils/logger.js';
 
 const jobStatuses = {};
 

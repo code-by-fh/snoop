@@ -1,7 +1,7 @@
 import puppeteer from 'puppeteer-extra';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 import { debug, DEFAULT_HEADER, botDetected } from './utils.js';
-import logger from "../../../utils/logger.js";
+import logger from '#utils/logger.js';
 
 puppeteer.use(StealthPlugin());
 

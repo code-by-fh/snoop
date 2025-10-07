@@ -17,7 +17,7 @@ interface NotificationIndicatorsProps {
 const NotificationIndicators: React.FC<NotificationIndicatorsProps> = ({
   adapters,
   size = 'sm',
-  showLabels = false,
+  showLabels = true,
   maxDisplay = 3,
   isJobInactive = false
 }) => {

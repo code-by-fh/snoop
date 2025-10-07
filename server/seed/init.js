@@ -1,6 +1,6 @@
 import dotenv from 'dotenv';
 import { adminUser } from './users.js';
-import logger from '../utils/logger.js';
+import logger from "../utils/logger.js";
 
 import Settings from '../models/Settings.js';
 import User from '../models/User.js';

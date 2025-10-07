@@ -1,5 +1,5 @@
 import * as cheerio from 'cheerio';
-import logger from "../../../../utils/logger.js";
+import logger from '#utils/logger.js';
 
 let $ = null;
 

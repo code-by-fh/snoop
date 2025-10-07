@@ -1,12 +1,9 @@
-import Job from "../../models/Job.js";
-import Listing from "../../models/Listing.js";
-import * as notify from "../../notification/notify.js";
-import logger from "../../utils/logger.js";
 import { NoNewListingsWarning } from "./errors.js";
 import Extractor from './extractor/extractor.js';
 import urlModifier from "./queryStringMutator.js";
 import * as reverseGeoCoder from "./reverseGeoCoder.js";
 import * as similarityCache from "./similarity-check/similarityCache.js";
+import logger from '#utils/logger.js';
 
 class JobRuntime {
   /**

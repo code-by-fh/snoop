@@ -5,9 +5,13 @@ import { useNavigate } from 'react-router-dom';
 import { Job } from '../../types';
 import JobToggleSwitch from './JobToggleSwitch';
 import NotificationIndicators from './NotificationIndicators';
+import { isFailed, isRunning, isFinished } from "../../utils/job";
+import JobStatusBadge from './JobStatusBadge';
+import { JobStatus } from '@/utils/jobStatusStyles';
 
 interface JobListViewProps {
   jobs: Job[];
+  jobsStatus: any;
   onDelete: (id: string) => void;
   onJobRun: (id: string) => void;
   onToggleActive: (id: string, isActive: boolean) => void;
@@ -16,7 +20,7 @@ interface JobListViewProps {
 type SortField = 'name' | 'status' | 'createdAt' | 'updatedAt' | 'progress' | 'isActive';
 type SortDirection = 'asc' | 'desc';
 
-const JobListView: React.FC<JobListViewProps> = ({ jobs, onDelete, onJobRun, onToggleActive }) => {
+const JobListView: React.FC<JobListViewProps> = ({ jobs, jobsStatus, onDelete, onJobRun, onToggleActive }) => {
   const navigate = useNavigate();
   const [sortField, setSortField] = useState<SortField>('createdAt');
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
@@ -69,13 +73,14 @@ const JobListView: React.FC<JobListViewProps> = ({ jobs, onDelete, onJobRun, onT
       <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
         <thead className="bg-gray-50 dark:bg-gray-800/40">
           <tr>
-            <th className="px-4 py-3 text-left text-sm font-medium text-gray-900 dark:text-gray-200"><SortButton field="isActive">Status</SortButton></th>
+            <th className="px-2 py-3 text-left text-sm font-medium text-gray-900 dark:text-gray-200"><SortButton field="isActive">Active / Inactive</SortButton></th>
             <th className="px-2 py-3 text-left text-sm font-medium text-gray-900 dark:text-gray-200"><SortButton field="name">Job Name</SortButton></th>
             <th className="px-2 py-3 text-left text-sm font-medium text-gray-900 dark:text-gray-200">Notifications</th>
             <th className="px-2 py-3 text-left text-sm font-medium text-gray-900 dark:text-gray-200"><SortButton field="createdAt">Created</SortButton></th>
             <th className="px-2 py-3 text-left text-sm font-medium text-gray-900 dark:text-gray-200"><SortButton field="updatedAt">Last Run</SortButton></th>
             <th className="px-2 py-3 text-left text-sm font-medium text-gray-900 dark:text-gray-200">Results</th>
             <th className="px-2 py-3 text-left text-sm font-medium text-gray-900 dark:text-gray-200">Actions</th>
+            <th className="px-2 py-3 text-left text-sm font-medium text-gray-900 dark:text-gray-200">Status</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
@@ -97,7 +102,7 @@ const JobListView: React.FC<JobListViewProps> = ({ jobs, onDelete, onJobRun, onT
                     jobId={job.id}
                     isActive={job.isActive}
                     onToggleActive={onToggleActive}
-                    jobStatus={job.status}
+                    jobStatus={jobsStatus[job.id]}
                     size="sm"
                   />
                 </td>
@@ -164,6 +169,9 @@ const JobListView: React.FC<JobListViewProps> = ({ jobs, onDelete, onJobRun, onT
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
                   </div>
+                </td>
+                <td className="px-2 py-4">
+                  <JobStatusBadge status={(jobsStatus[job.id] || "waiting") as JobStatus} isJobActive={job.isActive} />
                 </td>
               </tr>
             );

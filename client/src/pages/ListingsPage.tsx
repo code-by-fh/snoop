@@ -76,13 +76,13 @@ const ListingsPage: React.FC = () => {
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Property Listings - Showing {totalListings} Results</h1>
           <p className="text-gray-600 dark:text-gray-400 mt-1">
-            Explore and filter property listings, with the option to view them on the map.
+            Explore and filter property listings.
           </p>
         </div>
       </div>
 
       {/* Search + Buttons */}
-      <div className="flex flex-col sm:flex-row gap-2 items-center">
+      <div className="sticky top-0 z-20 bg-white dark:bg-gray-900 py-2 border-b border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row gap-2 items-center">
 
         <ListingsViewToggle
           localStorageKey="listings-view-preference"
@@ -105,9 +105,8 @@ const ListingsPage: React.FC = () => {
         <div className="w-full grid grid-cols-2 gap-2 sm:flex sm:space-x-2 sm:w-auto">
           <button
             onClick={() => setSortBy('date')}
-            className={`px-3 py-2 text-sm rounded-md border text-center 
-      flex-1 sm:flex-none
-      ${sortBy === 'date'
+            className={`px-3 py-2 text-sm rounded-md border text-center flex-1 sm:flex-none
+            ${sortBy === 'date'
                 ? 'bg-blue-100 border-blue-300 text-blue-800'
                 : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-700'
               }`}

@@ -1,11 +1,13 @@
+import { JobStatus } from "@/utils/jobStatusStyles";
 import { format, formatDistanceToNow } from "date-fns";
 import { BarChart2, Edit, Play, Trash2 } from "lucide-react";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Job } from "../../types";
+import { isFailed, isFinished, isRunning } from "../../utils/job";
+import JobStatusBadge from "./JobStatusBadge";
 import JobToggleSwitch from "./JobToggleSwitch";
 import NotificationIndicators from "./NotificationIndicators";
-import { isFailed, isRunning, isIdle } from "../../utils/job";
 
 interface JobCardProps {
   job: Job;
@@ -22,26 +24,22 @@ const JobCard: React.FC<JobCardProps> = ({ job, jobStatus, onDelete, onJobRun, o
   const handleViewStatisticsClick = () => navigate(`/jobs/${job.id}/statistics`);
 
   const isInactive = !job.isActive;
+  const isJobRunning = isRunning(jobStatus);
+  const isJobFailed = isFailed(jobStatus);
+  const isJobFinished = isFinished(jobStatus);
 
   return (
     <div
       className={`flex flex-col rounded-xl overflow-hidden shadow-md transition-shadow duration-300 border
         ${isInactive ? "bg-gray-100 dark:bg-gray-600 border-gray-300 dark:border-gray-700" : "bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 hover:shadow-lg"}
-        ${isIdle(jobStatus) ? "" : ""}
-        ${job.owner === false ? "bg-yellow-50 dark:bg-yellow-900/20" : ""}
-      `}
-    >
+        ${isJobFinished ? "" : ""}
+        ${!job.owner ? "bg-yellow-50 dark:bg-yellow-900/20" : ""}
+      `}>
+
       {/* Header */}
       <div className={`p-4 border-b flex items-center justify-center border-gray-300 dark:border-gray-700`}>
         <div className="flex items-center space-x-4">
           <div className="flex items-center space-x-2">
-            <JobToggleSwitch
-              jobId={job.id}
-              isActive={job.isActive}
-              onToggleActive={onToggleActive}
-              jobStatus={jobStatus}
-              size="sm"
-            />
             <h3
               className={`text-base font-semibold truncate 
                 ${isInactive ? "text-gray-500 dark:text-gray-400 line-through" : "text-gray-900 dark:text-gray-100"}`}
@@ -56,23 +54,43 @@ const JobCard: React.FC<JobCardProps> = ({ job, jobStatus, onDelete, onJobRun, o
       {/* Body */}
       <div className={`p-4 flex-1 space-y-4 
         ${isInactive ? "bg-gray-100 dark:bg-gray-800/40" : ""} 
-        ${job.owner === false ? "bg-yellow-50 dark:bg-yellow-900/20" : ""}
+        ${!job.owner ? "bg-yellow-50 dark:bg-yellow-900/20" : ""}
         `}>
         {/* Stats */}
-        <div className="grid grid-cols-2 gap-3">
-          <div className={`text-center p-2 rounded-lg ${isInactive ? "bg-gray-200 dark:bg-gray-700" : "bg-gray-50 dark:bg-gray-800"}`}>
+        <div className="grid grid-cols-2 gap-2">
+          {/* Total Listings */}
+          <div className={`text-center p-3 rounded-lg ${isInactive ? "bg-gray-200 dark:bg-gray-700" : "bg-gray-50 dark:bg-gray-800"}`}>
             <p className={`text-xs ${isInactive ? "text-gray-400" : "text-gray-500"}`}>Total</p>
             <p className={`text-lg font-semibold ${isInactive ? "text-gray-400" : "text-gray-900 dark:text-gray-100"}`}>
               {job.totalListings}
             </p>
           </div>
-          <div className={`text-center p-2 rounded-lg ${isInactive ? "bg-gray-200 dark:bg-gray-700" : "bg-gray-50 dark:bg-gray-800"}`}>
+
+          {/* New Listings */}
+          <div className={`text-center p-3 rounded-lg ${isInactive ? "bg-gray-200 dark:bg-gray-700" : "bg-gray-50 dark:bg-gray-800"}`}>
             <p className={`text-xs ${isInactive ? "text-gray-400" : "text-gray-500"}`}>New</p>
             <p className={`text-lg font-semibold ${isInactive ? "text-gray-400" : "text-green-600 dark:text-green-400"}`}>
               {job.newListings}
             </p>
           </div>
+
+          {/* Job Status */}
+          <JobStatusBadge status={(jobStatus || "waiting") as JobStatus} isJobActive={job.isActive} />
+
+          {/* Active Toggle */}
+          <div className={`text-center p-3 rounded-lg ${isInactive ? "bg-gray-200 dark:bg-gray-700" : "bg-gray-50 dark:bg-gray-800"}`}>
+            <p className={`text-xs font-bold`}>{job.isActive ? "Active" : "Inactive"}</p>
+            <div className="flex justify-center mt-1">
+              <JobToggleSwitch
+                jobId={job.id}
+                isActive={job.isActive}
+                onToggleActive={onToggleActive}
+                jobStatus={jobStatus}
+              />
+            </div>
+          </div>
         </div>
+
 
         <hr className="my-4" />
 
@@ -80,7 +98,7 @@ const JobCard: React.FC<JobCardProps> = ({ job, jobStatus, onDelete, onJobRun, o
         <div className="text-center">
           <p className={`text-xs mb-2 ${isInactive ? "text-gray-400" : "text-gray-500"}`}>Notifications</p>
           <div className="flex justify-center">
-            <NotificationIndicators adapters={job.notificationAdapters || []} size="sm" maxDisplay={5} isJobInactive={isInactive} />
+            <NotificationIndicators adapters={job.notificationAdapters || []} size="md" maxDisplay={5} isJobInactive={isInactive} />
           </div>
         </div>
 
@@ -112,8 +130,8 @@ const JobCard: React.FC<JobCardProps> = ({ job, jobStatus, onDelete, onJobRun, o
                     btn-icon 
                     transition-colors duration-200
                     ${isRunning(jobStatus) || isFailed(jobStatus)
-                                ? 'bg-green-200 text-green-400 dark:bg-green-900/20 dark:text-green-700 cursor-not-allowed opacity-60 hover:bg-green-200 dark:hover:bg-green-900/20'
-                                : 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300 hover:bg-green-200 dark:hover:bg-green-800'}
+                ? 'bg-green-200 text-green-400 dark:bg-green-900/20 dark:text-green-700 cursor-not-allowed opacity-60 hover:bg-green-200 dark:hover:bg-green-900/20'
+                : 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300 hover:bg-green-200 dark:hover:bg-green-800'}
                   `}>
             <Play className="w-5 h-5" />
           </button>

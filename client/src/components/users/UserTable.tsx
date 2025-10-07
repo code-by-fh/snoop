@@ -79,7 +79,7 @@ const UserTable: React.FC<UserTableProps> = ({ users, onEdit, onDelete }) => {
                   <div className="flex space-x-2">
                     <button
                       onClick={() => onEdit(user)}
-                      className="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300"
+                      className="text-blue-600 dark:text-blue-500  rounded-lg hover:text-blue-900 dark:hover:text-blue-900"
                       title="Edit User"
                     >
                       <Edit size={18} />
