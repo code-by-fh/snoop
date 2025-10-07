@@ -3,6 +3,7 @@ import Job from "../../models/Job.js";
 import { getAvailableProviders } from "../../provider/index.js";
 import jobEvents from './JobEvents.js';
 import JobRuntime from "./JobRuntime.js";
+import logger from '#utils/logger.js';
 
 const availableProviders = getAvailableProviders();
 

@@ -7,6 +7,9 @@ import { Job } from '../../types';
 import JobStatusBadge from './JobStatusBadge';
 import JobToggleSwitch from './JobToggleSwitch';
 import NotificationIndicators from './NotificationIndicators';
+import { isFailed, isRunning, isFinished } from "../../utils/job";
+import JobStatusBadge from './JobStatusBadge';
+import { JobStatus } from '@/utils/jobStatusStyles';
 
 interface JobListViewProps {
   jobs: Job[];
