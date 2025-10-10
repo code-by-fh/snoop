@@ -5,14 +5,14 @@ const jobStatuses = {};
 
 export function setupSocket(io) {
     io.on('connection', (socket) => {
-        logger.debug('Client connected:', socket.id);
+        logger.debug(`[WEBSOCKET] Total connected clients: ${io.engine.clientsCount}`);
 
         socket.on('get-all-jobs-status', () => {
-            socket.emit('all-jobs-status', jobStatuses);
+            socket.emit('all-jobs-status', Object.values(jobStatuses));
         });
 
         const handleJobStatusEvent = (job) => {
-            logger.debug(`Job status event received for id: ${job.id} - ${job.status}`);
+            logger.debug(`[WEBSOCKET] Job status event received for id: ${job.id} - ${job.status}`);
             jobStatuses[job.id] = job;
             socket.emit('job-status', job);
         };
@@ -20,7 +20,7 @@ export function setupSocket(io) {
         jobEvents.on('jobStatusEvent', handleJobStatusEvent);
 
         socket.on('disconnect', () => {
-            logger.debug('Client disconnected:', socket.id);
+            logger.debug(`[WEBSOCKET] Client disconnected (${socket.id}). Remaining: ${io.engine.clientsCount}`);
             jobEvents.off('jobStatusEvent', handleJobStatusEvent);
         });
     });

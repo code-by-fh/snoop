@@ -30,7 +30,7 @@ export const me = async (req, res) => {
         if (error.name === 'TokenExpiredError') {
             return res.status(401).json({ message: 'Token expired' });
         }
-        logger.error('Token verification error:', error);
+        logger.error(error, 'Token verification error:');
         res.status(500).json({ message: 'Server error during token verification' });
     }
 };
@@ -76,7 +76,7 @@ export const login = async (req, res) => {
             user: userResponse
         });
     } catch (error) {
-        logger.error('Login error:', error);
+        logger.error(error, 'Login error:');
         res.status(500).json({
             message: 'Server error during login',
             error: error.message

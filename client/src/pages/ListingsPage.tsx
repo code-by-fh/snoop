@@ -36,7 +36,7 @@ const ListingsPage: React.FC = () => {
         setIsLoading(true);
         const response = await getListings({
           page,
-          limit: 12,
+          limit: 50,
           minPrice: filters.minPrice,
           maxPrice: filters.maxPrice,
           minRooms: filters.minRooms,
@@ -100,6 +100,16 @@ const ListingsPage: React.FC = () => {
           onChange={(val) => { setSearchTerm(val); setPage(1); }}
           placeholder="Search listings..."
         />
+
+        <select
+          value="dsfas"
+          onChange={() => console.log("sadfasd")}
+          className="block w-full sm:w-48 px-3 py-2 border border-gray-300 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-1 focus:ring-blue-500"
+        >
+          <option value="">All Status</option>
+          <option value="true">Active</option>
+          <option value="false">Inactive</option>
+        </select>
 
         {/* Filter/Sort Buttons */}
         <div className="w-full grid grid-cols-2 gap-2 sm:flex sm:space-x-2 sm:w-auto">

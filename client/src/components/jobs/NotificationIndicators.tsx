@@ -36,7 +36,7 @@ const NotificationIndicators: React.FC<NotificationIndicatorsProps> = ({
   };
 
   const getAdapterColor = (type: string) => {
-    if(isJobInactive) {
+    if (isJobInactive) {
       return 'bg-gray-200 text-gray-500 border-gray-300';
     }
     switch (type) {
@@ -62,7 +62,7 @@ const NotificationIndicators: React.FC<NotificationIndicatorsProps> = ({
         >
           {getAdapterIcon(adapter.id)}
           {showLabels && (
-            <span className="ml-1 capitalize">{adapter.id}</span>
+            <span className="ml-1 capitalize hidden 2xl:inline">{adapter.id}</span>
           )}
         </div>
       ))}

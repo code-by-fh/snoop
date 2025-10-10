@@ -1,16 +1,16 @@
+import { addOrUpdateCommonAttributes } from '#utils/jobUtils.js';
 import logger from '#utils/logger.js';
 import Job from "../../models/Job.js";
 import { getAvailableProviders } from "../../provider/index.js";
 import jobEvents from './JobEvents.js';
 import JobRuntime from "./JobRuntime.js";
-
 const availableProviders = getAvailableProviders();
 
 async function executeJob(job) {
-  logger.info(`Running job with id: ${job.id}`);
-  jobEvents.emit('jobStatusEvent', { ...job, status: 'running' });
+  logger.info(`start executing job with id: ${job.id}`);
 
   const jobExecutions = [];
+  const jobStartTime = Date.now();
 
   for (const prov of job.providers) {
     const providerModule = availableProviders[prov.id];
@@ -21,27 +21,36 @@ async function executeJob(job) {
 
     providerModule.init(prov, job.blacklist);
 
+
     jobExecutions.push(async () => {
-      await new JobRuntime(providerModule.config, job.notificationAdapters, prov.id, job.id, prov.listings).execute();
-      // await setLastJobExecution(job.id);
+      await new JobRuntime(providerModule.config, job, prov.id, prov.listings.map(l => l.id))
+        .execute()
+        .then(() => Job.getJob(job.id))
+        .then(addOrUpdateCommonAttributes)
+        .then(async (updatedJob) => {
+          const lastRun = await Job.updateLastRun(job.id, jobStartTime, prov.id);
+          jobEvents.emit("jobStatusEvent", { ...updatedJob, status: "Finished", lastRun });
+        })
+        .catch(async (err) => {
+          jobEvents.emit("jobStatusEvent", { ...job, status: "Failed" });
+          logger.error(err, `Job ${job.id} failed:`);
+          await Job.addProviderError(job.id, {
+            providerId: prov.id,
+            providerName: providerModule.config.name,
+            providerUrl: prov.url,
+            message: err.message || String(err)
+          });
+        });
     });
   }
 
   logger.info(`Job with id: ${job.id} has ${jobExecutions.length} executions.`);
   await jobExecutions.reduce((prev, jobFunc) => prev.then(jobFunc), Promise.resolve());
-
-  // await new Promise((resolve) => {
-  //   setTimeout(() => {
-  //     logger.info(`Job ${job.id} executed`);
-  //     resolve();
-  //   }, 7000);
-  // });
-  jobEvents.emit('jobStatusEvent', { ...job, status: 'finished' });
 }
 
 export async function runJobs() {
-  const enabledJobs = (await Job.getAllJobs()).filter((job) => job.enabled);
-
+  const jobs = await Job.getAllJobs();
+  const enabledJobs = jobs.filter((job) => job.isActive);
   for (const job of enabledJobs) {
     await runJob(job.id);
   }
@@ -49,24 +58,5 @@ export async function runJobs() {
 
 export async function runJob(jobId) {
   const job = await Job.getJob(jobId);
-
-  try {
-    await executeJob(job);
-
-    return {
-      jobId,
-      jobName: job.name,
-      status: 'finished'
-    };
-  } catch (err) {
-    logger.error(`Error executing job with id: ${job.id}`, err);
-    jobEvents.emit('jobStatusEvent', { ...job, status: 'failed' });
-
-    return {
-      jobId,
-      jobName: job.name,
-      status: 'failed',
-      error: err.message
-    };
-  }
+  await executeJob(job);
 }

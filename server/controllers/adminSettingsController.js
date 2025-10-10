@@ -1,4 +1,5 @@
 import Settings from '../models/Settings.js';
+import {startRuntime} from '../services/runtime/scheduler.js';
 
 
 export const getSettings = async (req, res) => {
@@ -43,6 +44,7 @@ export const putSettings = async (req, res) => {
         }
 
         await settings.save();
+        await startRuntime(settings)
 
         res.json(settings);
     } catch (error) {

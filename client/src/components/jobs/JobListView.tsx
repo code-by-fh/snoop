@@ -1,4 +1,3 @@
-import { JobStatus } from '@/utils/jobStatusStyles';
 import { format, formatDistanceToNow } from 'date-fns';
 import { ArrowUpDown, BarChart2, ChevronDown, ChevronUp, Edit, Play, Trash2 } from 'lucide-react';
 import React, { useState } from 'react';
@@ -7,13 +6,10 @@ import { Job } from '../../types';
 import JobStatusBadge from './JobStatusBadge';
 import JobToggleSwitch from './JobToggleSwitch';
 import NotificationIndicators from './NotificationIndicators';
-import { isFailed, isRunning, isFinished } from "../../utils/job";
-import JobStatusBadge from './JobStatusBadge';
-import { JobStatus } from '@/utils/jobStatusStyles';
+import { useAuth } from '@/context/AuthContext';
 
 interface JobListViewProps {
   jobs: Job[];
-  jobsStatus: any;
   onDelete: (id: string) => void;
   onJobRun: (id: string) => void;
   onToggleActive: (id: string, isActive: boolean) => void;
@@ -22,10 +18,11 @@ interface JobListViewProps {
 type SortField = 'name' | 'status' | 'createdAt' | 'updatedAt' | 'progress' | 'isActive';
 type SortDirection = 'asc' | 'desc';
 
-const JobListView: React.FC<JobListViewProps> = ({ jobs, jobsStatus, onDelete, onJobRun, onToggleActive }) => {
+const JobListView: React.FC<JobListViewProps> = ({ jobs, onDelete, onJobRun, onToggleActive }) => {
   const navigate = useNavigate();
   const [sortField, setSortField] = useState<SortField>('createdAt');
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
+  const { user } = useAuth();
 
   const handleSort = (field: SortField) => {
     if (sortField === field) {
@@ -88,7 +85,8 @@ const JobListView: React.FC<JobListViewProps> = ({ jobs, jobsStatus, onDelete, o
         <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
           {sortedJobs.map((job) => {
             const isInactive = !job.isActive;
-            const ownerClass = !job.owner ? "bg-yellow-50 dark:bg-yellow-900/20" : "";
+            const jobOwner = user?.id === job.user;
+            const ownerClass = !jobOwner ? "bg-yellow-50 dark:bg-yellow-900/20" : "";
             const failedClass = job.status === "failed" ? "ring-2 ring-red-200 dark:ring-red-400" : "";
 
             return (
@@ -104,7 +102,7 @@ const JobListView: React.FC<JobListViewProps> = ({ jobs, jobsStatus, onDelete, o
                     jobId={job.id}
                     isActive={job.isActive}
                     onToggleActive={onToggleActive}
-                    jobStatus={jobsStatus[job.id]}
+                    jobStatus={job.status}
                     size="sm"
                   />
                 </td>
@@ -125,7 +123,7 @@ const JobListView: React.FC<JobListViewProps> = ({ jobs, jobsStatus, onDelete, o
                   <div className="text-xs text-gray-400">{formatDistanceToNow(new Date(job.createdAt), { addSuffix: true })}</div>
                 </td>
                 <td className={`px-2 py-4 text-sm ${isInactive ? "text-gray-400" : "text-gray-700 dark:text-gray-300"}`}>
-                  <div>{format(new Date(job.updatedAt), 'MMM dd, yyyy')}</div>
+                  <div>{job.lastRun ? format(new Date(job.lastRun), 'MMM dd, yyyy'): "-"}</div>
                   <div className="text-xs text-gray-400">{formatDistanceToNow(new Date(job.updatedAt), { addSuffix: true })}</div>
                 </td>
                 <td className={`px-2 py-4 text-sm`}>
@@ -173,7 +171,7 @@ const JobListView: React.FC<JobListViewProps> = ({ jobs, jobsStatus, onDelete, o
                   </div>
                 </td>
                 <td className="px-2 py-4">
-                  <JobStatusBadge status={(jobsStatus[job.id] || "waiting") as JobStatus} isJobActive={job.isActive} />
+                  <JobStatusBadge status={job.status} isJobActive={job.isActive} />
                 </td>
               </tr>
             );

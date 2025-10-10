@@ -3,7 +3,7 @@ import { getAvailableNotificators } from "../notification/adapter/index.js";
 import { getAvailableProviders } from "../provider/index.js";
 import Job from '../models/Job.js';
 import logger from '#utils/logger.js';
-
+import { getNewListings, getListings } from '../utils/jobUtils.js';
 
 // ────────────────────────────────────────────────────────────────────────────────
 // Utility Functions
@@ -100,7 +100,7 @@ function findMostCommonPriceRange(listings, buckets) {
         };
     });
 
-    if(bucketStats.length === 0) return {};
+    if (bucketStats.length === 0) return {};
 
     const mostCommon = bucketStats?.reduce((a, b) => (a.count > b.count ? a : b));
 
@@ -393,7 +393,7 @@ export const getDashboardStats = async (req, res) => {
 
         res.json(stats);
     } catch (error) {
-        logger.error('Error generating dashboard stats:', error);
+        logger.error(error, 'Error generating dashboard stats:');
         res.status(500).json({ message: error.message });
     }
 };
@@ -401,46 +401,42 @@ export const getDashboardStats = async (req, res) => {
 export const getJobStats = async (req, res) => {
     try {
         const filter = req.user.role === 'admin' ? {} : { user: req.user.id };
-        const job = await Job.getJobWithListings(req.params.id, filter);
+        const job = await Job.getJob(req.params.id, filter);
 
         if (!job) return res.status(404).json({ message: 'Job not found' });
 
-        const listings = job.providers?.flatMap(p => p.listings || []) || [];
-        const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
-        const newListingsToday = listings.filter(l => new Date(l.createdAt) > oneDayAgo).length;
+        const listings = getListings(job);
+        const newListingsToday = getNewListings(job);
 
-        const providers = getAvailableProviders();
         const listingsBySource = job.providers.map(provider => ({
-            name: Object.values(providers).find(p => p.metaInformation.id === provider.id)?.metaInformation.name,
+            name: provider.id,
             value: (provider.listings || []).length,
         }));
 
-        const priceBuckets = [
-            { range: '0-1000', min: 0, max: 1000 },
-            { range: '1000-2000', min: 1000, max: 2000 },
-            { range: '2000-3000', min: 2000, max: 3000 },
-            { range: '3000+', min: 3000, max: Infinity },
-        ];
 
-        const listingsOverTime = groupListingsByTime(listings, 'yyyy-MM');
+        const listingsOverTime = groupListingsByTime(listings, 'yyyy-MM-dd');
         const months = listingsOverTime.map(l => l.date);
+
+        const providerCount = job.providers.length;
 
         res.json({
             jobId: job.id,
             jobName: job.name,
+            errors: job.errors,
+            lastRun: job.lastRun,
+            createdAt: job.createdAt,
+            providerCount,
             totalListings: listings.length,
             newListingsToday,
             listingsBySource,
-            listingsByPrice: generatePriceStats(listings, priceBuckets).range,
             listingsOverTime,
-            errorsOverTime: months.map(date => ({ date, count: 0 })),
             processingTime: months.map(date => ({
                 date,
                 avgTimeMs: Math.floor(Math.random() * 300) + 100,
             })),
         });
     } catch (error) {
-        logger.error('Error generating job stats:', error);
+        logger.error(error, 'Error generating job stats:');
         res.status(500).json({ message: error.message });
     }
 };

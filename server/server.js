@@ -29,7 +29,7 @@ import { setupSocketServer } from './services/socket/socketServer.js';
 // Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => logger.info('MongoDB connected successfully'))
-  .catch((err) => logger.error('MongoDB connection error:', err));
+  .catch((err) => logger.error(err, 'MongoDB connection error:'));
 
 if (process.env.NODE_ENV !== 'production' && process.env.MONGO_DB_DEBUG === 'true') {
   mongoose.set('debug', true);
@@ -41,7 +41,7 @@ await setupSocketServer();
 const settings = await Settings.findOne({})
   .then((settings) => settings.toJSON())
   .catch((err) => {
-    logger.error('Error fetching settings:', err);
+    logger.error(err, 'Error fetching settings:');
     return null;
   });
 

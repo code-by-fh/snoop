@@ -26,7 +26,7 @@ for (const file of providerFiles) {
       logger.warn(`Provider "${file}" does not export a valid metaInformation.id`);
     }
   } catch (err) {
-    logger.error(`Failed to load provider "${file}"`, err);
+    logger.error(err, `Failed to load provider "${file}"`);
   }
 }
 

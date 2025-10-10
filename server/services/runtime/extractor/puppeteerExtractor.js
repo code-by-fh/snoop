@@ -41,7 +41,7 @@ export default async function execute(url, waitForSelector, options) {
 
     return await page.content();
   } catch (error) {
-    logger.error({ error }, 'Error executing Puppeteer extractor:');
+    logger.error(error, 'Error executing Puppeteer extractor:');
     return null;
   } finally {
     if (browser != null) {

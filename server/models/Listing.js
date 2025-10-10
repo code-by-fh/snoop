@@ -54,7 +54,7 @@ const ListingSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  job: {
+  jobId: {
     type: mongoose.Schema.Types.String,
     ref: 'Job',
     required: true
@@ -79,18 +79,28 @@ const ListingSchema = new mongoose.Schema({
   }
 });
 
-
 ListingSchema.statics.saveListings = async function (newListings, jobId) {
   const savedListings = [];
 
   for (const listingData of newListings) {
-    const newListing = new this({
-      ...listingData,
-      job: jobId
-    });
+    const filter = {
+      _id: listingData.id,
+      jobId: jobId,
+    };
 
-    await newListing.save();
-    savedListings.push(newListing);
+    const update = {
+      ...listingData,
+      jobId: jobId,
+    };
+
+    const options = {
+      upsert: true,
+      new: true,
+      setDefaultsOnInsert: true,
+    };
+
+    const listing = await this.findOneAndUpdate(filter, update, options);
+    savedListings.push(listing);
   }
 
   return savedListings;

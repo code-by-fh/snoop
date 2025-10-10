@@ -59,7 +59,7 @@ export function parse(crawlContainer, crawlFields, text, url) {
 
         parsedObject[key] = value || null;
       } catch (error) {
-        logger.error({error},`Error parsing field '${key}' with selector '${fieldSelector}':`);
+        logger.error(error, `Error parsing field '${key}' with selector '${fieldSelector}':`);
         parsedObject[key] = null;
       }
     }

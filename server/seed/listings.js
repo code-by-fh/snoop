@@ -1,4 +1,5 @@
 import { faker } from '@faker-js/faker';
+import { buildHash } from '../utils/utils.js';
 
 const today = new Date();
 
@@ -12,10 +13,13 @@ export function generateListings(jobId, count) {
   for (let i = 0; i < count; i++) {
     const city = faker.location.city();
     const street = faker.location.streetAddress();
+    const title = `Wohnung in ${city}`;
+    const price = faker.number.int({ min: 600, max: 3000 });
 
     listings.push({
-      title: `Wohnung in ${city}`,
-      price: faker.number.int({ min: 600, max: 3000 }),
+      id: buildHash(title, price, city, street, faker.string.uuid()),
+      title: title,
+      price: price,
       location: {
         city,
         street,
@@ -27,7 +31,7 @@ export function generateListings(jobId, count) {
       description: faker.lorem.sentences(2),
       imageUrl: `https://picsum.photos/seed/${faker.string.uuid()}/600/400`,
       url: faker.internet.url(),
-      job: jobId,
+      jobId: jobId,
       createdAt: randomCreatedAt(),
       updatedAt: new Date()
     });

@@ -34,7 +34,7 @@ export default class Extractor {
         loadParser(this.responseText);
       }
     } catch (error) {
-      logger.error({error}, 'Error trying to load page.');
+      logger.error(error, 'Error trying to load page.');
     }
     return this;
   };

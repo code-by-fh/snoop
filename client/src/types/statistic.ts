@@ -1,3 +1,5 @@
+import { JobError } from './index';
+
 export interface Statistics {
   totalJobs: number;
   activeJobs: number;
@@ -109,11 +111,14 @@ export interface TimeStats {
 export interface JobStatistics {
   jobId: string;
   jobName: string;
+  errors: JobError[];
+  providerCount: number;
   totalListings: number;
   newListingsToday: number;
   listingsBySource: { name: string; value: number }[];
   listingsByPrice: { range: string; count: number }[];
   listingsOverTime: { date: string; count: number }[];
-  errorsOverTime: { date: string; count: number }[];
   processingTime: { date: string; avgTimeMs: number }[];
+  createdAt: string;
+  lastRun: string;
 }

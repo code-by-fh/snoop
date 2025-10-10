@@ -1,8 +1,7 @@
 import { markdown2Html } from "../../services/markdown.js";
-import logger from '#utils/logger.js';
 
-export const send = ({ serviceName, newListings, jobKey }) => {
-  return [Promise.resolve(logger.info(`Found entry from service ${serviceName}, Job: ${jobKey}:`, newListings))];
+export const send = ({ serviceName, newListings, jobId }) => {
+  return [Promise.resolve(console.info(`Found listings from provider ${serviceName}, Job: ${jobId}:\n ${JSON.stringify(newListings, null, 2)}`))];
 };
 
 export const config = {

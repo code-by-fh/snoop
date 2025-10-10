@@ -33,7 +33,7 @@ export const send = ({ serviceName, newListings, notificationConfig, jobKey }) =
               short: false,
             },
           ],
-          footer: "Powered by Snnop",
+          footer: "Powered by Fredy",
           ts: new Date().getTime() / 1000,
         },
       ],
@@ -44,8 +44,8 @@ export const send = ({ serviceName, newListings, notificationConfig, jobKey }) =
 export const config = {
   id: "slack",
   name: "Slack",
-  readme: markdown2Html("notification/adapter/slack.md"),
-  description: "Snoop will send new listings to the slack channel of your choice..",
+  readme: markdown2Html("./notification/adapter/slack.md"),
+  description: "Fredy will send new listings to the slack channel of your choice..",
   fields: {
     token: {
       type: "text",
@@ -53,9 +53,9 @@ export const config = {
       description: "The token needed to send notifications to slack.",
     },
     channel: {
-      type: "text",
+      type: "channel",
       label: "Channel",
-      description: "The channel where Snoop should send notifications to.",
+      description: "The channel where fredy should send notifications to.",
     },
   },
 };

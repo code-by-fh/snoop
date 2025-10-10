@@ -92,9 +92,9 @@ body {
   bottom: 0;
   left: 0;
   height: 10%;
-  background: linear-gradient(90deg, #3b83f638, #06b6d4);
+  background: linear-gradient(90deg, #2563eb, #85a3e4);
   animation: toast-progress linear forwards;
-  animation-duration: var(--toast-duration, 5s);
+  animation-duration: var(--toast-duration, 3s);
   border-radius: 14px;
 }
 

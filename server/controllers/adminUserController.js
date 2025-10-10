@@ -12,7 +12,7 @@ export const getUsers = async (req, res) => {
         const users = await User.find({}).select('-password');
         res.json(users);
     } catch (error) {
-        logger.error('Error fetching users:', error);
+        logger.error(error, 'Error fetching users:');
         res.status(500).json({ message: 'Error fetching users', error: error.message });
     }
 }
@@ -84,7 +84,7 @@ export const deleteUser = async (req, res) => {
 
         res.json({ message: 'User, jobs, and related listings deleted successfully.' });
     } catch (error) {
-        logger.error('Error deleting user:', error);
+        logger.error(error, 'Error deleting user:');
         res.status(500).json({ message: 'Error deleting user', error: error.message });
     }
 };

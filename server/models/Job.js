@@ -43,7 +43,20 @@ const JobSchema = new mongoose.Schema({
   updatedAt: {
     type: Date,
     default: Date.now
-  }
+  },
+  lastRun: {
+    type: Date
+  },
+  processingTime: {
+    type: Number
+  },
+  runtimeErrors: [{
+    providerId: String,
+    providerName: String,
+    providerUrl: String,
+    message: String,
+    timestamp: { type: Date, default: Date.now }
+  }]
 }, {
   timestamps: true,
   toJSON: {
@@ -55,6 +68,28 @@ const JobSchema = new mongoose.Schema({
     }
   }
 });
+
+JobSchema.statics.updateLastRun = async function (jobId, startTime, providerId) {
+  const now = new Date();
+  const update = {
+    lastRun: now,
+    processingTime: startTime ? Date.now() - startTime : undefined
+  };
+
+  await this.updateOne(
+    { _id: jobId },
+    { $set: update }
+  );
+
+  if (providerId) { 
+    await this.updateOne(
+      { _id: jobId },
+      { $pull: { errors: { providerId } } }
+    );
+  }
+
+  return now;
+};
 
 
 JobSchema.statics.addListingsIds = async function (listingIds, jobId, providerId) {
@@ -80,18 +115,26 @@ JobSchema.statics.getAllJobs = async function (filter) {
 };
 
 JobSchema.statics.getJob = async function (id, filter = {}) {
-  const job = await this.findOne({ _id: id, ...filter });
-  return job.toJSON()
-};
-
-JobSchema.statics.getJobWithListings = async function (id, filter = {}) {
   const job = await this.findOne({ _id: id, ...filter })
     .populate({
       path: 'providers.listings',
       model: 'Listing'
     });
-  return job.toJSON()
+  return job?.toJSON() || null;
 };
 
+JobSchema.statics.addProviderError = async function (jobId, error) {
+  await this.updateOne(
+    { _id: jobId },
+    { $pull: { runtimeErrors: { providerId: error.providerId } } }
+  );
+
+  await this.updateOne(
+    { _id: jobId },
+    { $push: { runtimeErrors: error } }
+  );
+
+  return true;
+};
 
 export default mongoose.model('Job', JobSchema);

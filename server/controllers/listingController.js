@@ -72,7 +72,7 @@ export const getListings = async (req, res) => {
       return res.json({ listings: [], total: 0, page: 1, totalPages: 0 });
     }
 
-    const filter = { job: { $in: jobIds } };
+    const filter = { jobId: { $in: jobIds } };
 
     if (minPrice) filter.price = { ...filter.price, $gte: parseFloat(minPrice) };
     if (maxPrice) filter.price = { ...filter.price, $lte: parseFloat(maxPrice) };

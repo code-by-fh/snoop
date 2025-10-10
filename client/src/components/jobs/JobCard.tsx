@@ -1,38 +1,39 @@
-import { JobStatus } from "@/utils/jobStatusStyles";
+import { useAuth } from "@/context/AuthContext";
 import { format, formatDistanceToNow } from "date-fns";
 import { BarChart2, Edit, Play, Trash2 } from "lucide-react";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Job } from "../../types";
-import { isFailed, isFinished, isRunning } from "../../utils/job";
+import { isFinished, isRunning } from "../../utils/job";
 import JobStatusBadge from "./JobStatusBadge";
 import JobToggleSwitch from "./JobToggleSwitch";
 import NotificationIndicators from "./NotificationIndicators";
 
 interface JobCardProps {
   job: Job;
-  jobStatus: JobStatus;
   onDelete: (id: string) => void;
   onJobRun: (id: string) => void;
   onToggleActive: (id: string, isActive: boolean) => void;
 }
 
-const JobCard: React.FC<JobCardProps> = ({ job, jobStatus, onDelete, onJobRun, onToggleActive }) => {
+const JobCard: React.FC<JobCardProps> = ({ job, onDelete, onJobRun, onToggleActive }) => {
   const navigate = useNavigate();
   const handleEditClick = () => navigate(`/jobs/${job.id}`);
   const handleViewStatisticsClick = () => navigate(`/jobs/${job.id}/statistics`);
 
   const isJobInactive = !job.isActive;
-  const isJobFinished = isFinished(jobStatus);
-  const isJobFailed = isFailed(jobStatus);
-  const isJobRunning = isRunning(jobStatus);
+  const isJobFinished = isFinished(job.status);
+  const isJobRunning = isRunning(job.status);
+
+  const { user } = useAuth();
+  const jobOwner = user?.id === job.user;
 
   return (
     <div
       className={`flex flex-col rounded-xl overflow-hidden shadow-md transition-shadow duration-300 border
         ${isJobInactive ? "bg-gray-100 dark:bg-gray-600 border-gray-300 dark:border-gray-700" : "bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 hover:shadow-lg"}
         ${isJobFinished ? "" : ""}
-        ${!job.owner ? "bg-yellow-50 dark:bg-yellow-900/20" : ""}
+        ${!jobOwner ? "bg-yellow-50 dark:bg-yellow-900/20" : ""}
       `}>
 
       {/* Header */}
@@ -53,14 +54,14 @@ const JobCard: React.FC<JobCardProps> = ({ job, jobStatus, onDelete, onJobRun, o
       {/* Body */}
       <div className={`p-4 flex-1 space-y-4 
         ${isJobInactive ? "bg-gray-100 dark:bg-gray-800/40" : ""} 
-        ${!job.owner ? "bg-yellow-50 dark:bg-yellow-900/20" : ""}
+        ${!jobOwner ? "bg-yellow-50 dark:bg-yellow-900/20" : ""}
         `}>
         {/* Stats */}
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-3 gap-2">
           {/* Total Listings */}
           <div className={`text-center p-3 rounded-lg ${isJobInactive ? "bg-gray-200 dark:bg-gray-700" : "bg-gray-50 dark:bg-gray-800"}`}>
             <p className={`text-xs ${isJobInactive ? "text-gray-400" : "text-gray-500"}`}>Total</p>
-            <p className={`text-lg font-semibold ${isJobInactive ? "text-gray-400" : "text-gray-900 dark:text-gray-100"}`}>
+            <p className={`text-lg font-semibold ${isJobInactive ? "text-gray-400" : "text-blue-600 dark:text-blue-400"}`}>
               {job.totalListings}
             </p>
           </div>
@@ -73,8 +74,17 @@ const JobCard: React.FC<JobCardProps> = ({ job, jobStatus, onDelete, onJobRun, o
             </p>
           </div>
 
+          {/* Provider count */}
+          <div className={`text-center p-3 rounded-lg ${isJobInactive ? "bg-gray-200 dark:bg-gray-700" : "bg-gray-50 dark:bg-gray-800"}`}>
+            <p className={`text-xs ${isJobInactive ? "text-gray-400" : "text-gray-500"}`}>Providers</p>
+            <p className={`text-lg font-semibold ${isJobInactive ? "text-gray-400" : "text-blue-600 dark:text-blue-400"}`}>
+              {job.providers.length}
+            </p>
+          </div>
+        </div>
+        <div className="grid grid-cols-2 gap-2">
           {/* Job Status */}
-          <JobStatusBadge status={jobStatus} isJobActive={job.isActive} />
+          <JobStatusBadge status={job.status} isJobActive={job.isActive} />
 
           {/* Active Toggle */}
           <div className={`text-center p-3 rounded-lg ${isJobInactive ? "bg-gray-200 dark:bg-gray-700" : "bg-gray-50 dark:bg-gray-800"}`}>
@@ -84,12 +94,11 @@ const JobCard: React.FC<JobCardProps> = ({ job, jobStatus, onDelete, onJobRun, o
                 jobId={job.id}
                 isActive={job.isActive}
                 onToggleActive={onToggleActive}
-                jobStatus={jobStatus}
+                jobStatus={job.status}
               />
             </div>
           </div>
         </div>
-
 
         <hr className="my-4" />
 
@@ -106,14 +115,16 @@ const JobCard: React.FC<JobCardProps> = ({ job, jobStatus, onDelete, onJobRun, o
         {/* Created / Last Run */}
         <div className={`text-xs text-center space-y-1 ${isJobInactive ? "text-gray-400" : "text-gray-500 dark:text-gray-400"}`}>
           <p>Created {formatDistanceToNow(new Date(job.createdAt), { addSuffix: true })}</p>
-          <p>Last Run: {format(new Date(job.updatedAt), "MMM dd, yyyy HH:mm")}</p>
+          <p>
+            Last Run: {job.lastRun ? format(new Date(job.lastRun), "MMM dd, yyyy HH:mm") : "–"}
+          </p>
         </div>
       </div>
 
       {/* Footer */}
       <div className={`px-4 py-3 flex justify-center border-t 
         ${isJobInactive ? "bg-gray-200 dark:bg-gray-700 border-gray-300 dark:border-gray-600" : "bg-gray-50 dark:bg-gray-800 border-gray-100 dark:border-gray-700"}
-        ${job.owner === false ? "bg-yellow-50 dark:bg-yellow-900/20" : ""}
+        ${jobOwner === false ? "bg-yellow-50 dark:bg-yellow-900/20" : ""}
         `}>
         <div className="flex items-center space-x-4">
           <button
@@ -123,12 +134,12 @@ const JobCard: React.FC<JobCardProps> = ({ job, jobStatus, onDelete, onJobRun, o
             <Edit className="w-5 h-5" />
           </button>
           <button
-            disabled={isJobRunning || isJobFailed || false}
+            disabled={isJobRunning || false}
             onClick={() => onJobRun(job.id)}
             className={`
                     btn-icon 
                     transition-colors duration-200
-                    ${isJobRunning || isJobFailed
+                    ${isJobRunning
                 ? 'bg-green-200 text-green-400 dark:bg-green-900/20 dark:text-green-700 cursor-not-allowed opacity-60 hover:bg-green-200 dark:hover:bg-green-900/20'
                 : 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300 hover:bg-green-200 dark:hover:bg-green-800'}
                   `}>

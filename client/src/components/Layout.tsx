@@ -158,7 +158,7 @@ const Layout: React.FC = () => {
       <Toaster
         position="bottom-right"
         gutter={8}
-        toastOptions={{ duration: 5000, className: 'modern-toast', }}
+        toastOptions={{ duration: 3000, className: 'modern-toast', }}
       />
     </div>
   );

@@ -116,7 +116,7 @@ const Map: React.FC<MapProps> = ({ listings, onSelect, selectedListing }) => {
     (map as any).__markers = markers.map((m) => m.marker);
     (map as any).__markerData = markers;
 
-    if (listings.length > 0) {
+    if (markers.length > 0 && bounds.isEmpty() === false) {
       map.fitBounds(bounds, { padding: 50, maxZoom: 14, duration: 0 });
     }
 
@@ -161,10 +161,9 @@ const Map: React.FC<MapProps> = ({ listings, onSelect, selectedListing }) => {
             key={style}
             onClick={() => setMapStyle(style)}
             className={`px-3 py-1 rounded-md text-sm font-medium transition-colors duration-200
-              ${
-                mapStyle === style
-                  ? "bg-blue-600 text-white"
-                  : "bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600"
+              ${mapStyle === style
+                ? "bg-blue-600 text-white"
+                : "bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600"
               }`}
           >
             {style.charAt(0).toUpperCase() + style.slice(1)}

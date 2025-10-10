@@ -1,19 +1,30 @@
+import { JobStatus } from "@/utils/jobStatusStyles";
+
 export interface Job {
   id: string;
   name: string;
+  errors: JobError[];
   isActive: boolean;
-  status: 'pending' | 'running' | 'completed' | 'failed';
+  status: JobStatus;
   progress: number;
   totalListings: number;
   newListings: number;
-  user_id: string;
+  user: string;
   createdAt: string;
   updatedAt: string;
+  lastRun?: string;
   error?: boolean;
   notificationAdapters: NotificationAdapter[];
   providers: Provider[];
   blacklistTerms: string[];
-  owner: boolean
+}
+
+export interface JobError {
+  providerId: string,
+  providerName: string,
+  providerUrl: string,
+  message: string,
+  timestamp: Date
 }
 
 export interface Provider {

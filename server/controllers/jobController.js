@@ -1,53 +1,8 @@
 import Job from '../models/Job.js';
 import Listing from '../models/Listing.js';
 import { runJob } from "../services/runtime/JobRunner.js";
+import { addOrUpdateCommonAttributes } from "../utils/jobUtils.js";
 import logger from "../utils/logger.js";
-
-const validateJobData = (data) => {
-  const { name, providers, notificationAdapters } = data;
-
-  if (!name || name.length === 0 || name.length > 100) {
-    throw new Error('Name is required and must be between 1 and 100 characters long.');
-  }
-
-  if (!providers || providers.length === 0) {
-    throw new Error('At least one provider is required.');
-  }
-  for (const provider of providers) {
-    if (!provider.id || !provider.url) {
-      throw new Error('Each provider must have an id and a url.');
-    }
-  }
-
-  if (!notificationAdapters || notificationAdapters.length === 0) {
-    throw new Error('At least one notification adapter is required.');
-  }
-  for (const adapter of notificationAdapters) {
-    if (!adapter.id) {
-      throw new Error('Each notification adapter must have an id.');
-    }
-  }
-};
-
-export const addCommonAttributes = (job, userId) => {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
-  const allListings = job.providers?.flatMap(p => p.listings || []) || [];
-  const totalListings = allListings.length;
-  const newListings = allListings.filter(listing => {
-    const createdAt = new Date(listing.createdAt);
-    return createdAt >= today;
-  }).length;
-
-  return {
-    ...job,
-    totalListings,
-    newListings,
-    progress: Math.floor(Math.random() * 101),
-    owner: job.user?.toString() === userId
-  };
-};
 
 export const createJob = async (req, res) => {
   try {
@@ -69,7 +24,7 @@ export const createJob = async (req, res) => {
 
     res.status(201).send();
   } catch (error) {
-    logger.error({ error: error.stack }, 'Error creating job:');
+    logger.error(error, 'Error creating job:');
     res.status(400).json({ message: error.message });
   }
 };
@@ -77,12 +32,12 @@ export const createJob = async (req, res) => {
 export const getJobs = async (req, res) => {
   try {
     logger.debug({ jobData: req.body }, 'Fetching jobs with filters:');
-    const filter = req.user.role === 'admin' && req.query.onlyMyJobs !== 'true' ? {} : { user: req.user.id };
-    let jobs = await Job.getAllJobs(filter);
-    const formattedJobs = jobs.map(job => addCommonAttributes(job, req.user.id));
+    const filter = req.user.role === 'admin' ? {} : { user: req.user.id };
+    const jobs = await Job.getAllJobs(filter);
+    const formattedJobs = jobs.map(job => addOrUpdateCommonAttributes(job, req.user.id));
     res.json(formattedJobs);
   } catch (error) {
-    logger.error({ error: error.stack }, 'Error fetching jobs:');
+    logger.error(error, 'Error fetching jobs:');
     res.status(500).json({ message: error.message });
   }
 };
@@ -92,8 +47,7 @@ export const getJobById = async (req, res) => {
   try {
     const filter = req.user.role === 'admin' ? {} : { user: req.user.id };
     const job = await Job.getJob(req.params.id, filter);
-
-    res.json(job);
+    res.json(addOrUpdateCommonAttributes(job, req.user.id));
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -149,7 +103,7 @@ export const updateJob = async (req, res) => {
     logger.debug({ jobId: job._id, updatedFields: req.body }, 'Job updated successfully:');
     res.status(200).send();
   } catch (error) {
-    logger.error({ error }, 'Error updating job:');
+    logger.error(error, 'Error updating job:');
     res.status(400).json({ message: error.message });
   }
 };
@@ -169,7 +123,7 @@ export const deleteJob = async (req, res) => {
 
     res.status(200).send();
   } catch (error) {
-    logger.error({ error }, 'Error deleting job:');
+    logger.error(error, 'Error deleting job:');
     res.status(500).json({ message: error.message });
   }
 };
@@ -183,3 +137,29 @@ export const execute = async (req, res) => {
   runJob(job.id);
   res.status(200).json({ message: 'Job execution started' });
 }
+
+const validateJobData = (data) => {
+  const { name, providers, notificationAdapters } = data;
+
+  if (!name || name.length === 0 || name.length > 100) {
+    throw new Error('Name is required and must be between 1 and 100 characters long.');
+  }
+
+  if (!providers || providers.length === 0) {
+    throw new Error('At least one provider is required.');
+  }
+  for (const provider of providers) {
+    if (!provider.id || !provider.url) {
+      throw new Error('Each provider must have an id and a url.');
+    }
+  }
+
+  if (!notificationAdapters || notificationAdapters.length === 0) {
+    throw new Error('At least one notification adapter is required.');
+  }
+  for (const adapter of notificationAdapters) {
+    if (!adapter.id) {
+      throw new Error('Each notification adapter must have an id.');
+    }
+  }
+};

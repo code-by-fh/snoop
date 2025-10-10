@@ -65,7 +65,7 @@ async function seedDatabase() {
         logger.info('✅ Database seeding complete!');
         await mongoose.disconnect();
     } catch (err) {
-        logger.error('Seeding failed:', err);
+        logger.error(err, 'Seeding failed:');
         process.exit(1);
     }
 }

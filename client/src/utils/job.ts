@@ -1,11 +1,13 @@
-export const isFailed = (status: string) => {
+import { JobStatus } from "./jobStatusStyles";
+
+export const isFailed = (status: JobStatus) => {
   return status && status.toLowerCase() === "failed";
 };
 
-export const isRunning = (status: string) => {
+export const isRunning = (status: JobStatus) => {
   return status && status.toLowerCase() === "running";
 };
 
-export const isFinished = (status: string) => {
+export const isFinished = (status: JobStatus) => {
   return status && status.toLowerCase() === "finished";
 };

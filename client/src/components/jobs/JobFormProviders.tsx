@@ -1,4 +1,4 @@
-import { Globe, Plus, Trash2,Info } from 'lucide-react';
+import { Globe, Plus, Trash2, Info } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { getProviders } from '../../api';
 import { Provider } from '../../types';
@@ -85,51 +85,86 @@ const ProviderSection: React.FC<ProviderSectionProps> = ({
           No Providers configured yet.
         </div>
       ) : (
-        <div className="mt-6 space-y-3">
-          <h4 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Configured Providers</h4>
-          {providers.map((provider, index) => (
-            <div
-              key={index}
-              className="flex justify-between items-center dark:text-gray-100 bg-gray-200 dark:bg-gray-800 p-4 rounded-lg border hover:shadow-sm"
-            >
-              <div className="flex-grow">
-                <span className="font-bold text-gray-900 dark:text-gray-100 text-lg">{availableProviders.find(p => p.id === provider.id)?.name}</span>
-              </div>
-              <a
-                href={provider.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-500 hover:text-blue-700 p-2 rounded-full hover:bg-blue-100 transition-colors"
-                title="Visit Provider"
-              >
-                <Globe className="h-5 w-5" />
-              </a>
-              <button
-                type="button"
-                onClick={() => onRemoveProvider(index)}
-                className="text-red-500 hover:text-red-700 p-2 rounded-full hover:bg-red-100"
-              >
-                <Trash2 className="h-5 w-5" />
-              </button>
-            </div>
-          ))}
+<div className="mt-6 space-y-3">
+  <h4 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+    Configured Providers
+  </h4>
+
+  {providers.map((provider, index) => {
+    const providerInfo = availableProviders.find(p => p.id === provider.id);
+    const providerName = providerInfo?.name || "Unknown Provider";
+    const providerUrl = providerInfo?.url || provider.url || "";
+
+    return (
+      <div
+        key={index}
+        className="flex justify-between items-center dark:text-gray-100 bg-gray-200 dark:bg-gray-800 p-4 rounded-lg border border-gray-300 dark:border-gray-700 hover:shadow-md transition"
+      >
+        <div className="flex flex-col flex-grow overflow-hidden">
+          <span className="font-bold text-gray-900 dark:text-gray-100 text-lg truncate">
+            {providerName}
+          </span>
+          <a
+            href={providerUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm text-blue-600 dark:text-blue-400 hover:underline truncate"
+            title={providerUrl}
+          >
+            {providerUrl}
+          </a>
         </div>
+
+        <div className="flex items-center space-x-2">
+          <a
+            href={providerUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-500 hover:text-blue-700 p-2 rounded-full hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors"
+            title="Visit Provider"
+          >
+            <Globe className="h-5 w-5" />
+          </a>
+          <button
+            type="button"
+            onClick={() => onRemoveProvider(index)}
+            className="text-red-500 hover:text-red-700 p-2 rounded-full hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors"
+            title="Remove Provider"
+          >
+            <Trash2 className="h-5 w-5" />
+          </button>
+        </div>
+      </div>
+    );
+  })}
+</div>
+
       )}
 
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 backdrop-blur-sm">
-          <div className="bg-white w-full max-w-md rounded-xl shadow-xl p-6 dark:bg-gray-700 ">
-            <h3 className="text-2xl font-bold text-gray-900 mb-6 text-center">Configure Provider</h3>
-            <div className="space-y-5">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+          <div className="bg-white dark:bg-gray-800 w-full max-w-md rounded-2xl shadow-2xl p-6 border border-gray-200 dark:border-gray-700 transition-all">
+            {/* Titel */}
+            <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6 text-center">
+              Configure Provider
+            </h3>
+
+            {/* Inhalt */}
+            <div className="space-y-6">
+
+              {/* Provider Auswahl */}
               <div>
-                <label htmlFor="modalProviderName" className="block text-sm font-medium text-gray-700 mb-1 dark:text-dark-text">
+                <label
+                  htmlFor="modalProviderName"
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                >
                   Select Provider
                 </label>
                 <select
                   id="modalProviderName"
                   value={selectedProvider?.id}
                   onChange={handleProviderOnChange}
-                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm p-2.5 dark:text-dark-input"
+                  className="block w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm p-2.5 transition"
                 >
                   <option value="">-- Select a provider --</option>
                   {availableProviders.map((p) => (
@@ -138,20 +173,26 @@ const ProviderSection: React.FC<ProviderSectionProps> = ({
                     </option>
                   ))}
                 </select>
+
+                {/* Open Website Button */}
                 {selectedProvider?.name && (
                   <a
                     href={selectedProvider?.baseUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block w-full text-center mt-4 px-6 py-3 text-base font-semibold text-white rounded-lg shadow-md bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 transition-all"
+                    className="block w-full text-center mt-4 px-6 py-3 text-base font-semibold text-white rounded-lg shadow-md bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 dark:from-blue-500 dark:to-blue-600 transition-all"
                   >
-                    🌐 Open Webseite
+                    🌐 Open Website
                   </a>
                 )}
               </div>
 
+              {/* Provider URL */}
               <div>
-                <label htmlFor="modalProviderUrl" className="block text-sm font-medium text-gray-700 mb-1 dark:text-dark-text">
+                <label
+                  htmlFor="modalProviderUrl"
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                >
                   Provider URL
                 </label>
                 <input
@@ -159,30 +200,34 @@ const ProviderSection: React.FC<ProviderSectionProps> = ({
                   value={selectedProvider?.url || ''}
                   disabled={!selectedProvider}
                   type="url"
-                  onChange={handleProviderUrlChange} className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm p-2.5"
+                  onChange={handleProviderUrlChange}
                   placeholder="https://example.com"
+                  className={`block w-full rounded-lg border text-sm p-2.5 shadow-sm transition ${selectedProvider
+                      ? 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500'
+                      : 'bg-gray-100 dark:bg-gray-700/60 text-gray-400 dark:text-gray-500 cursor-not-allowed'
+                    }`}
                 />
-                {error && (
-                  <p className="text-sm text-red-500 mt-2">{error}</p>
-                )}
+                {error && <p className="text-sm text-red-500 mt-2">{error}</p>}
               </div>
             </div>
 
-            <div className="mt-8 flex justify-end space-x-4">
+            {/* Footer */}
+            <div className="mt-8 flex justify-end space-x-3">
               <button
                 type="button"
                 onClick={() => setShowModal(false)}
-                className="py-2.5 px-5 border border-gray-300 text-base rounded-md text-gray-700 bg-white hover:bg-gray-50"
+                className="py-2.5 px-5 border border-gray-300 dark:border-gray-600 rounded-md text-gray-700 dark:text-gray-200 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 transition"
               >
                 Cancel
               </button>
+
               <button
                 type="button"
                 onClick={handleAddProvider}
                 disabled={!selectedProvider || !selectedProvider?.url || error !== null}
-                className={`px-4 py-2 text-base rounded-md text-white ${!selectedProvider?.name || !selectedProvider?.url || error !== null
-                  ? 'bg-blue-400 cursor-not-allowed'
-                  : 'btn-primary'
+                className={`px-5 py-2.5 text-base font-medium rounded-md text-white transition ${!selectedProvider?.name || !selectedProvider?.url || error !== null
+                    ? 'bg-blue-400/50 cursor-not-allowed'
+                    : 'bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 dark:from-blue-500 dark:to-blue-600'
                   }`}
               >
                 Add Provider

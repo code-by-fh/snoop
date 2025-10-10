@@ -1,3 +1,4 @@
+import { ArrowLeft } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
@@ -6,7 +7,8 @@ import {
 } from 'recharts';
 import { getJobStats } from '../api';
 import { JobStatistics } from '../types/statistic';
-import { ArrowLeft } from 'lucide-react';
+import { format, formatDistanceToNow } from 'date-fns';
+import JobErrorPanel from '@/components/jobs/JobErrorPanel';
 
 const JobStatisticsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -29,6 +31,7 @@ const JobStatisticsPage: React.FC = () => {
         .catch(() => {
           setError('Failed to load job statistics. Please try again later.');
           setStats(null);
+          setIsLoading(false);
         });
     };
 
@@ -77,7 +80,11 @@ const JobStatisticsPage: React.FC = () => {
       </div>
 
       {/* KPI Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 2xl:grid-cols-6 md:grid-cols-4 sm:grid-cols-2 gap-6">
+        <div className="bg-white dark:bg-gray-900 p-6 rounded-lg shadow border border-gray-100 dark:border-gray-700">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">Job ID</h2>
+          <p className="text-xl font-medium text-gray-700 dark:text-gray-300 break-all">{stats.jobId}</p>
+        </div>
         <div className="bg-white dark:bg-gray-900 p-6 rounded-lg shadow border border-gray-100 dark:border-gray-700">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">Total Listings</h2>
           <p className="text-4xl font-bold text-blue-600 dark:text-blue-400">{stats.totalListings}</p>
@@ -87,8 +94,16 @@ const JobStatisticsPage: React.FC = () => {
           <p className="text-4xl font-bold text-green-600 dark:text-green-400">{stats.newListingsToday}</p>
         </div>
         <div className="bg-white dark:bg-gray-900 p-6 rounded-lg shadow border border-gray-100 dark:border-gray-700">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">Job ID</h2>
-          <p className="text-xl font-medium text-gray-700 dark:text-gray-300 break-all">{stats.jobId}</p>
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">Providers</h2>
+          <p className="text-xl font-medium text-blue-600 dark:text-blue-400 break-all">{stats.providerCount}</p>
+        </div>
+        <div className="bg-white dark:bg-gray-900 p-6 rounded-lg shadow border border-gray-100 dark:border-gray-700">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">Created</h2>
+          <p className="text-xl font-medium text-gray-700 dark:text-gray-300 break-all">{formatDistanceToNow(new Date(stats.createdAt), { addSuffix: true })}</p>
+        </div>
+        <div className="bg-white dark:bg-gray-900 p-6 rounded-lg shadow border border-gray-100 dark:border-gray-700">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">Last Run</h2>
+          <p className="text-xl font-medium text-gray-700 dark:text-gray-300 break-all">{stats.lastRun ? format(new Date(stats.lastRun), "MMM dd, yyyy HH:mm") : "–"}</p>
         </div>
       </div>
 
@@ -119,16 +134,16 @@ const JobStatisticsPage: React.FC = () => {
         </div>
 
         <div className="bg-white dark:bg-gray-900 p-6 rounded-lg shadow border border-gray-100 dark:border-gray-700">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Listings by Price Range</h2>
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Average Processing Time (ms)</h2>
           <div className="h-80">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={stats.listingsByPrice || []}>
+              <BarChart data={stats.processingTime || []}>
                 <CartesianGrid strokeDasharray="3 3" strokeOpacity={0.2} />
-                <XAxis dataKey="range" stroke="currentColor" />
+                <XAxis dataKey="date" stroke="currentColor" />
                 <YAxis stroke="currentColor" />
-                <Tooltip contentStyle={{ backgroundColor: 'var(--tw-prose-bg)' }} />
+                <Tooltip formatter={(value: number) => `${value} ms`} contentStyle={{ backgroundColor: 'var(--tw-prose-bg)' }} />
                 <Legend />
-                <Bar dataKey="count" fill="#1E40AF" />
+                <Bar dataKey="avgTimeMs" fill="#3B82F6" name="Avg. Time" />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -151,38 +166,9 @@ const JobStatisticsPage: React.FC = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white dark:bg-gray-900 p-6 rounded-lg shadow border border-gray-100 dark:border-gray-700">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Errors Over Time</h2>
-          <div className="h-80">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={stats.errorsOverTime || []}>
-                <CartesianGrid strokeDasharray="3 3" strokeOpacity={0.2} />
-                <XAxis dataKey="date" stroke="currentColor" />
-                <YAxis stroke="currentColor" />
-                <Tooltip contentStyle={{ backgroundColor: 'var(--tw-prose-bg)' }} />
-                <Legend />
-                <Line type="monotone" dataKey="count" stroke="#EF4444" activeDot={{ r: 8 }} name="Errors" />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-
-        <div className="bg-white dark:bg-gray-900 p-6 rounded-lg shadow border border-gray-100 dark:border-gray-700">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Average Processing Time (ms)</h2>
-          <div className="h-80">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={stats.processingTime || []}>
-                <CartesianGrid strokeDasharray="3 3" strokeOpacity={0.2} />
-                <XAxis dataKey="date" stroke="currentColor" />
-                <YAxis stroke="currentColor" />
-                <Tooltip formatter={(value: number) => `${value} ms`} contentStyle={{ backgroundColor: 'var(--tw-prose-bg)' }} />
-                <Legend />
-                <Bar dataKey="avgTimeMs" fill="#3B82F6" name="Avg. Time" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
+      <div className="bg-white dark:bg-gray-900 p-6 rounded-lg shadow border border-gray-100 dark:border-gray-700">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Error Infos</h2>
+        <JobErrorPanel stats={stats} />
       </div>
     </div>
   );
