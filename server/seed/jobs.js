@@ -9,7 +9,7 @@ export function generateJobs(userId, providerConfig) {
 
   return {
       name: `${providerConfig.id} - Seeded`,
-      isActive: false,
+      isActive: true,
       user: userId,
       providers,
       notificationAdapters: [

@@ -36,7 +36,7 @@ export const SEED_CONFIG = {
       url: 'https://www.neubaukompass.de/neubau-immobilien/berlin/',
     },
     {
-      id: 'OhneMakler',
+      id: 'ohneMakler',
       url: 'https://www.ohne-makler.net/immobilien/immobilie-mieten/berlin/berlin/',
     },
     {
@@ -44,8 +44,20 @@ export const SEED_CONFIG = {
       url: 'https://www.wg-gesucht.de/wohnungen-in-Berlin.8.2.1.0.html',
     },
     {
-      id: 'Wohnungboerse',
+      id: 'wohnungsboerse',
       url: 'https://www.wohnungsboerse.net/searches/index?estate_marketing_types=miete%2C1&marketing_type=miete&estate_types%5B0%5D=1&is_rendite=0&estate_id=&zipcodes%5B%5D=&cities%5B%5D=Berlin&districts%5B%5D=&term=Berlin&umkreiskm=&pricetext=&minprice=&maxprice=&sizetext=&minsize=&maxsize=&roomstext=&minrooms=&maxrooms=',
+    },
+    {
+      id: "regionalimmobilien24",
+      url: "https://www.regionalimmobilien24.de/rostock/rostock/kaufen/haus/-/-/-/?rd=5",
+    },
+    {
+      id: "sparkasse",
+      url: "https://immobilien.sparkasse.de/immobilien/treffer?marketingType=buy&objectType=flat&perimeter=10&usageType=residential&zipCityEstateId=62782__Hamburg",
+    },
+    {
+      id: "mcMakler",
+      url: "https://www.mcmakler.de/immobilien/results?placeId=62649&search=Leipzig%252C+Sachsen&propertyTypes=APARTMENT&page=0",
     }
   ]
 };
