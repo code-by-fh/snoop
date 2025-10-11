@@ -4,29 +4,11 @@ import logger from "#utils/logger.js";
 
 const RATE_LIMIT_INTERVAL = 1010;
 
-const TEMPLATE = {
-  to: "",
-  messaging_product: "whatsapp",
-  type: "template",
-  template: {
-    name: "f_scout",
-    language: {
-      code: "de",
-    },
-    components: [
-      {
-        type: "body",
-        parameters: "",
-      },
-    ],
-  },
-};
-
-//as a parameter, you will always get the serviceName, newListings and all the values, that
+//as a parameter, you will always get the serviceName, listings and all the values, that
 //you have defined exports.config.fields. (This is being used for rendering in the frontend)
-export const send = ({ serviceName, newListings, notificationConfig }) => {
-  const { receivers } = notificationConfig.find((adapter) => adapter.id === config.id).fields;
-  return newListings.map((payload) => {
+export const send = ({ serviceName, listings, notificationAdapters }) => {
+  const { receivers } = notificationAdapters.find((adapter) => adapter.id === config.id).fields;
+  return listings.map((payload) => {
     const promises = receivers
       .trim()
       .split(",")
@@ -75,7 +57,7 @@ export const send = ({ serviceName, newListings, notificationConfig }) => {
           body: JSON.stringify(data),
         };
 
-        
+
         /**
          * This is to not break the rate limit. It is to only send 1 message per second
          */
@@ -87,7 +69,7 @@ export const send = ({ serviceName, newListings, notificationConfig }) => {
           }, RATE_LIMIT_INTERVAL);
         });
       });
-      return Promise.all(promises);
+    return Promise.all(promises);
 
   });
 };

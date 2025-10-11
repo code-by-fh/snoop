@@ -1,14 +1,12 @@
-import { markdown2Html } from "../../services/markdown.js";
-import Job from "../../models/Job.js";
 import fetch from "node-fetch";
+import { markdown2Html } from "../../services/markdown.js";
 
-export const send = async ({ serviceName, newListings, notificationConfig, jobKey }) => {
-  const { webhook, channel } = notificationConfig.find((adapter) => adapter.id === config.id).fields;
-  const job = await Job.findById(jobKey);
-  const jobName = job == null ? jobKey : job.name;
-  let message = `### *${jobName}* (${serviceName}) found **${newListings.length}** new listings:\n\n`;
+export const send = async ({ serviceName, listings, notificationAdapters, jobName }) => {
+  const { webhook, channel } = notificationAdapters.find((adapter) => adapter.id === config.id).fields;
+
+  let message = `### *${jobName}* (${serviceName}) found **${listings.length}** new listings:\n\n`;
   message += `| Title | Address | Size | Price |\n|:----|:----|:----|:----|\n`;
-  message += newListings.map((o) => `| [${o.title}](${o.link}) | ` + [o.address, o.size.replace(/2m/g, "$m^2$"), o.price].join(" | ") + " |\n");
+  message += listings.map((o) => `| [${o.title}](${o.link}) | ` + [o.address, o.size.replace(/2m/g, "$m^2$"), o.price].join(" | ") + " |\n");
   return fetch(webhook, {
     method: "POST",
     headers: { "Content-Type": "application/json" },

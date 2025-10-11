@@ -1,3 +1,4 @@
+import logger from "#utils/logger.js";
 import { markdown2Html } from "../../services/markdown.js";
 
 import { Buffer } from "buffer";
@@ -15,16 +16,17 @@ async function getImageBuffer(url) {
     const arrayBuffer = await imageResponse.arrayBuffer();
     return Buffer.from(arrayBuffer);
   } catch (error) {
-    LOG.error(`Error while fetching image: ${error.message}`);
+    logger.error(error, `Error while fetching image`);
     return null;
   }
 }
 
-export const send = ({ serviceName, newListings, notificationConfig }) => {
-  return newListings.map(async (payload, index) => {
+export const send = ({ serviceName, listings, notificationAdapters }) => {
+  const { token, user } = notificationAdapters.find((adapter) => adapter.id === config.id).fields;
+  return listings.map(async (payload, index) => {
     const form = new FormData();
-    form.append("token", process.env.PUSHOVER_TOKEN);
-    form.append("user", process.env.PUSHOVER_USER);
+    form.append("token", token);
+    form.append("user", user);
 
     if (payload.image || payload.lazyImage) {
       const imageBuffer = await getImageBuffer(payload.image || payload.lazyImage);
@@ -53,10 +55,10 @@ export const send = ({ serviceName, newListings, notificationConfig }) => {
         });
         if (response.ok) {
           const jsonResponse = await response.json();
-          LOG.info("Message sent successfully:", jsonResponse);
+          logger.info(`Message sent successfully: ${jsonResponse}`,);
         }
       } catch (error) {
-        LOG.error("Error sending message to Pushover:", error);
+        logger.error(error, "Error sending message to Pushover:");
       }
     }, 1000 * index);
   });
@@ -65,7 +67,18 @@ export const send = ({ serviceName, newListings, notificationConfig }) => {
 export const config = {
   id: "pushover",
   name: "Pushover",
-  description: "Pushover is being used to send new listings via Pushover Api.",
-  config: {},
   readme: markdown2Html("notification/adapter/pushover.md"),
+  description: "Pushover is being used to send new listings via Pushover Api.",
+  fields: {
+    token: {
+      type: "text",
+      label: "Token",
+      description: "The token needed to access this service.",
+    },
+    user: {
+      type: "text",
+      label: "User",
+      description: "The user needed to access this service.",
+    },
+  },
 };

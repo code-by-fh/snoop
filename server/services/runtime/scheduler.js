@@ -6,10 +6,12 @@ import * as similarityCache from "./similarity-check/similarityCache.js";
 let runtimeInterval = null;
 let currentSettings = null;
 let lastSettingsJSON = "";
+let isRunning = false;
 
 async function execJobLoop() {
-    if (!currentSettings) return;
+    if (!currentSettings || isRunning) return;
 
+    isRunning = true;
     try {
         const isDuringWorkingHoursOrNotSet = duringWorkingHoursOrNotSet(currentSettings, Date.now());
         if (isDuringWorkingHoursOrNotSet) {
@@ -20,6 +22,8 @@ async function execJobLoop() {
         }
     } catch (err) {
         logger.error(err, "Error during job execution");
+    } finally {
+        isRunning = false;
     }
 }
 

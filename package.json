@@ -9,6 +9,7 @@
   "description": "[S]earch & [N]avigate [O]ffers [O]n [P]latform",
   "author": "Doublelayer",
   "keywords": [
+    "snoop",
     "flat",
     "flatfinder",
     "fredy",
@@ -46,6 +47,6 @@
     "concurrently": "^9.2.0"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
   }
 }

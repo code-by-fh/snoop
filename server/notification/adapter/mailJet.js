@@ -9,8 +9,8 @@ const __dirname = getDirName();
 const template = fs.readFileSync(path.resolve(__dirname + "/../notification/emailTemplate/template.hbs"), "utf8");
 const emailTemplate = Handlebars.compile(template);
 
-export const send = ({ serviceName, newListings, notificationConfig, jobKey }) => {
-  const { apiPublicKey, apiPrivateKey, receiver, from } = notificationConfig.find((adapter) => adapter.id === config.id).fields;
+export const send = ({serviceName, listings, notificationAdapters, jobName}) => {
+  const { apiPublicKey, apiPrivateKey, receiver, from } = notificationAdapters.find((adapter) => adapter.id === config.id).fields;
   const to = receiver
     .trim()
     .split(",")
@@ -28,11 +28,11 @@ export const send = ({ serviceName, newListings, notificationConfig, jobKey }) =
             Name: "Fredy",
           },
           To: to,
-          Subject: `Fredy found ${newListings.length} new listings for ${serviceName}`,
+          Subject: `Fredy found ${listings.length} new listings for ${serviceName}`,
           HTMLPart: emailTemplate({
-            serviceName: `Job: (${jobKey}) | Service: ${serviceName}`,
-            numberOfListings: newListings.length,
-            listings: newListings,
+            serviceName: `Job: (${jobName}) | Service: ${serviceName}`,
+            numberOfListings: listings.length,
+            listings: listings,
           }),
         },
       ],

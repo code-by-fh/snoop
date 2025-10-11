@@ -3,13 +3,13 @@ import { markdown2Html } from "../../services/markdown.js";
 
 const msg = Slack.chat.postMessage;
 
-export const send = ({ serviceName, newListings, notificationConfig, jobKey }) => {
-  const { token, channel } = notificationConfig.find((adapter) => adapter.id === config.id).fields;
-  return newListings.map((payload) =>
+export const send = ({ serviceName, listings, notificationAdapters, jobName }) => {
+  const { token, channel } = notificationAdapters.find((adapter) => adapter.id === config.id).fields;
+  return listings.map((payload) =>
     msg({
       token,
       channel,
-      text: `*(${serviceName} - ${jobKey})* - ${payload.title}`,
+      text: `*(${serviceName} - ${jobName})* - ${payload.title}`,
       attachments: [
         {
           fallback: payload.title,

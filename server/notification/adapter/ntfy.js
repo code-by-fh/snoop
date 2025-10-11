@@ -1,12 +1,10 @@
-import { markdown2Html } from "../../services/markdown.js";
-import Job from "../../models/Job.js";
 import fetch from "node-fetch";
+import { markdown2Html } from "../../services/markdown.js";
 
-export const send = ({ serviceName, newListings, notificationConfig, jobKey }) => {
-  const { priority, server, topic } = notificationConfig.find((adapter) => adapter.id === config.id).fields;
-  const job = Job.findById(jobKey);
-  const jobName = job == null ? jobKey : job.name;
-  const promises = newListings.map((newListing) => {
+export const send = ({ serviceName, listings, notificationAdapters, jobName }) => {
+  const { priority, server, topic } = notificationAdapters.find((adapter) => adapter.id === config.id).fields;
+
+  const promises = listings.map((newListing) => {
     const message = `Address: ${newListing.address} Size: ${newListing.size.replace(/2m/g, "$m^2$")} Price: ${newListing.price}`;
     return fetch(server, {
       method: "POST",

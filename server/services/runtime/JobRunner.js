@@ -23,7 +23,7 @@ async function executeJob(job) {
 
 
     jobExecutions.push(async () => {
-      await new JobRuntime(providerModule.config, job, prov.id, prov.listings.map(l => l.id))
+      await new JobRuntime(providerModule, job, prov.id, prov.listings.map(l => l.id))
         .execute()
         .then(() => Job.getJob(job.id))
         .then(addOrUpdateCommonAttributes)

@@ -11,14 +11,15 @@ import * as similarityCache from "./similarity-check/similarityCache.js";
 class JobRuntime {
   /**
    *
-   * @param providerConfig the config for the specific provider, we're going to query at the moment
+   * @param provider the provider that is currently in use
    * @param job the job that is currently running
    * @param providerId the id of the provider currently in use
    * @param jobKey key of the job that is currently running (from within the config)
    * @param knownListingsIds the ids of the listings that are already known to the provider
    */
-  constructor(providerConfig, job, providerId, knownListingsIds) {
-    this._providerConfig = providerConfig;
+  constructor(provider, job, providerId, knownListingsIds) {
+    this._providerMetaInformation = provider.metaInformation
+    this._providerConfig = provider.config;
     this._job = job;
     this._providerId = providerId;
     this._knownListingsIds = knownListingsIds || [];
@@ -56,11 +57,6 @@ class JobRuntime {
 
   async _emitSocketEvent(currentStatus) {
     jobEvents.emit("jobStatusEvent", { ...this._job, status: currentStatus });
-    await new Promise((resolve) => { // TODO remove, only here for testimng
-      setTimeout(() => {
-        resolve();
-      }, 2000);
-    });
   }
 
   async _getListings(url) {
@@ -95,14 +91,10 @@ class JobRuntime {
     return newListings;
   }
 
-  async _notify(newListings) {
-    if (newListings.length > 0) {
-      return await notify.send(this._providerId, newListings, this._job.notificationAdapters, this._job.id);
-    }
-    return newListings;
-  }
-
   async _addGeoCoordinates(newListings) {
+    if (!process.env.OPEN_CAGE_DATA_API_KEY) {
+      return newListings;
+    }
     for (const listing of newListings) {
       if (listing.address) {
         const latAndLng = await reverseGeoCoder.getCoordinatesFromAddress(listing.address);
@@ -135,6 +127,14 @@ class JobRuntime {
     });
     filteredList.forEach((filter) => similarityCache.addCacheEntry(this._job.id, filter.title));
     return filteredList;
+  }
+
+  async _notify(newListings) {
+    if (newListings.length > 0) {
+      const sendNotifications = notify.send(this._providerMetaInformation.name, newListings, this._job);
+      return Promise.all(sendNotifications).then(() => newListings);
+    }
+    return newListings;
   }
 }
 

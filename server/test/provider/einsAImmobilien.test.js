@@ -1,44 +1,75 @@
 import { expect } from 'chai';
 import * as provider from '../../provider/einsAImmobilien.js';
 import * as similarityCache from '../../services/runtime/similarity-check/similarityCache.js';
+import { mockJobData } from '../mocks/mockJob.js';
 import { get } from '../mocks/mockNotification.js';
-import { logObject, mockFredy, providerConfig } from '../utils.js';
+import { logObject, mockJobRuntime, providerConfig, validateListings } from '../utils.js';
 
 describe('#einsAImmobilien testsuite()', () => {
+
   after(() => {
     similarityCache.stopCacheCleanup();
   });
 
-  provider.init(providerConfig.einsAImmobilien, []);
+  before(() => {
+    provider.init(providerConfig.einsAImmobilien, []);
+  });
 
-  it('should test einsAImmobilien provider', async () => {
-    let notificationObj;
-    try {
-      const Fredy = await mockFredy();
-      const fredy = new Fredy(provider, null, "test-id", []);
-      const listings = await fredy.execute();
+  it('should successfully execute einsAImmobilien provider', async () => {
+    const job = mockJobData();
+    const JobRuntime = await mockJobRuntime();
 
-      expect(listings).to.be.a('array');
-      notificationObj = get();
-      logObject('Notification Object (success)', notificationObj);
+    const listings = await new JobRuntime(
+      provider,
+      job,
+      provider.metaInformation.id,
+      []
+    ).execute();
 
-      expect(notificationObj).to.be.a('object');
-      expect(notificationObj.serviceName).to.equal(provider.metaInformation.name);
+    expect(listings)
+      .to.be.an('array')
+      .that.is.not.empty;
 
-      notificationObj.payload.forEach((notify) => {
-        expect(notify.url).to.include(provider.metaInformation.baseUrl);
-        expect(notify.price).to.be.a('number');
-        expect(notify.size).to.be.a('number');
-        expect(notify.id).to.be.a('string');
-        expect(notify.title).to.be.a('string');
-        expect(notify.rooms).to.be.a('number');
-      });
+    validateListings(listings, (listing) => {
+      expect(listing).to.include.keys([
+        'id',
+        'price',
+        'size',
+        'rooms',
+        'title',
+        'imageUrl',
+        'url',
+      ]);
 
-    } catch (error) {
-      if (notificationObj) {
-        logObject('Notification Object (failure)', notificationObj);
-      }
-      throw error;
-    }
+      expect(listing.price).to.be.a('number').above(0);
+      expect(listing.size).to.be.a('number').above(0);
+      expect(listing.rooms).to.be.a('number').above(0);
+      expect(listing.title).to.be.a('string').and.not.empty;
+      expect(listing.imageUrl).to.include('https://mms.einsAImmobilien.de');
+      expect(listing.url).to.include(provider.metaInformation.baseUrl);
+    }, 0.3, 'Listings');
+
+    const notificationObj = get();
+    logObject('Notification Object', notificationObj);
+
+    expect(notificationObj)
+      .to.be.an('object')
+      .that.has.all.keys(['serviceName', 'listings', 'job']);
+
+    expect(notificationObj.serviceName).to.equal(provider.metaInformation.name);
+
+    expect(notificationObj.listings)
+      .to.be.an('array')
+      .that.is.not.empty;
+
+    validateListings(notificationObj.listings, (notify) => {
+      expect(notify.id).to.be.a('string').and.not.empty;
+      expect(notify.price).to.be.a('number').above(0);
+      expect(notify.size).to.be.a('number').above(0);
+      expect(notify.rooms).to.be.a('number').above(0);
+      expect(notify.imageUrl).to.include('https://mms.einsAImmobilien.de');
+      expect(notify.title).to.be.a('string').and.not.empty;
+      expect(notify.url).to.include(provider.metaInformation.baseUrl);
+    }, 0.3, 'Notifications');
   });
 });

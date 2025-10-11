@@ -1,7 +1,7 @@
 let tmpStore = {};
 
-export const send = (serviceName, payload) => {
-  tmpStore = { serviceName, payload };
+export const send = (serviceName, listings, job) => {
+  tmpStore = { serviceName, listings, job };
   return [Promise.resolve()];
 };
 

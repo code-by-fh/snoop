@@ -2,44 +2,73 @@ import { expect } from 'chai';
 import * as provider from '../../provider/kleinanzeigen.js';
 import * as similarityCache from '../../services/runtime/similarity-check/similarityCache.js';
 import { get } from '../mocks/mockNotification.js';
-import { logObject, mockFredy, providerConfig } from '../utils.js';
+import { logObject, mockJobRuntime, providerConfig } from '../utils.js';
 
 describe('#kleinanzeigen testsuite()', () => {
+
   after(() => {
     similarityCache.stopCacheCleanup();
   });
 
-  provider.init(providerConfig.kleinanzeigen, [], []);
+  before(() => {
+    provider.init(providerConfig.kleinanzeigen, []);
+  });
 
-  it('should test kleinanzeigen provider', async () => {
-    let notificationObj;
-    try {
-      const Fredy = await mockFredy();
-      const fredy = new Fredy(provider, null, "test-id", []);
-      const listings = await fredy.execute();
+  it('should successfully execute kleinanzeigen provider', async () => {
+    const JobRuntime = await mockJobRuntime();
 
-      expect(listings).to.be.a('array');
-      notificationObj = get();
-      logObject('Notification Object (success)', notificationObj);
+    const listings = await new JobRuntime(
+      provider,
+      {},
+      provider.metaInformation.id,
+      []
+    ).execute();
 
-      expect(notificationObj).to.be.a('object');
-      expect(notificationObj.serviceName).to.equal(provider.metaInformation.name);
+    expect(listings)
+      .to.be.an('array')
+      .that.is.not.empty;
 
-      notificationObj.payload.forEach((notify) => {
-        expect(notify.id).to.be.a('string');
-        expect(notify.title).to.be.a('string');
-        expect(notify.url).to.be.a('string');
-        expect(notify.address).to.be.a('string');
+    listings.forEach((listing) => {
+      expect(listing).to.include.keys([
+        'id',
+        'price',
+        'size',
+        'title',
+        'url',
+        'description',
+        'address',
+        'imageUrl',
+      ]);
 
-        expect(notify.title).to.not.be.empty;
-        expect(notify.url).to.include(provider.metaInformation.baseUrl);
-        expect(notify.address).to.not.be.empty;
-      });
-    } catch (error) {
-      if (notificationObj) {
-        logObject('Notification Object (failure)', notificationObj);
-      }
-      throw error;
-    }
+      expect(listing.price).to.be.a('number').above(0);
+      expect(listing.size).to.be.a('number').above(0);
+      expect(listing.rooms).to.be.a('number').above(0);
+      expect(listing.title).to.be.a('string').and.not.empty;
+      expect(listing.imageUrl).to.include(provider.metaInformation.baseUrl);
+      expect(listing.url).to.include(provider.metaInformation.baseUrl);
+    });
+
+    const notificationObj = get();
+    logObject('Notification Object', notificationObj);
+
+    expect(notificationObj)
+      .to.be.an('object')
+      .that.has.all.keys(['serviceName', 'newListings', 'notificationAdapters', 'jobId']);
+
+    expect(notificationObj.serviceName).to.equal(provider.metaInformation.name);
+
+    expect(notificationObj.newListings)
+      .to.be.an('array')
+      .that.is.not.empty;
+
+    notificationObj.newListings.forEach((notify) => {
+      expect(notify.id).to.be.a('string').and.not.empty;
+      expect(notify.price).to.be.a('number').above(0);
+      expect(notify.size).to.be.a('number').above(0);
+      expect(notify.rooms).to.be.a('number').above(0);
+      expect(notify.imageUrl).to.include(provider.metaInformation.baseUrl);
+      expect(notify.title).to.be.a('string').and.not.empty;
+      expect(notify.url).to.include(provider.metaInformation.baseUrl);
+    });
   });
 });

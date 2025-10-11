@@ -1,6 +1,5 @@
-import { markdown2Html } from "../../services/markdown.js";
-import Job from "../../models/Job.js";
 import fetch from "node-fetch";
+import { markdown2Html } from "../../services/markdown.js";
 
 const MAX_ENTITIES_PER_CHUNK = 8;
 const RATE_LIMIT_INTERVAL = 1010;
@@ -22,14 +21,12 @@ function shorten(str, len = 30) {
   return str.length > len ? str.substring(0, len) + "..." : str;
 }
 
-export const send = async ({ serviceName, newListings, notificationConfig, jobKey }) => {
-  const { token, chatId } = notificationConfig.find((adapter) => adapter.id === config.id).fields;
-  const job = await Job.findById(jobKey);
-  const jobName = job == null ? jobKey : job.name;
+export const send = async ({ serviceName, listings, notificationAdapters, jobName }) => {
+  const { token, chatId } = notificationAdapters.find((adapter) => adapter.id === config.id).fields;
   //we have to split messages into chunk, because otherwise messages are going to become too big and will fail
-  const chunks = arrayChunks(newListings, MAX_ENTITIES_PER_CHUNK);
+  const chunks = arrayChunks(listings, MAX_ENTITIES_PER_CHUNK);
   const promises = chunks.map((chunk) => {
-    let message = `<i>${jobName}</i> (${serviceName}) found <b>${newListings.length}</b> new listings:\n\n`;
+    let message = `<i>${jobName}</i> (${serviceName}) found <b>${listings.length}</b> new listings:\n\n`;
     message += chunk.map(
       (o) => `<a href='${o.link}'><b>${shorten(o.title.replace(/\*/g, ""), 45).trim()}</b></a>\n` + [o.address, o.price, o.size].join(" | ") + "\n\n"
     );
