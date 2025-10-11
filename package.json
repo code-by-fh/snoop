@@ -34,12 +34,12 @@
   },
   "homepage": "https://github.com/Doublelayer/snoop#readme",
   "scripts": {
+    "start": "concurrently -k -n BACKEND,FRONTEND -c cyan,green \"npm --prefix server run start\" \"npm --prefix client start\"",
     "install:all": "npm install",
     "clean:all": "rm -rf node_modules client/node_modules server/node_modules",
     "dev:full": "yarn run dev:docker && yarn run dev",
     "dev": "concurrently -k -n FRONTEND,BACKEND -c cyan,green \"npm run server\" \"npm run client\"",
     "dev:docker": "docker-compose -f docker-compose-dev.yml up -d --force-recreate",
-    "start": "npm run dev",
     "client": "npm --prefix client start",
     "server": "npm --prefix server run dev"
   },
