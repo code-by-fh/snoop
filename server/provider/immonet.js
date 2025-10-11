@@ -51,7 +51,6 @@ const config = {
 };
 
 export const init = (sourceConfig, blacklistTerms) => {
-  config.enabled = sourceConfig.isActive;
   config.url = sourceConfig.url;
   appliedBlackList = blacklistTerms || [];
 };
@@ -59,6 +58,7 @@ export const init = (sourceConfig, blacklistTerms) => {
 export const metaInformation = {
   name: "Immonet",
   baseUrl: "https://www.immonet.de",
+  imageBaseUrl: "https://mms.immonet.de",
   id: "immonet",
 };
 

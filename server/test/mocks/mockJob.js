@@ -1,14 +1,14 @@
 
 export const mockJobData = (overrides = {}) => ({
-  _id: 'mock-job-id',
+  id: 'mock-job-id',
   name: 'Mock Job',
   active: true,
   blacklist: [],
   providers: [
     {
-      id: 'immonet',
-      name: 'Immonet',
-      url: 'https://www.immonet.de',
+      id: 'this-is-the-id',
+      name: 'this-is-the-name',
+      url: 'https://www.this-is-the-url.de',
       listings: [],
     },
   ],

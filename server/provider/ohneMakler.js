@@ -40,7 +40,6 @@ const config = {
 };
 
 export const init = (sourceConfig, blacklistTerms) => {
-  config.enabled = sourceConfig.isActive;
   config.url = sourceConfig.url;
   appliedBlackList = blacklistTerms || [];
 };
@@ -48,7 +47,8 @@ export const init = (sourceConfig, blacklistTerms) => {
 export const metaInformation = {
   name: "OhneMakler",
   baseUrl: "https://www.ohne-makler.net",
-  id: "OhneMakler",
+  imageBaseUrl: "https://media.ohne-makler.net",
+  id: "ohneMakler",
 };
 
 export { config };

@@ -41,15 +41,14 @@ const config = {
 };
 
 export const init = (sourceConfig, blacklistTerms) => {
-  config.enabled = sourceConfig.isActive;
   config.url = sourceConfig.url;
   appliedBlackList = blacklistTerms || [];
 };
 
 export const metaInformation = {
-  name: "Wohnungboerse",
+  name: "Wohnungsboerse",
   baseUrl: "https://www.wohnungsboerse.net",
-  id: "Wohnungboerse",
+  id: "wohnungsboerse",
 };
 
 export { config };

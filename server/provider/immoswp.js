@@ -33,7 +33,6 @@ const config = {
     details: 'div.align-items-start | trim',
     title: '.js-item-title-link@title | trim',
     url: '.ci-search-result__link@href',
-    description: '.js-show-more-item-sm | removeNewline | trim',
     imageUrl: "div img@src",
   },
   normalize: normalize,
@@ -41,7 +40,6 @@ const config = {
 };
 
 export const init = (sourceConfig, blacklistTerms) => {
-  config.enabled = sourceConfig.isActive;
   config.url = sourceConfig.url;
   appliedBlackList = blacklistTerms || [];
 };
@@ -49,6 +47,7 @@ export const init = (sourceConfig, blacklistTerms) => {
 export const metaInformation = {
   name: "Immo Südwest Presse",
   baseUrl: "https://immo.swp.de",
+  imageBaseUrl: "https://cmcdn.de",
   id: "immoswp",
 };
 

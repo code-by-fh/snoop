@@ -188,7 +188,6 @@ To add a new provider to the platform, follow these steps:
    };
 
    export const init = (sourceConfig, blacklistTerms) => {
-     config.enabled = sourceConfig.isActive;
      config.url = sourceConfig.url;
    };
 

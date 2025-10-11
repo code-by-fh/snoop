@@ -3,7 +3,7 @@
  *
  * The mobile API provides the following endpoints:
  * - GET /search/total?{search parameters}: Returns the total number of listings for the given query
- *   Example: `curl -H "User-Agent: ImmoScout24_1410_30_._" https://api.mobile.immobilienscout24.de/search/total?searchType=region&realestatetype=apartmentrent&pricetype=calculatedtotalrent&geocodes=%2Fde%2Fberlin%2Fberlin `
+ *   Example: `curl -H "User-Agent: ImmoScout_27.3_26.0_._" https://api.mobile.immobilienscout24.de/search/total?searchType=region&realestatetype=apartmentrent&pricetype=calculatedtotalrent&geocodes=%2Fde%2Fberlin%2Fberlin `
  *
  * - POST /search/list?{search parameters}: Actually retrieves the listings. Body is json encoded and contains
  *   data specifying additional results (advertisements) to return. The format is as follows:
@@ -15,12 +15,12 @@
  *   ```
  *   It is not necessary to provide data for the specified keys.
  *
- *   Example: `curl -X POST 'https://api.mobile.immobilienscout24.de/search/list?pricetype=calculatedtotalrent&realestatetype=apartmentrent&searchType=region&geocodes=%2Fde%2Fberlin%2Fberlin&pagenumber=1' -H "Connection: keep-alive" -H "User-Agent: ImmoScout24_1410_30_._" -H "Accept: application/json" -H "Content-Type: application/json" -d '{"supportedResultListType": [], "userData": {}}'`
+ *   Example: `curl -X POST 'https://api.mobile.immobilienscout24.de/search/list?pricetype=calculatedtotalrent&realestatetype=apartmentrent&searchType=region&geocodes=%2Fde%2Fberlin%2Fberlin&pagenumber=1' -H "Connection: keep-alive" -H "User-Agent: ImmoScout_27.3_26.0_._" -H "Accept: application/json" -H "Content-Type: application/json" -d '{"supportedResultListType": [], "userData": {}}'`
 
  * - GET /expose/{id} - Returns the details of a listing. The response contains additional details not included in the
  *   listing response.
  *
- *   Example: `curl -H "User-Agent: ImmoScout24_1410_30_._" "https://api.mobile.immobilienscout24.de/expose/158382494"`
+ *   Example: `curl -H "User-Agent: ImmoScout_27.3_26.0_._" "https://api.mobile.immobilienscout24.de/expose/158382494"`
  *
  *
  * It is necessary to set the correct User Agent (see `getListings`) in the request header.
@@ -35,18 +35,21 @@
  *
  */
 
-import { convertWebToMobile } from '../services/runtime/immoscout/immoscout-web-translater.js';
-import logger from '../utils/logger.js';
+import logger from '#utils/logger.js';
+import {
+  convertImmoscoutListingToMobileListing,
+  convertWebToMobile,
+} from '../services/runtime/immoscout/immoscout-web-translater.js';
+import { buildHash, isOneOf } from "../utils/utils.js";
 import { extractNumber } from '../utils/numberParser.js';
-import utils, { buildHash, nullOrEmpty } from '../utils/utils.js';
 
 let appliedBlackList = [];
 
-async function getListings() {
-  const response = await fetch(config.url, {
+async function getListings(url) {
+  const response = await fetch(url, {
     method: 'POST',
     headers: {
-      'User-Agent': 'ImmoScout24_1410_30_._',
+      'User-Agent': 'ImmoScout_27.3_26.0_._',
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
@@ -55,7 +58,7 @@ async function getListings() {
     }),
   });
   if (!response.ok) {
-    logger.error(`Error fetching data from ImmoScout Mobile API: ${response.statusText}`);
+    logger.error('Error fetching data from ImmoScout Mobile API:', response.statusText);
     return [];
   }
 
@@ -64,60 +67,61 @@ async function getListings() {
     .filter((item) => item.type === 'EXPOSE_RESULT')
     .map((expose) => {
       const item = expose.item;
-      const [price, size, rooms] = item.attributes;
-
-      const listing = {
+      const [price, size] = item.attributes;
+      return {
         id: item.id,
-        price: price?.value,
-        size: size?.value,
-        rooms: rooms?.value,
+        price: extractNumber(price?.value),
+        size: extractNumber(size?.value),
         title: item.title,
-        url: `${metaInformation.baseUrl}/expose/${item.id}`,
-        imageUrl: item.titlePicture?.preview || null,
+        description: item.description || '',
+        url: `${metaInformation.baseUrl}expose/${item.id}`,
+        address: item.address?.line,
+        imageUrl: item?.titlePicture?.preview ?? null
       };
-
-      if (item.address?.lat && item.address?.lon) {
-        listing.location = {
-          lat: item.address.lat,
-          lng: item.address.lon,
-        };
-      }
-
-      if (item.address?.line) {
-        const [streetPart, cityPart] = item.address?.line.split(",")
-        listing.location.street = streetPart.trim();
-        listing.location.city = cityPart.trim();
-      }
-
-      return listing;
     });
-
 }
 
+async function isListingActive(link) {
+  const result = await fetch(convertImmoscoutListingToMobileListing(link), {
+    headers: {
+      'User-Agent': 'ImmoScout_27.3_26.0_._',
+    },
+  });
+
+  if (result.status === 200) {
+    return 1;
+  }
+
+  if (result.status === 404) {
+    return 0;
+  }
+
+  logger.warn('Unknown status for immoscout listing', link);
+  return -1;
+}
+
+function nullOrEmpty(val) {
+  return val == null || val.length === 0;
+}
 function normalize(o) {
   const title = nullOrEmpty(o.title) ? 'NO TITLE FOUND' : o.title.replace('NEU', '');
+  const address = nullOrEmpty(o.address) ? 'NO ADDRESS FOUND' : (o.address || '').replace(/\(.*\),.*$/, '').trim();
   const id = buildHash(o.id, o.price);
-  const price = extractNumber(o.price);
-  const size = extractNumber(o.size);
-  const rooms = extractNumber(o.rooms);
-
-  return Object.assign(o, { id, title, price, size, rooms });
+  return Object.assign(o, { id, title, address });
 }
-
 function applyBlacklist(o) {
-  return !utils.isOneOf(o.title, appliedBlackList);
+  return !isOneOf(o.title, appliedBlackList);
 }
-
 const config = {
   url: null,
   crawlFields: {
-    id: 'id',
-    title: 'title',
-    price: 'price',
-    size: 'size',
-    url: 'link',
-    address: 'address',
-    imageUrl: '.result-list-entry .gallery-container .gallery__image@data-lazy-src',
+    id: "",
+    price: "",
+    size: "",
+    title: "",
+    url: "",
+    address: "",
+    imageUrl: "",
   },
   // Not required - used by filter to remove and listings that failed to parse
   sortByDateParam: 'sorting=-firstactivation',
@@ -125,18 +129,16 @@ const config = {
   filter: applyBlacklist,
   getListings: getListings,
 };
-
-export const init = (sourceConfig, blacklistTerms) => {
-  config.enabled = sourceConfig.isActive;
+export const init = (sourceConfig, blacklist) => {
+  config.enabled = sourceConfig.enabled;
   config.url = convertWebToMobile(sourceConfig.url);
-  appliedBlackList = blacklistTerms || [];
+  appliedBlackList = blacklist || [];
 };
-
 export const metaInformation = {
   name: 'Immoscout',
-  baseUrl: 'https://www.immobilienscout24.de',
+  baseUrl: 'https://www.immobilienscout24.de/',
+  imageBaseUrl: "https://pictures.immobilienscout24.de",
   id: 'immoscout',
 };
 
 export { config };
-

@@ -14,7 +14,7 @@ class JobRuntime {
    * @param provider the provider that is currently in use
    * @param job the job that is currently running
    * @param providerId the id of the provider currently in use
-   * @param jobKey key of the job that is currently running (from within the config)
+   * @param jobId key of the job that is currently running (from within the config)
    * @param knownListingsIds the ids of the listings that are already known to the provider
    */
   constructor(provider, job, providerId, knownListingsIds) {
@@ -70,7 +70,7 @@ class JobRuntime {
       );
       return listings == null ? [] : listings;
     } catch (err) {
-      logger.error(err, `Error while fetching listings for provider: ${this._providerId}, jobKey: ${this._job.id}`);
+      logger.error(err, `Error while fetching listings for provider: ${this._providerId}, jobId: ${this._job.id}`);
       throw err;
     }
   }
@@ -81,13 +81,13 @@ class JobRuntime {
 
   _filter(listings) {
     const filteredListings = listings.filter(this._providerConfig.filter);
-    logger.info(`${filteredListings.length} listings after filtering for provider: ${this._providerId}, jobKey: ${this._job.id}`);
+    logger.info(`${filteredListings.length} listings after filtering for provider: ${this._providerId}, jobId: ${this._job.id}`);
     return filteredListings;
   }
 
   async _findNew(listings) {
     const newListings = listings.filter(o => !this._knownListingsIds.includes(o.id));
-    logger.info(`${newListings.length} of ${listings.length} listing new for provider: ${this._providerId}, jobKey: ${this._job.id}`);
+    logger.info(`${newListings.length} of ${listings.length} listing new for provider: ${this._providerId}, jobId: ${this._job.id}`);
     return newListings;
   }
 
@@ -99,7 +99,7 @@ class JobRuntime {
       if (listing.address) {
         const latAndLng = await reverseGeoCoder.getCoordinatesFromAddress(listing.address);
         if (latAndLng.lat && latAndLng.lng) {
-          logger.info(`Found coordinates for listing ${listing.id} for provider: ${this._providerId}, jobKey: ${this._job.id}`);
+          logger.info(`Found coordinates for listing ${listing.id} for provider: ${this._providerId}, jobId: ${this._job.id}`);
           listing.lat = latAndLng.lat;
           listing.lng = latAndLng.lng;
         }
@@ -121,7 +121,7 @@ class JobRuntime {
     const filteredList = listings.filter((listing) => {
       const similar = similarityCache.hasSimilarEntries(this._job.id, listing.title);
       if (similar) {
-        logger.info(`Filtering similar entry for job ${this._providerId} with jobKey ${this._job.id} and title: ${listing.title}`);
+        logger.info(`Filtering similar entry for job ${this._providerId} with jobId ${this._job.id} and title: ${listing.title}`);
       }
       return !similar;
     });

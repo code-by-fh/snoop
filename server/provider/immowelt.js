@@ -35,14 +35,13 @@ const config = {
     title: 'div[data-testid="cardmfe-description-box-text-test-id"]  div:nth-child(2) | removeNewline | trim',
     url: 'a@href',
     address: 'div[data-testid="cardmfe-description-box-address"] | removeNewline | trim',
-    imageUrl: 'div[data-testid="cardMfe-card-pictureBox-opacity"] img@src'
+    imageUrl: 'div[data-testid="card-mfe-picture-box-gallery-thumbnail-test-id"] img@src'
   },
   normalize: normalize,
   filter: applyBlacklist,
 };
 
 export const init = (sourceConfig, blacklistTerms) => {
-  config.enabled = sourceConfig.isActive;
   config.url = sourceConfig.url;
   appliedBlackList = blacklistTerms || [];
 };
@@ -50,6 +49,7 @@ export const init = (sourceConfig, blacklistTerms) => {
 export const metaInformation = {
   name: "Immowelt",
   baseUrl: "https://www.immowelt.de",
+  imageBaseUrl: "https://mms.immowelt.de",
   id: "immowelt",
 };
 

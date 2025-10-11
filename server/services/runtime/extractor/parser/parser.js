@@ -1,5 +1,6 @@
 import * as cheerio from 'cheerio';
 import logger from '#utils/logger.js';
+import {extractNumber } from '#utils/numberParser.js';
 
 let $ = null;
 
@@ -89,6 +90,9 @@ function applyModifiers(value, modifiers) {
       case 'removeNewline':
         value = value.replace(/\n/g, ' ');
         break;
+      case 'parseNumber':
+        value = extractNumber(value);
+        break;
       default:
         logger.warn(`Unknown modifier: ${modifier}`);
     }
@@ -96,3 +100,4 @@ function applyModifiers(value, modifiers) {
 
   return value;
 }
+

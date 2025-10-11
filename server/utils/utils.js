@@ -61,6 +61,7 @@ function buildHash(...inputs) {
         .digest('hex');
 }
 
+
 export { buildHash, duringWorkingHoursOrNotSet, getDirName, inDevMode, isOneOf, nullOrEmpty };
 export default {
     isOneOf,

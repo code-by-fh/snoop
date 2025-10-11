@@ -1,5 +1,6 @@
-import { readFile } from 'fs/promises';
 import esmock from 'esmock';
+import { readFile } from 'fs/promises';
+import logger from "../utils/logger.js";
 import { send } from './mocks/mockNotification.js';
 
 export const providerConfig = JSON.parse(await readFile(new URL('./provider/testProvider.json', import.meta.url)));
@@ -20,16 +21,20 @@ export function logObject(label, obj) {
   console.log(`=== /${label} ===\n`);
 }
 
-export function validateListings(items, validateFn, threshold = 0.3, label = 'Items') {
+export function validateListings(debug, items, validateFn, threshold = 0.3, label = 'Items') {
   const invalid = [];
 
   items.forEach((item, i) => {
     try {
       validateFn(item);
     } catch (err) {
+      if (debug) {
+        logger.error(JSON.stringify(item));
+        logger.error(err, err.stack);
+      }
       invalid.push({
         index: i,
-        id: item.id ?? '(missing id)',
+        url: item.url ?? '(missing url)',
         error: err.message
       });
     }

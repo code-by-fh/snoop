@@ -5,14 +5,15 @@ let appliedBlackList = [];
 let appliedBlacklistedDistricts = [];
 
 function normalize(o) {
-  const size = o.size ? extractNumber(o.size) : null;
   const url = `${metaInformation.baseUrl}${o.url}`;
   const id = buildHash(o.id, o.price);
   const price = extractNumber(o.price);
   const location = {
     ...(o.address && { city: o.address })
   };
-  return Object.assign(o, { id, size, url, price, location });
+  const rooms = o.rooms ? extractNumber(o.rooms.split('·')[0].trim()) : null;
+  const size = o.size ? extractNumber(o.size.split('·')[1].trim()) || o.size.split('·')[0].trim() : null;;
+  return Object.assign(o, { id, size, url, price, location, rooms });
 }
 
 function applyBlacklist(o) {
@@ -31,7 +32,8 @@ const config = {
   crawlFields: {
     id: '.aditem@data-adid | int',
     price: '.aditem-main--middle--price-shipping--price | removeNewline | trim',
-    size: '.aditem-main .text-module-end | removeNewline | trim',
+    size: '.aditem-main--middle--tags | removeNewline | trim',
+    rooms: '.aditem-main--middle--tags | removeNewline | trim',
     title: '.aditem-main .text-module-begin a | removeNewline | trim',
     url: '.aditem-main .text-module-begin a@href | removeNewline | trim',
     description: '.aditem-main .aditem-main--middle--description | removeNewline | trim',
@@ -45,11 +47,11 @@ const config = {
 export const metaInformation = {
   name: "Kleinanzeigen",
   baseUrl: "https://www.kleinanzeigen.de",
+  imageBaseUrl: "https://img.kleinanzeigen.de",
   id: "kleinanzeigen",
 };
 
 export const init = (sourceConfig, blacklistTerms, blacklistedDistricts) => {
-  config.enabled = sourceConfig.isActive;
   config.url = sourceConfig.url;
   appliedBlacklistedDistricts = blacklistedDistricts || [];
   appliedBlackList = blacklistTerms || [];
