@@ -5,6 +5,7 @@ on:
     workflows: ["test"]
     types:
       - completed
+    conclusion: [success, failure]
   workflow_dispatch:
 
 jobs:
@@ -19,7 +20,7 @@ jobs:
           curl -H "Authorization: token ${{ secrets.GH_PERSONAL_TOKEN }}" \
                https://api.github.com/gists/${{ secrets.FAILURE_GIST_ID }} \
                -o gist.json
-          count=$(jq -r '.files["fredy-failure-counter.txt"].content' gist.json | tr -d '\r')
+          count=$(jq -r '.files["snoop-failure-counter.txt"].content' gist.json | tr -d '\r')
           echo "counter=$count" >> $GITHUB_OUTPUT
 
       - name: Check test result and update counter
