@@ -57,8 +57,8 @@ jobs:
           if [ "${{ steps.test.outcome }}" != "success" ]; then
             # Pushover senden
             curl -s \
-              -F "token=${{ secrets.PUSHOVER_TOKEN }}" \
-              -F "user=${{ secrets.PUSHOVER_USER }}" \
+              -F "token=${{ secrets.PUSHOVER_API_TOKEN }}" \
+              -F "user=${{ secrets.PUSHOVER_USER_KEY }}" \
               -F "message=🚨 Puppeteer Test failed in workflow '${{ github.workflow }}' on branch '${{ github.ref_name }}'" \
               https://api.pushover.net/1/messages.json
 
