@@ -46,7 +46,6 @@ jobs:
           push: true
           tags: |
             doublelayer/snoop-backend:${{ steps.vars.outputs.TAG }}
-            doublelayer/snoop-backend:latest
           cache-from: type=gha,scope=backend
           cache-to: type=gha,mode=max,scope=backend
 
@@ -59,6 +58,5 @@ jobs:
           push: true
           tags: |
             doublelayer/snoop-frontend:${{ steps.vars.outputs.TAG }}
-            doublelayer/snoop-frontend:latest
           cache-from: type=gha,scope=frontend
           cache-to: type=gha,mode=max,scope=frontend
