@@ -56,6 +56,9 @@ jobs:
           context: client
           file: ./client/Dockerfile
           push: true
+          build-args: |
+            VITE_API_URL=https://snoop-backend.cap.dev.992011.xyz/api
+            VITE_WEBSOCKET_BASE_URL=wss://snoop-backend.cap.dev.992011.xyz
           tags: |
             doublelayer/snoop-frontend:${{ steps.vars.outputs.TAG }}
           cache-from: type=gha,scope=frontend
