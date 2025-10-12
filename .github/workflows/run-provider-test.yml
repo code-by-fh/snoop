@@ -32,8 +32,8 @@ jobs:
       - name: Debug files
         run: |
           pwd
-          ls -la ./server
-
+          ls -la
+          
       - name: Install dependencies
         run: npm ci
 
