@@ -7,7 +7,7 @@ import { BarChart3, Grid3X3, List, Plus } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { Link } from 'react-router-dom';
-import { io } from 'socket.io-client';
+import io from 'socket.io-client';
 import { deleteJob, getJobs, runJob, updateJob } from '../api';
 import JobGridView from '../components/jobs/JobGridView';
 import JobListView from '../components/jobs/JobListView';

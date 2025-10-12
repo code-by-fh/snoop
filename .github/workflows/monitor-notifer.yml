@@ -1,0 +1,57 @@
+name: monitor-notifer
+
+on:
+  workflow_run:
+    workflows: ["test"]
+    types:
+      - completed
+  workflow_dispatch:
+
+jobs:
+  monitor-failures:
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.event == 'schedule' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Get counter from Gist
+        id: get_counter
+        run: |
+          curl -H "Authorization: token ${{ secrets.GH_PERSONAL_TOKEN }}" \
+               https://api.github.com/gists/${{ secrets.FAILURE_GIST_ID }} \
+               -o gist.json
+          count=$(jq -r '.files["fredy-failure-counter.txt"].content' gist.json | tr -d '\r')
+          echo "counter=$count" >> $GITHUB_OUTPUT
+
+      - name: Check test result and update counter
+        run: |
+          current_count=${{ steps.get_counter.outputs.counter }}
+
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            conclusion="failure"
+          else
+            conclusion="${{ github.event.workflow_run.conclusion }}"
+          fi
+
+          if [ "$conclusion" == "success" ]; then
+            echo "✔️ Test war erfolgreich. Zähler wird zurückgesetzt."
+            new_count=0
+          else
+            echo "❌ Test war nicht erfolgreich. Zähler wird erhöht."
+            new_count=$((current_count + 1))
+          fi
+
+          if [ "$new_count" -ge 3 ]; then
+            echo "🔔 3 Fehler in Folge – sende Pushover"
+            curl -s \
+              -F "token=${{ secrets.PUSHOVER_API_TOKEN }}" \
+              -F "user=${{ secrets.PUSHOVER_USER_KEY }}" \
+              -F "title=❌ Fredy Crawler Tests fehlgeschlagen" \
+              -F "message=Fredy Tests sind 3x in Folge fehlgeschlagen." \
+              https://api.pushover.net/1/messages.json
+            new_count=0
+          fi
+
+          curl -X PATCH https://api.github.com/gists/${{ secrets.FAILURE_GIST_ID }} \
+            -H "Authorization: token ${{ secrets.GH_PERSONAL_TOKEN }}" \
+            -d "{\"files\":{\"fredy-failure-counter.txt\":{\"content\":\"$new_count\"}}}"
+

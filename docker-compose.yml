@@ -1,0 +1,46 @@
+services:
+  backend:
+    build:
+      context: server
+      dockerfile: Dockerfile
+    container_name: snoop-backend
+    ports:
+      - "5000:5000"
+      - "8888:8888"
+    environment:
+      - MONGODB_URI=mongodb://snoop-mongodb:27017/snoop
+      - MONGO_DB_DEBUG=false
+      - JWT_SECRET=your_super_secret_key_that_is_long_and_complex_123!@#
+      - LOG_LEVEL=info
+      - NODE_ENV=production
+    networks:
+      - snoop
+
+  frontend:
+    build:
+      context: client
+      dockerfile: Dockerfile
+    container_name: snoop-frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+  
+  mongodb:
+    image: mongo:6.0
+    container_name: snoop-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/db
+    networks:
+      - snoop
+
+networks:
+  snoop:
+    driver: bridge
+
+volumes:
+  mongo-data:
+    driver: local

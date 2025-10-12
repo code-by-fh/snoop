@@ -24,7 +24,7 @@ import notificationAdapterRoutes from './routes/notificationAdapterRoutes.js';
 import providerRoutes from './routes/providerRoutes.js';
 import statsRoutes from './routes/statsRoutes.js';
 import healthRouter from "./routes/healthRouter.js";
-import { setupSocketServer } from './services/socket/socketServer.js';
+import { setupSocketServer } from './services/socket/SocketServer.js';
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI)

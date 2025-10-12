@@ -1,10 +1,6 @@
 {
   "name": "snoop",
   "private": true,
-  "workspaces": [
-    "client",
-    "server"
-  ],
   "version": "0.1.0",
   "description": "[S]earch & [N]avigate [O]ffers [O]n [P]latform",
   "author": "Doublelayer",
