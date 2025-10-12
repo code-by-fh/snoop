@@ -25,8 +25,8 @@ export const send = ({ serviceName, listings, notificationAdapters }) => {
   const { token, user } = notificationAdapters.find((adapter) => adapter.id === config.id).fields;
   return listings.map(async (payload, index) => {
     const form = new FormData();
-    form.append("token", token);
-    form.append("user", user);
+    form.append("token", token.value);
+    form.append("user", user.value);
 
     if (payload.image || payload.lazyImage) {
       const imageBuffer = await getImageBuffer(payload.image || payload.lazyImage);
