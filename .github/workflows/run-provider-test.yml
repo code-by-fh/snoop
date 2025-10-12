@@ -52,10 +52,17 @@ jobs:
         continue-on-error: true
       
       - name: Send Pushover notification if test failed
-        if: failure()
+        if: always()
         run: |
-          curl -s \
-            -F "token=${{ secrets.PUSHOVER_TOKEN }}" \
-            -F "user=${{ secrets.PUSHOVER_USER }}" \
-            -F "message=🚨 Puppeteer Test failed in workflow '${{ github.workflow }}' on branch '${{ github.ref_name }}'" \
-            https://api.pushover.net/1/messages.json
+          if [ "${{ job.status }}" != "success" ]; then
+            # Pushover senden
+            curl -s \
+              -F "token=${{ secrets.PUSHOVER_TOKEN }}" \
+              -F "user=${{ secrets.PUSHOVER_USER }}" \
+              -F "message=🚨 Puppeteer Test failed in workflow '${{ github.workflow }}' on branch '${{ github.ref_name }}'" \
+              https://api.pushover.net/1/messages.json
+
+            # Workflow endgültig fehlschlagen lassen
+            echo "Forcing workflow failure because tests failed"
+            exit 1
+          fi
