@@ -54,7 +54,7 @@ jobs:
       - name: Send Pushover notification if test failed
         if: always()
         run: |
-          if [ "${{ job.status }}" != "success" ]; then
+          if [ "${{ steps.test.outcome }}" != "success" ]; then
             # Pushover senden
             curl -s \
               -F "token=${{ secrets.PUSHOVER_TOKEN }}" \
