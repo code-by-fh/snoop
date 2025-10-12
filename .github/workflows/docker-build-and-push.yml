@@ -3,7 +3,7 @@ name: docker-build-and-push
 on:
   push:
     tags:
-      - 'v*'
+      - '*'
     branches:
       - 'main'
 
