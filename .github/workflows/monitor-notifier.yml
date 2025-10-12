@@ -1,0 +1,24 @@
+name: monitor-notifier
+
+on:
+  workflow_run:
+    workflows: ["test"]
+    types:
+      - completed
+  workflow_dispatch:
+
+jobs:
+  monitor-failures:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Send Pushover if test workflow failed
+        if: ${{ github.event.workflow_run.conclusion != 'success' }}
+        run: |
+          echo "❌ Test workflow '${{ github.event.workflow_run.name }}' on Branch '${{ github.event.workflow_run.head_branch }}' failed. Sending Pushover notification..."
+          curl -s \
+            -F "token=${{ secrets.PUSHOVER_API_TOKEN }}" \
+            -F "user=${{ secrets.PUSHOVER_USER_KEY }}" \
+            -F "title=❌ Test Workflow Failed" \
+            -F "message=Workflow '${{ github.event.workflow_run.name }}' on Branch '${{ github.event.workflow_run.head_branch }}' failed." \
+            https://api.pushover.net/1/messages.json
