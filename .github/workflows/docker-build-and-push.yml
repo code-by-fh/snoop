@@ -37,11 +37,28 @@ jobs:
             echo "TAG=latest" >> $GITHUB_OUTPUT
           fi
 
-      - name: Build and Push with Cache
+      # --- Backend Build ---
+      - name: Build and Push Backend
         uses: docker/build-push-action@v5
         with:
-          context: .
+          context: ./server
+          file: ./server/Dockerfile
           push: true
-          tags: doublelayer/snoop:${{ steps.vars.outputs.TAG }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          tags: |
+            doublelayer/snoop-backend:${{ steps.vars.outputs.TAG }}
+            doublelayer/snoop-backend:latest
+          cache-from: type=gha,scope=backend
+          cache-to: type=gha,mode=max,scope=backend
+
+      # --- Frontend Build ---
+      - name: Build and Push Frontend
+        uses: docker/build-push-action@v5
+        with:
+          context: ./client
+          file: ./client/Dockerfile
+          push: true
+          tags: |
+            doublelayer/snoop-frontend:${{ steps.vars.outputs.TAG }}
+            doublelayer/snoop-frontend:latest
+          cache-from: type=gha,scope=frontend
+          cache-to: type=gha,mode=max,scope=frontend
