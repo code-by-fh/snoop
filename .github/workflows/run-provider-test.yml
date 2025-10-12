@@ -62,7 +62,6 @@ jobs:
               -F "message=🚨 Puppeteer Test failed in workflow '${{ github.workflow }}' on branch '${{ github.ref_name }}'" \
               https://api.pushover.net/1/messages.json
 
-            # Workflow endgültig fehlschlagen lassen
             echo "Forcing workflow failure because tests failed"
             exit 1
           fi

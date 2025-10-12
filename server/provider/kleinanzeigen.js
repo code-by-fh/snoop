@@ -11,8 +11,10 @@ function normalize(o) {
   const location = {
     ...(o.address && { city: o.address })
   };
-  const rooms = o.rooms ? extractNumber(o.rooms.split('·')[0].trim()) : null;
-  const size = o.size ? extractNumber(o.size.split('·')[1].trim()) || o.size.split('·')[0].trim() : null;;
+  const splitSizeRooms = o.size.split('·');
+  const rooms = o.rooms && splitSizeRooms[1] ? extractNumber(o.rooms.split('·')[0].trim()) : null;
+  const size = o.size && splitSizeRooms[1] ? extractNumber(o.size.split('·')[1].trim()) : null;
+  o.size.split('·')[6].trim()
   return Object.assign(o, { id, size, url, price, location, rooms });
 }
 
