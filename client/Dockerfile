@@ -22,7 +22,6 @@ COPY --from=builder /app/dist ./dist
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
-USER node
 EXPOSE 3000
 
 ENTRYPOINT ["sh", "/usr/local/bin/docker-entrypoint.sh"]
