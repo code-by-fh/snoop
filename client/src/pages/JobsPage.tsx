@@ -14,7 +14,7 @@ import JobListView from '../components/jobs/JobListView';
 import { useViewPreference } from '../hooks/useViewPreference';
 import { Job } from '../types';
 
-const socket = io(import.meta.env.VITE_WEBSOCKET_BASE_URL || 'http://localhost:8888', {
+const socket = io(window.__WS_URL__  || 'http://localhost:8888', {
   transports: ['websocket'],
   autoConnect: true,
 });
