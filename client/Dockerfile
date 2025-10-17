@@ -5,6 +5,13 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm ci
 COPY . .
+
+ARG VITE_API_URL
+ENV VITE_API_URL=${VITE_API_URL}
+
+ARG VITE_WS_URL
+ENV VITE_WS_URL=${VITE_WS_URL}
+
 RUN npm run build
 
 
@@ -19,10 +26,7 @@ ENV PORT=3000
 RUN npm install -g serve
 
 COPY --from=builder /app/dist ./dist
-COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
-RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
 EXPOSE 3000
 
-ENTRYPOINT ["sh", "/usr/local/bin/docker-entrypoint.sh"]
 CMD ["serve", "-s", "dist", "-l", "3000"]

@@ -2,12 +2,11 @@ import axios from 'axios';
 import { Job, Listing, ListingsApiResponse, NotificationAdapter, Settings } from './types';
 import { JobStatistics, Statistics } from './types/statistic';
 import { User } from './types/user';
-import { getRuntimeConfig, loadRuntimeConfig } from './configLoader';
 
-await loadRuntimeConfig();
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 const api = axios.create({
-  baseURL: getRuntimeConfig().API_URL,
+  baseURL: API_BASE_URL,
 });
 
 api.interceptors.request.use(
