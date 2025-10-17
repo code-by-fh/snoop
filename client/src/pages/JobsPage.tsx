@@ -13,8 +13,9 @@ import JobGridView from '../components/jobs/JobGridView';
 import JobListView from '../components/jobs/JobListView';
 import { useViewPreference } from '../hooks/useViewPreference';
 import { Job } from '../types';
+import { getRuntimeConfig } from '@/configLoader';
 
-const socket = io(window.__WS_URL__  || 'http://localhost:8888', {
+const socket = io(getRuntimeConfig().WS_URL, {
   transports: ['websocket'],
   autoConnect: true,
 });

@@ -2,13 +2,12 @@ import axios from 'axios';
 import { Job, Listing, ListingsApiResponse, NotificationAdapter, Settings } from './types';
 import { JobStatistics, Statistics } from './types/statistic';
 import { User } from './types/user';
-import { loadConfig } from './configLoader';
+import { getRuntimeConfig, loadRuntimeConfig } from './configLoader';
 
-
-const config = await loadConfig();
+await loadRuntimeConfig();
 
 const api = axios.create({
-  baseURL: config.API_URL,
+  baseURL: getRuntimeConfig().API_URL,
 });
 
 api.interceptors.request.use(
