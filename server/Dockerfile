@@ -30,9 +30,10 @@ COPY --from=builder /app /app
 
 RUN npm install -g pm2
 
-EXPOSE 9998
+EXPOSE 5000
+EXPOSE 8888
 
 HEALTHCHECK --interval=30s --timeout=10s --retries=3 --start-period=30s \
-    CMD curl -fsS http://localhost:9998/health || echo "Healthcheck failed" >&2 || exit 1
+    CMD curl -fsS http://localhost:5000/health || echo "Healthcheck failed" >&2 || exit 1
 
 CMD ["pm2-runtime", "server.js"]

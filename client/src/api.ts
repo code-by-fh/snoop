@@ -2,11 +2,13 @@ import axios from 'axios';
 import { Job, Listing, ListingsApiResponse, NotificationAdapter, Settings } from './types';
 import { JobStatistics, Statistics } from './types/statistic';
 import { User } from './types/user';
+import { loadConfig } from './configLoader';
 
-const API_BASE_URL = window.__API_URL__ || 'http://localhost:5000/api';
+
+const config = await loadConfig();
 
 const api = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: config.API_URL,
 });
 
 api.interceptors.request.use(
