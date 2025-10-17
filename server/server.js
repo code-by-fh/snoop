@@ -1,30 +1,31 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
+import logger from '#utils/logger.js';
 import cors from 'cors';
 import express from 'express';
 import helmet from 'helmet';
+import http from 'http';
 import mongoose from 'mongoose';
 import authMiddleware from './middleware/authMiddleware.js';
 import { errorHandler } from "./middleware/errorHandler.js";
-import Settings from "./models/Settings.js";
-import { startRuntime } from './services/runtime/scheduler.js';
 import { requestLogger } from './middleware/requestLogger.js';
-import { initDatabase } from './seed/init.js'
-import logger from '#utils/logger.js';
+import Settings from "./models/Settings.js";
+import { initDatabase } from './seed/init.js';
+import { startRuntime } from './services/runtime/scheduler.js';
 
 // Import routes
 import adminSettingsRoutes from './routes/adminSettingsRoutes.js';
 import adminUserRoutes from './routes/adminUserRoutes.js';
-import userRoutes from './routes/userRoutes.js';
 import authRoutes from './routes/authRoutes.js';
+import healthRouter from "./routes/healthRouter.js";
 import jobRoutes from './routes/jobRoutes.js';
 import listingRoutes from './routes/listingRoutes.js';
 import notificationAdapterRoutes from './routes/notificationAdapterRoutes.js';
 import providerRoutes from './routes/providerRoutes.js';
 import statsRoutes from './routes/statsRoutes.js';
-import healthRouter from "./routes/healthRouter.js";
-import { setupSocketServer } from './services/socket/SocketServer.js';
+import userRoutes from './routes/userRoutes.js';
+import { setupSocketServer } from './socketServer.js';
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI)
@@ -36,7 +37,6 @@ if (process.env.NODE_ENV !== 'production' && process.env.MONGO_DB_DEBUG === 'tru
 }
 
 await initDatabase();
-await setupSocketServer();
 
 const settings = await Settings.findOne({})
   .then((settings) => settings.toJSON())
@@ -71,8 +71,11 @@ app.use("/health", healthRouter);
 app.use(errorHandler);
 
 const PORT = settings.port || 5000;
-app.listen(PORT, () => {
-  logger.info(`Server running on port ${PORT}`);
+
+const server = http.createServer(app);
+const io = setupSocketServer(server);
+server.listen(PORT, () => {
+  logger.info(`HTTP + Socket.IO server running on port ${PORT} (WebSocket path: /ws)`);
 });
 
 export default app;
