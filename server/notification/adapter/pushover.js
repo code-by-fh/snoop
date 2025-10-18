@@ -21,48 +21,48 @@ async function getImageBuffer(url) {
   }
 }
 
-export const send = ({ serviceName, listings, notificationAdapters }) => {
-  const { token, user } = notificationAdapters.find((adapter) => adapter.id === config.id).fields;
-  return listings.map(async (payload, index) => {
-    const form = new FormData();
-    form.append("token", token.value);
-    form.append("user", user.value);
+export const send = async ({ serviceName, listings, notificationAdapters }) => {
+  const { token, user, device } = notificationAdapters.find((adapter) => adapter.id === config.id).fields;
 
-    if (payload.image || payload.lazyImage) {
-      const imageBuffer = await getImageBuffer(payload.image || payload.lazyImage);
-      if (imageBuffer) form.append("attachment", imageBuffer, { filename: "image.jpg" });
-    }
+  const results = await Promise.all(
+    listings.map(async (newListing) => {
+      const title = `${serviceName}: ${newListing.title}`;
+      const message = `Address: ${newListing.address}\nSize: ${newListing.size}\nPrice: ${newListing.price}\nLink: ${newListing.url}`;
 
-    const address = getDefaultOrUnknown(payload.address);
-    const price = getDefaultOrUnknown(payload.price);
-    const size = getDefaultOrUnknown(payload.size);
-    const description = getDefaultOrUnknown(payload.description);
+      const form = new FormData();
+      form.append('token', token?.value?.trim());
+      form.append('user', user?.value?.trim());
+      form.append('title', title);
+      form.append('message', message);
+      if (device) form.append('device', device);
 
-    const msg = `${serviceName} | ${payload.title}\n\nAdresse: ${address} \nPreis: ${price} \nWohnfläche: ${size} \n\nBeschreibung: ${description}\n\n${payload.link}`;
-
-    form.append("message", msg);
-
-    /**
-     * This is to not break the rate limit. It is to only send 1 message per second
-     */
-
-    setTimeout(async () => {
-      try {
-        const response = await fetch("https://api.pushover.net/1/messages.json", {
-          method: "POST",
-          body: form,
-          headers: form.getHeaders(),
-        });
-        if (response.ok) {
-          const jsonResponse = await response.json();
-          logger.info(`Message sent successfully: ${jsonResponse}`,);
-        }
-      } catch (error) {
-        logger.error(error, "Error sending message to Pushover:");
+      // Try to attach image if available
+      if (listings.image || listings.lazyImage) {
+        const imageBuffer = await getImageBuffer(listings.image || listings.lazyImage);
+        if (imageBuffer) form.append("attachment", imageBuffer, { filename: "image.jpg" });
       }
-    }, 1000 * index);
-  });
+
+      const res = await fetch('https://api.pushover.net/1/messages.json', {
+        method: 'POST',
+        body: form,
+      });
+
+      return res.json();
+    }),
+  );
+
+  const errors = results
+    .map((r) => (r.errors && r.errors.length > 0 ? r.errors.join(', ') : null))
+    .filter((e) => e !== null);
+
+  if (errors.length > 0) {
+    return Promise.reject(errors.join('; '));
+  }
+
+  return results;
+
 };
+
 
 export const config = {
   id: "pushover",
