@@ -27,6 +27,12 @@ RUN npm install -g serve
 
 COPY --from=builder /app/dist ./dist
 
+COPY env.sh /docker-entrypoint.d/env.sh
+RUN dos2unix /docker-entrypoint.d/env.sh
+RUN chmod +x /docker-entrypoint.d/env.sh
+
+ENTRYPOINT ["/docker-entrypoint.sh"]
+
 EXPOSE 3000
 
 CMD ["serve", "-s", "dist", "-l", "3000"]

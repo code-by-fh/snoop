@@ -6,7 +6,6 @@ services:
     container_name: snoop-backend
     ports:
       - "5000:5000"
-      - "8888:8888"
     environment:
       - MONGODB_URI=mongodb://snoop-mongodb:27017/snoop
       - MONGO_DB_DEBUG=false
@@ -23,6 +22,11 @@ services:
     container_name: snoop-frontend
     ports:
       - "3000:3000"
+    environment:
+      - VITE_API_URL=http://snoop-backend:5000
+      - VITE_WS_URL=ws://snoop-backend:5000/ws
+    networks:
+      - snoop
     depends_on:
       - backend
   

@@ -58,8 +58,5 @@ jobs:
           push: true
           tags: |
             doublelayer/snoop-frontend:${{ steps.vars.outputs.TAG }}
-          build-args: |
-            VITE_API_URL=${{ secrets.VITE_API_URL }}
-            VITE_WS_URL=${{ secrets.VITE_WS_URL }}
           cache-from: type=gha,scope=frontend
           cache-to: type=gha,mode=max,scope=frontend
