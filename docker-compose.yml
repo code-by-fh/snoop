@@ -25,8 +25,8 @@ services:
     environment:
       - APP_PREFIX=SNOOP_
       - ASSET_DIR=/dist
-      - SNOOP_API_URL=http://localhost:5000
-      - SNOOP_WS_URL=http://localhost:5000/ws
+      - SNOOP_API_URL=http://localhost:5000/api
+      - SNOOP_WS_URL=http://localhost:5000
     networks:
       - snoop
     depends_on:
