@@ -9,7 +9,8 @@ import {
   Settings,
   UserCircle,
   Users,
-  X
+  X,
+  Megaphone
 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { Toaster } from 'react-hot-toast';
@@ -41,7 +42,8 @@ const Layout: React.FC = () => {
     { icon: Hammer, label: 'Jobs', path: '/jobs', allowedRoles: ['user', 'admin'] },
     { icon: List, label: 'Listings', path: '/listings', allowedRoles: ['user', 'admin'] },
     { icon: Users, label: 'Users', path: '/users', allowedRoles: ['admin'] },
-    { icon: Settings, label: 'Settings', path: '/settings', allowedRoles: ['admin'] }
+    { icon: Settings, label: 'Settings', path: '/settings', allowedRoles: ['admin'] },
+    { icon: Megaphone, label: 'Notifications', path: '/notifications', allowedRoles: ['admin'] }
   ];
 
   const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);

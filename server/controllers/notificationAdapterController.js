@@ -1,6 +1,68 @@
 import { getAvailableNotificators } from "../notification/adapter/index.js";
+import logger from "#utils/logger.js";
 
 export const getAvailableNotificationAdapters = async (req, res) => {
+    try {
+        const notificators = getAvailableNotificators();
+        const configs = Object.values(notificators).map(provider => provider.config);
+        res.status(200).json(configs);
+    } catch (error) {
+        logger.error(error, "Error fetching notification adapters");
+        res.status(500).json({ message: 'Failed to fetch adapters', error: error.message });
+    }
+};
+
+export const sendTestNotification = async (req, res) => {
+  const { adapterId } = req.params;
+  const adapterConfig = req.body;
+
+  try {
     const notificators = getAvailableNotificators();
-    res.status(200).json(Object.values(notificators).map(provider => provider.config));
-}
+    const adapter = notificators[adapterId];
+
+    if (!adapter) {
+      return res.status(404).json({ message: `Adapter ${adapterId} not found` });
+    }
+
+    const listings = [
+      {
+        title: "Test Notification",
+        address: "k.A.",
+        price: "k.A.",
+        size: "k.A.",
+        description: "This is a test notification sent by the system.",
+        link: "https://example.com",
+        image: null,
+      },
+    ];
+
+    const formattedFields = {};
+    if (adapterConfig && typeof adapterConfig === "object") {
+      for (const [key, value] of Object.entries(adapterConfig)) {
+        formattedFields[key] = { value };
+      }
+    }
+
+    await adapter.send({
+      serviceName: adapter.config.name,
+      listings,
+      notificationAdapters: [
+        {
+          id: adapterId,
+          fields: formattedFields,
+        },
+      ],
+    });
+
+    res.status(200).json({ message: "Test notification sent successfully" });
+  } catch (error) {
+    logger.error(error, `Error sending test notification for adapter ${adapterId}`);
+    res.status(500).json({
+      message: "Failed to send test notification",
+      error: error.message,
+    });
+  }
+};
+
+
+

@@ -68,6 +68,7 @@ export const getJobStats = (jobId: string) => api.get<JobStatistics>(`/statistic
 // Notification Adapter-related API methods
 export const getNotificationAdapterConfig = (adapterId: string) => api.get(`/notificationAdapters/${adapterId}`);
 export const getAvailableNotificationAdapters = () => api.get<NotificationAdapter[]>(`/notificationAdapters`);
+export const sendTestNotification = (adapterId: string, fields?: Record<string, any>) => api.post(`/notificationAdapters/${adapterId}/test`, fields || {});
 
 // Provider-related API methods
 export const getProviders = () => api.get('/providers');

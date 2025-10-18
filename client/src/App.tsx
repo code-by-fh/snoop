@@ -13,6 +13,7 @@ import JobsPage from './pages/JobsPage';
 import JobStatisticsPage from './pages/JobStatisticsPage';
 import ListingsPage from './pages/ListingsPage';
 import SettingsPage from './pages/SettingsPage';
+import NotificationsPage from './pages/NotificationsPage';
 import UsersPage from './pages/UsersPage';
 
 import 'mapbox-gl/dist/mapbox-gl.css';
@@ -41,6 +42,7 @@ const App: React.FC = () => {
               <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
                 <Route path="users" element={<UsersPage />} />
                 <Route path="settings" element={<SettingsPage />} />
+                <Route path="notifications" element={<NotificationsPage />} />
               </Route>
 
               {/* Other Protected Routes */}
