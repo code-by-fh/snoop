@@ -24,7 +24,7 @@ export const createUser = async (req, res) => {
 
     try {
         logger.info('Creating user with body:', req.body);
-        const { username, email, password, role, firstName, lastName } = req.body;
+        const { username, email, password, role } = req.body;
 
         const existingUser = await User.findOne({ $or: [{ email }, { username }] });
         if (existingUser) {
@@ -35,9 +35,7 @@ export const createUser = async (req, res) => {
             username,
             email,
             password,
-            role: role || 'user',
-            firstName,
-            lastName
+            role: role || 'user'
         });
 
         await newUser.save();
@@ -47,6 +45,7 @@ export const createUser = async (req, res) => {
 
         res.status(201).json(userResponse);
     } catch (error) {
+        logger.error(error, 'Error creating user:');
         res.status(500).json({ message: 'Error creating user', error: error.message });
     }
 }
@@ -95,26 +94,34 @@ export const updateUser = async (req, res) => {
     }
 
     try {
-        const { username, email, role, firstName, lastName } = req.body;
+        const { username, email, role, password } = req.body;
+        const userId = req.params.id;
 
-        const user = await User.findById(req.params.id);
-        if (!user) {
-            return res.status(404).json({ message: 'User not found' });
+        let user = await User.findById(userId);
+
+        if (user) {
+            if (username !== undefined) user.username = username;
+            if (email !== undefined) user.email = email;
+            if (role !== undefined && req.user.role === 'admin' && user.id !== req.user.id) user.role = role;
+            if (password !== undefined) user.password = password;
+            await user.save();
+        } else {
+            user = new User({
+                _id: userId,
+                username,
+                email,
+                role,
+                password,
+            });
+            await user.save();
         }
-
-        if (username !== undefined) user.username = username;
-        if (email !== undefined) user.email = email;
-        if (role !== undefined) user.role = role;
-        if (firstName !== undefined) user.firstName = firstName;
-        if (lastName !== undefined) user.lastName = lastName;
-
-        await user.save();
 
         const userResponse = user.toObject();
         delete userResponse.password;
 
         res.json(userResponse);
     } catch (error) {
-        res.status(500).json({ message: 'Error updating user', error: error.message });
+        logger.error(error, 'Error updating or creating user:');
+        res.status(500).json({ message: 'Error updating or creating user', error: error.message });
     }
 };

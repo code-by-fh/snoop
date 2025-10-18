@@ -100,7 +100,10 @@ const Map: React.FC<MapProps> = ({ listings, onSelect, selectedListing }) => {
           e.stopPropagation();
           if (!listing.location) return;
           map.flyTo({
-            center: [listing.location.lng, listing.location.lat],
+            center: [
+              listing.location?.lng ?? 0,
+              listing.location?.lat ?? 0,
+            ],
             zoom: 8,
             speed: 1.2,
             curve: 1.2,

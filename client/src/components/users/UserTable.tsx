@@ -73,13 +73,13 @@ const UserTable: React.FC<UserTableProps> = ({ users, onEdit, onDelete }) => {
                   </span>
                 </td>
                 <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500 dark:text-gray-300">
-                  {new Date(user.created_at).toLocaleDateString()}
+                  {new Date(user.createdAt).toLocaleDateString()}
                 </td>
-                <td className="whitespace-nowrap px-6 py-4 text-sm font-medium">
-                  <div className="flex space-x-2">
+                <td className="whitespace-nowrap px-6 py-6 text-sm font-medium">
+                  <div className="flex space-x-4">
                     <button
                       onClick={() => onEdit(user)}
-                      className="text-blue-600 dark:text-blue-500  rounded-lg hover:text-blue-900 dark:hover:text-blue-900"
+                      className="text-blue-600 dark:text-blue-500  rounded-lg hover:text-blue-800 dark:hover:text-blue-300"
                       title="Edit User"
                     >
                       <Edit size={18} />

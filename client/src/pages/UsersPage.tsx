@@ -7,14 +7,17 @@ import UserTable from '../components/users/UserTable';
 import { User, UserCreate, UserUpdate } from '../types/user';
 import toast from 'react-hot-toast';
 
+interface Error {
+  message: string;
+  error: string;
+}
+
 const UsersPage: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
+  const [error, setError] = useState<Error | null>(null);
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
-
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [userToDeleteId, setUserToDeleteId] = useState<string | null>(null);
 
@@ -25,7 +28,7 @@ const UsersPage: React.FC = () => {
       const response = await getUsers();
       setUsers(response.data);
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to fetch users');
+      setError(err?.response?.data as Error);
     } finally {
       setLoading(false);
     }
@@ -37,11 +40,13 @@ const UsersPage: React.FC = () => {
 
   const handleCreateClick = () => {
     setCurrentUser(null);
+    setError(null);
     setIsFormModalOpen(true);
   };
 
   const handleEditClick = (user: User) => {
     setCurrentUser(user);
+    setError(null);
     setIsFormModalOpen(true);
   };
 
@@ -59,23 +64,21 @@ const UsersPage: React.FC = () => {
         await createUser(userData);
       }
       fetchUsers();
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to save user');
-    } finally {
       setIsFormModalOpen(false);
+    } catch (err: any) {
+      setError(err?.response?.data as Error);
     }
   };
 
   const handleConfirmDelete = async () => {
     if (!userToDeleteId) return;
-
     setError(null);
     try {
       await deleteUser(userToDeleteId);
       fetchUsers();
       toast('User deleted successfully!', { icon: '🗑️' });
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to delete user');
+      setError(err?.response?.data as Error);
     } finally {
       setIsConfirmModalOpen(false);
       setUserToDeleteId(null);
@@ -85,14 +88,9 @@ const UsersPage: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        {/* Header */}
-        <div >
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-            User Management
-          </h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-1">
-            Effortlessly manage your user accounts
-          </p>
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">User Management</h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-1">Effortlessly manage your user accounts</p>
         </div>
         <button
           onClick={handleCreateClick}
@@ -103,28 +101,20 @@ const UsersPage: React.FC = () => {
         </button>
       </div>
 
-      {/* Status Messages */}
       {loading && (
         <div className="text-center text-gray-500 dark:text-gray-300">Loading users...</div>
       )}
 
-      {error && (
-        <div className="rounded-md bg-red-100 dark:bg-red-900 p-4 text-sm text-red-700 dark:text-red-200 border border-red-300 dark:border-red-700">
-          Error: {error}
-        </div>
-      )}
-
-      {/* Table */}
-      {!loading && !error && (
+      {!loading && (
         <UserTable users={users} onEdit={handleEditClick} onDelete={handleDeleteClick} />
       )}
 
-      {/* Modals */}
       <UserFormModal
         isOpen={isFormModalOpen}
         onClose={() => setIsFormModalOpen(false)}
         onSave={handleSaveUser}
         user={currentUser}
+        apiError={error ? `${error.error}` : null}
       />
 
       <ConfirmationModal

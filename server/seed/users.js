@@ -5,8 +5,6 @@ export const adminUser = {
     username: 'admin',
     email: 'admin@snnop.com',
     password: 'admin123',
-    firstName: 'Admin',
-    lastName: 'User',
     role: 'admin'
   }
 
@@ -19,8 +17,6 @@ export function generateUsers() {
     username: 'user',
     email: 'user@snnop.com',
     password: 'user123',
-    firstName: 'User',
-    lastName: 'User',
     role: 'user'
   });
 
@@ -29,8 +25,6 @@ export function generateUsers() {
       username: faker.internet.userName(),
       email: faker.internet.email(),
       password: "Password123!",
-      firstName: faker.person.firstName(),
-      lastName: faker.person.lastName(),
       role: 'user'
     });
   }

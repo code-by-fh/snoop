@@ -22,26 +22,10 @@ const UserSchema = new mongoose.Schema({
     required: true,
     minlength: 6
   },
-  firstName: {
-    type: String,
-    trim: true
-  },
-  lastName: {
-    type: String,
-    trim: true
-  },
   role: {
     type: String,
     enum: ['user', 'admin'],
     default: 'user'
-  },
-  created_at: {
-    type: Date,
-    default: Date.now
-  },
-  updated_at: {
-    type: Date,
-    default: Date.now
   }
 }, {
   timestamps: true,
@@ -56,8 +40,43 @@ const UserSchema = new mongoose.Schema({
   }
 });
 
+const PASSWORD_POLICY = {
+  minLength: 8,
+  requireUppercase: true,
+  requireLowercase: true,
+  requireNumber: true,
+  requireSpecialChar: true,
+};
+
+function validatePassword(password) {
+  const errors = [];
+
+  if (password.length < PASSWORD_POLICY.minLength)
+    errors.push(`Password must be at least ${PASSWORD_POLICY.minLength} characters long.`);
+  if (PASSWORD_POLICY.requireUppercase && !/[A-Z]/.test(password))
+    errors.push('Password must contain at least one uppercase letter.');
+  if (PASSWORD_POLICY.requireLowercase && !/[a-z]/.test(password))
+    errors.push('Password must contain at least one lowercase letter.');
+  if (PASSWORD_POLICY.requireNumber && !/[0-9]/.test(password))
+    errors.push('Password must contain at least one number.');
+  if (PASSWORD_POLICY.requireSpecialChar && !/[!@#$%^&*(),.?":{}|<>]/.test(password))
+    errors.push('Password must contain at least one special character.');
+
+  return errors;
+}
+
+
 UserSchema.pre('save', async function (next) {
   if (!this.isModified('password')) return next();
+
+  if (this.password) {
+    const validationErrors = validatePassword(this.password);
+    if (validationErrors.length > 0) {
+      const err = new Error(validationErrors.join('\n'));
+      err.name = 'PasswordValidationError';
+      return next(err);
+    }
+  }
 
   try {
     const salt = await bcrypt.genSalt(10);

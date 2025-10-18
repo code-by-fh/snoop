@@ -1,21 +1,28 @@
-import { X } from 'lucide-react';
+import { X, Eye, EyeOff } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { User, UserCreate, UserUpdate } from '../../types/user';
+import { useAuth } from '@/context/AuthContext';
 
 interface UserFormModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSave: (userData: UserCreate | UserUpdate) => void;
-  user?: User | null; // If user is provided, it's an edit operation
+  user?: User | null;
+  apiError?: string | null;
 }
 
-const UserFormModal: React.FC<UserFormModalProps> = ({ isOpen, onClose, onSave, user }) => {
+const UserFormModal: React.FC<UserFormModalProps> = ({ isOpen, onClose, onSave, user, apiError }) => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [role, setRole] = useState<'user' | 'admin'>('user');
   const [error, setError] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const { user: authUser } = useAuth();
+  console.log(authUser);
 
   useEffect(() => {
     if (user) {
@@ -39,29 +46,17 @@ const UserFormModal: React.FC<UserFormModalProps> = ({ isOpen, onClose, onSave, 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-
     if (password !== confirmPassword) {
       setError('Passwords do not match.');
       return;
     }
-
     if (!user && !password) {
       setError('Password is required for new users.');
       return;
     }
-
-    const userData: UserCreate | UserUpdate = {
-      username,
-      email,
-      role,
-    };
-
-    if (password) {
-      userData.password = password;
-    }
-
+    const userData: UserCreate | UserUpdate = { username, email, role };
+    if (password) userData.password = password;
     onSave(userData);
-    onClose();
   };
 
   return (
@@ -78,10 +73,10 @@ const UserFormModal: React.FC<UserFormModalProps> = ({ isOpen, onClose, onSave, 
           {user ? 'Edit User' : 'Create New User'}
         </h3>
 
-        {error && (
-          <div className="mb-4 rounded-md bg-red-100 p-3 text-sm text-red-700 dark:bg-red-900 dark:text-red-200">
-            {error}
-          </div>
+        {(error || apiError) && (
+          <pre className="mb-4 rounded-md bg-red-100 p-3 text-sm text-red-700 dark:bg-red-900 dark:text-red-200">
+            {error || apiError}
+          </pre>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -115,25 +110,43 @@ const UserFormModal: React.FC<UserFormModalProps> = ({ isOpen, onClose, onSave, 
             <label htmlFor="password" className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
               Password {user ? '(Leave blank to keep current)' : ''}
             </label>
-            <input
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded-md border border-gray-300 p-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full rounded-md border border-gray-300 p-2 pr-10 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-2 top-2.5 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
           </div>
           <div>
             <label htmlFor="confirmPassword" className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
               Confirm Password
             </label>
-            <input
-              type="password"
-              id="confirmPassword"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              className="w-full rounded-md border border-gray-300 p-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
-            />
+            <div className="relative">
+              <input
+                type={showConfirmPassword ? 'text' : 'password'}
+                id="confirmPassword"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                className="w-full rounded-md border border-gray-300 p-2 pr-10 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="absolute right-2 top-2.5 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+              >
+                {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
           </div>
           <div>
             <label htmlFor="role" className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -141,6 +154,7 @@ const UserFormModal: React.FC<UserFormModalProps> = ({ isOpen, onClose, onSave, 
             </label>
             <select
               id="role"
+              disabled={authUser?.id === user?.id}
               value={role}
               onChange={(e) => setRole(e.target.value as 'user' | 'admin')}
               className="w-full rounded-md border border-gray-300 p-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"

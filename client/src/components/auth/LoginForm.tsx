@@ -1,4 +1,4 @@
-import { AlertCircle, Lock, User } from 'lucide-react';
+import { AlertCircle, Eye, EyeOff, Lock, User } from 'lucide-react';
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Logo from '../../assets/logo.png';
@@ -8,6 +8,7 @@ import ThemeSwitcher from '../ThemeSwitcher';
 const LoginForm: React.FC = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const { login } = useAuth();
@@ -29,11 +30,8 @@ const LoginForm: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-
     if (!validateForm()) return;
-
     setIsLoading(true);
-
     try {
       await login(username, password);
       const origin = location.state?.from?.pathname || '/dashboard';
@@ -53,17 +51,10 @@ const LoginForm: React.FC = () => {
       <div className="max-w-md w-full space-y-8 bg-white/80 dark:bg-gray-800/80 backdrop-blur-md p-10 rounded-3xl shadow-2xl border border-gray-100 dark:border-gray-700">
         <div className="text-center">
           <div className="flex justify-center mb-4">
-            <img
-              src={Logo}
-              alt="SNOOP Logo"
-              className={`h-12 w-auto transition-all duration-300`}
-            />          </div>
-          <h2 className="text-3xl font-extrabold text-gray-900 dark:text-gray-100">
-            Welcome back
-          </h2>
-          <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-            Please sign in to continue
-          </p>
+            <img src={Logo} alt="SNOOP Logo" className="h-12 w-auto transition-all duration-300" />
+          </div>
+          <h2 className="text-3xl font-extrabold text-gray-900 dark:text-gray-100">Welcome back</h2>
+          <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">Please sign in to continue</p>
         </div>
         {error && (
           <div className="bg-red-50 dark:bg-red-900/30 border-l-4 border-red-500 p-4 rounded-lg shadow-sm animate-shake">
@@ -73,14 +64,10 @@ const LoginForm: React.FC = () => {
             </div>
           </div>
         )}
-
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-5">
             <div className="relative">
-              <label
-                htmlFor="username"
-                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-              >
+              <label htmlFor="username" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Username
               </label>
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -99,12 +86,8 @@ const LoginForm: React.FC = () => {
                 }}
               />
             </div>
-
             <div className="relative">
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-              >
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Password
               </label>
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -113,9 +96,9 @@ const LoginForm: React.FC = () => {
               <input
                 id="password"
                 name="password"
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 required
-                className="appearance-none block w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg placeholder-gray-400 dark:placeholder-gray-500 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-all"
+                className="appearance-none block w-full pl-10 pr-10 py-3 border border-gray-300 dark:border-gray-600 rounded-lg placeholder-gray-400 dark:placeholder-gray-500 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-all"
                 placeholder="Enter your password"
                 value={password}
                 onChange={(e) => {
@@ -123,17 +106,24 @@ const LoginForm: React.FC = () => {
                   setError(null);
                 }}
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-9 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
             </div>
           </div>
-
           <div>
             <button
               type="submit"
               disabled={isLoading}
-              className={`w-full flex justify-center py-3 px-4 border border-transparent text-sm font-semibold rounded-lg shadow-md text-white transition-all duration-300 ease-in-out ${isLoading
+              className={`w-full flex justify-center py-3 px-4 border border-transparent text-sm font-semibold rounded-lg shadow-md text-white transition-all duration-300 ease-in-out ${
+                isLoading
                   ? 'bg-blue-600 cursor-not-allowed dark:bg-blue-500'
                   : 'bg-gradient-to-r from-blue-600 to-blue-600 hover:from-blue-600 hover:to-blue-700 dark:from-blue-600 dark:to-blue-700 dark:hover:from-blue-700 dark:hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
-                }`}
+              }`}
             >
               {isLoading ? (
                 <div className="flex items-center">

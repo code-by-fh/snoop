@@ -4,24 +4,20 @@ import logger from '#utils/logger.js';
 
 export const me = async (req, res) => {
     try {
-        // Extract token from Authorization header
         const token = req.header('Authorization')?.replace('Bearer ', '');
 
         if (!token) {
             return res.status(401).json({ message: 'No token provided' });
         }
 
-        // Verify the token
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-        // Find the user by ID from the token
         const user = await User.findById(decoded.id).select('-password');
 
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        // Return user information
         res.json({ user });
     } catch (error) {
         if (error.name === 'JsonWebTokenError') {
