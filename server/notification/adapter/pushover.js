@@ -60,7 +60,6 @@ export const send = async ({ serviceName, listings, notificationAdapters }) => {
   }
 
   return results;
-
 };
 
 export const config = {

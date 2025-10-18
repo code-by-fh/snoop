@@ -1,12 +1,13 @@
 import express from 'express';
-import { 
+import {
   getAvailableNotificationAdapters,
   sendTestNotification
 } from '../controllers/notificationAdapterController.js';
+import authMiddleware from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-router.get('/', getAvailableNotificationAdapters);
-router.post('/:adapterId/test', sendTestNotification);
+router.get('/', authMiddleware, getAvailableNotificationAdapters);
+router.post('/:adapterId/test', authMiddleware, sendTestNotification);
 
 export default router;
