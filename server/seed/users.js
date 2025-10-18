@@ -4,7 +4,7 @@ import { SEED_CONFIG } from './config.js';
 export const adminUser = {
     username: 'admin',
     email: 'admin@snnop.com',
-    password: 'admin123',
+    password: 'Password123!',
     role: 'admin'
   }
 
@@ -16,13 +16,13 @@ export function generateUsers() {
   users.push({
     username: 'user',
     email: 'user@snnop.com',
-    password: 'user123',
+    password: 'Password123!',
     role: 'user'
   });
 
   for (let i = 0; i < SEED_CONFIG.users - 1; i++) {
     users.push({
-      username: faker.internet.userName(),
+      username: faker.internet.username(),
       email: faker.internet.email(),
       password: "Password123!",
       role: 'user'
