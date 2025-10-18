@@ -23,8 +23,10 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - VITE_API_URL=http://snoop-backend:5000
-      - VITE_WS_URL=ws://snoop-backend:5000/ws
+      - APP_PREFIX=SNOOP_
+      - ASSET_DIR=/dist
+      - SNOOP_API_URL=http://localhost:5000
+      - SNOOP_WS_URL=http://localhost:5000/ws
     networks:
       - snoop
     depends_on:

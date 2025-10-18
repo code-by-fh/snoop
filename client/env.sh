@@ -33,3 +33,5 @@ env | grep "^${APP_PREFIX}" | while IFS='=' read -r key value; do
     find "$ASSET_DIR" -type f \
         -exec sed -i "s|${key}|${value}|g" {} +
 done
+
+exec "$@"
