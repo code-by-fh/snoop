@@ -36,7 +36,6 @@
   "scripts": {
     "start": "concurrently -k -n BACKEND,FRONTEND -c cyan,green \"npm --prefix server run start\" \"npm --prefix client start\"",
     "dev": "concurrently -k -n BACKEND,FRONTEND -c cyan,green \"npm run server\" \"npm run client\"",
-    "install:all": "npm install",
     "clean:all": "rm -rf node_modules client/node_modules server/node_modules",
     "client": "npm --prefix client run dev",
     "server": "npm --prefix server run dev"
