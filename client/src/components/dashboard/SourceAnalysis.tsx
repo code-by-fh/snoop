@@ -27,17 +27,9 @@ const SourceAnalysis: React.FC<SourceAnalysisProps> = ({ listingsBySource }) => 
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Source Analysis</h2>
-        <div className="flex items-center space-x-4">
-          <div className="text-sm text-gray-500 dark:text-gray-400">Real-time data</div>
-        </div>
-      </div>
-
+    <div className="bg-white dark:bg-gray-800 p-6">
       {/* Source Distribution Chart */}
       <div>
-        <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">Listings by Source</h3>
         <div className="h-80">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>

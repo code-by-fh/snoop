@@ -10,14 +10,7 @@ interface PriceAnalysisProps {
 const PriceAnalysis: React.FC<PriceAnalysisProps> = ({ listingsByPrice }) => {
 
   return (
-    <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Price Analysis</h2>
-        <div className="flex items-center space-x-4">
-          <div className="text-sm text-gray-500 dark:text-gray-400">Overall</div>
-        </div>
-      </div>
-
+    <div className="bg-white dark:bg-gray-800 p-6">
       {/* Price Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-800">

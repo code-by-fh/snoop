@@ -1,4 +1,4 @@
-import { Activity, Building, MapPin, TrendingDown, TrendingUp, Users,Hammer,House,MapPinPlus } from 'lucide-react';
+import { Activity, Hammer, House, MapPinPlus, TrendingDown, TrendingUp } from 'lucide-react';
 import React from 'react';
 import { Statistics } from '../../types/statistic';
 
@@ -63,12 +63,7 @@ const Overview: React.FC<OverviewProps> = ({ stats }) => {
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Overview</h2>
-        <div className="text-sm text-gray-500 dark:text-gray-400">Overall</div>
-      </div>
-
+    <div className="bg-white dark:bg-gray-800 p-6">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         {metrics.map((metric, index) => (
           <div key={index} className={`p-4 rounded-lg border ${getColorClasses(metric.color)} dark:bg-gray-700 dark:border-gray-600`}>
