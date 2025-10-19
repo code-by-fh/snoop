@@ -2,6 +2,7 @@ import logger from "#utils/logger.js";
 import { Buffer } from "buffer";
 import FormData from "form-data";
 import { markdown2Html } from "../../services/markdown.js";
+import fetch from 'node-fetch';
 
 function getDefaultOrUnknown(value) {
   return value || "k.A.";
@@ -50,6 +51,7 @@ export const send = async ({ serviceName, listings, notificationAdapters }) => {
       return res.json();
     })
   );
+
   const errors = results
     .map((r) => (r.errors && r.errors.length > 0 ? r.errors.join(', ') : null))
     .filter((e) => e !== null);
