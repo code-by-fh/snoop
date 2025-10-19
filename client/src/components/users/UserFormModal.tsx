@@ -22,7 +22,6 @@ const UserFormModal: React.FC<UserFormModalProps> = ({ isOpen, onClose, onSave, 
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const { user: authUser } = useAuth();
-  console.log(authUser);
 
   useEffect(() => {
     if (user) {
