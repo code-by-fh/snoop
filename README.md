@@ -172,6 +172,20 @@ Access:
 
 ---
 
+## 🔐 Initial Admin Account
+
+When Snoop starts for the first time, it automatically creates a default administrator account for initial access:
+
+- Username: admin
+- Password:	Password123!
+
+⚠️ Important:
+- You must log in with these credentials after the first start.
+- Immediately change the password in the user settings for security reasons.
+- Once changed, this default password cannot be restored automatically — please make sure to note the new one safely.
+- The default credentials are created only if no admin user exists in the database.
+
+
 ## 🧪 Testing
 
 Run the full test suite:
