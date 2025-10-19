@@ -18,9 +18,6 @@ export const getAvailableNotificationAdapters = async (req, res) => {
 };
 
 export const sendTestNotification = async (req, res) => {
-    if (req.user.role !== 'admin') {
-        return res.status(403).json({ message: 'Access denied. Admin rights required.' });
-    }
 
     const { adapterId } = req.params;
     const adapterConfig = req.body;
@@ -45,20 +42,13 @@ export const sendTestNotification = async (req, res) => {
             },
         ];
 
-        const formattedFields = {};
-        if (adapterConfig && typeof adapterConfig === "object") {
-            for (const [key, value] of Object.entries(adapterConfig)) {
-                formattedFields[key] = { value };
-            }
-        }
-
         await adapter.send({
             serviceName: adapter.config.name,
             listings,
             notificationAdapters: [
                 {
                     id: adapterId,
-                    fields: formattedFields,
+                    fields: adapterConfig.fields,
                 },
             ],
         });

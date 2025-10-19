@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getAvailableNotificationAdapters, sendTestNotification } from '../api';
-import { NotificationAdapter } from '../types';
+import { NotificationAdapter, AdapterFieldConfig } from '../types';
 import { AlertCircle, Send } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -15,30 +15,30 @@ const NotificationsPage: React.FC = () => {
       .catch(() => setError('Failed to load notification adapters.'));
   }, []);
 
-  // 🧩 Lokales Update von Field-Werten (wenn Nutzer etwas eintippt)
   const handleFieldChange = (adapterId: string, fieldKey: string, value: string) => {
     setNotificationAdapters(prev =>
-      prev.map(adapter =>
-        adapter.id === adapterId
-          ? {
-              ...adapter,
-              fields: {
-                ...adapter.fields,
-                [fieldKey]: {
-                  ...adapter.fields?.[fieldKey],
-                  value,
-                },
-              },
-            }
-          : adapter
-      )
+      prev.map(adapter => {
+        if (adapter.id !== adapterId || !adapter.fields) return adapter;
+
+        const updatedField: AdapterFieldConfig = {
+          ...adapter.fields[fieldKey],
+          value,
+        };
+
+        return {
+          ...adapter,
+          fields: {
+            ...adapter.fields,
+            [fieldKey]: updatedField,
+          },
+        };
+      })
     );
   };
 
   const handleSendTest = async (adapter: NotificationAdapter) => {
     setLoadingAdapterId(adapter.id);
     try {
-      // Config-Felder in einfaches Objekt umwandeln
       const fields: Record<string, string> = {};
       if (adapter.fields) {
         Object.entries(adapter.fields).forEach(([key, field]) => {
@@ -84,23 +84,26 @@ const NotificationsPage: React.FC = () => {
             <h3 className="font-bold text-gray-900 dark:text-gray-100">{adapter.name}</h3>
             <p className="text-gray-600 dark:text-gray-400 text-sm">{adapter.description}</p>
 
-            {adapter.fields && Object.entries(adapter.fields).map(([key, field]) => (
-              <div key={key} className="flex flex-col">
-                <span className="text-gray-500 dark:text-gray-400 text-xs">{field.label || key}</span>
-                <input
-                  type="text"
-                  value={field.value || ''}
-                  placeholder={field.description || ''}
-                  onChange={(e) => handleFieldChange(adapter.id, key, e.target.value)}
-                  className="mt-1 p-2 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
-                />
-              </div>
-            ))}
+            {adapter.fields &&
+              Object.entries(adapter.fields).map(([key, field]) => (
+                <div key={key} className="flex flex-col">
+                  <span className="text-gray-500 dark:text-gray-400 text-xs">
+                    {field.label || key}
+                  </span>
+                  <input
+                    type={field.type || 'text'}
+                    value={field.value || ''}
+                    placeholder={field.description || ''}
+                    onChange={(e) => handleFieldChange(adapter.id, key, e.target.value)}
+                    className="mt-1 p-2 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+                  />
+                </div>
+              ))}
 
             <button
               onClick={() => handleSendTest(adapter)}
               disabled={loadingAdapterId === adapter.id}
-              className="mt-2 flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm font-medium"
+              className="mt-2 flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm font-medium disabled:opacity-70"
             >
               <Send className="h-4 w-4" />
               {loadingAdapterId === adapter.id ? 'Sending...' : 'Send Test Notification'}

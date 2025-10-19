@@ -4,9 +4,6 @@ import User from '../models/User.js';
 import logger from '#utils/logger.js';
 
 export const getUsers = async (req, res) => {
-    if (req.user.role !== 'admin') {
-        return res.status(403).json({ message: 'Access denied. Admin rights required.' });
-    }
 
     try {
         const users = await User.find({}).select('-password');
@@ -18,10 +15,6 @@ export const getUsers = async (req, res) => {
 }
 
 export const createUser = async (req, res) => {
-    if (req.user.role !== 'admin') {
-        return res.status(403).json({ message: 'Access denied. Admin rights required.' });
-    }
-
     try {
         logger.info('Creating user with body:', req.body);
         const { username, email, password, role } = req.body;
@@ -51,10 +44,6 @@ export const createUser = async (req, res) => {
 }
 
 export const deleteUser = async (req, res) => {
-    if (req.user.role !== 'admin') {
-        return res.status(403).json({ message: 'Access denied. Admin rights required.' });
-    }
-
     try {
         const user = await User.findById(req.params.id);
         if (!user) {
@@ -89,10 +78,6 @@ export const deleteUser = async (req, res) => {
 };
 
 export const updateUser = async (req, res) => {
-    if (req.user.role !== 'admin') {
-        return res.status(403).json({ message: 'Access denied. Admin rights required.' });
-    }
-
     try {
         const { username, email, role, password } = req.body;
         const userId = req.params.id;

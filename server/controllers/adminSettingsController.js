@@ -8,9 +8,6 @@ export const getSettings = async (req, res) => {
 }
 
 export const putSettings = async (req, res) => {
-    if (req.user.role !== 'admin') {
-        return res.status(403).json({ message: 'Access denied. Admin rights required.' });
-    }
 
     try {
         const { queryInterval, port, workingHoursFrom, workingHoursTo } = req.body;

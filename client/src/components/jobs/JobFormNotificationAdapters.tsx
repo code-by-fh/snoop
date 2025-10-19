@@ -1,7 +1,8 @@
-import { AlertCircle, Edit, Info, Plus, Trash2 } from 'lucide-react';
+import { AlertCircle, Edit, Info, Plus, Trash2, Send } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
-import { getAvailableNotificationAdapters } from '../../api';
+import { getAvailableNotificationAdapters, sendTestNotification } from '../../api';
 import { NotificationAdapter } from '../../types';
+import toast from 'react-hot-toast';
 
 interface NotificationAdapterSectionProps {
   preDefinedNotificationAdapters: NotificationAdapter[];
@@ -21,6 +22,7 @@ const NotificationAdapterSection: React.FC<NotificationAdapterSectionProps> = ({
   const [selectedAdapter, setSelectedAdapter] = useState<NotificationAdapter | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [editMode, setEditMode] = useState(false);
+  const [testingAdapterId, setTestingAdapterId] = useState<string | null>(null);
 
   useEffect(() => {
     getAvailableNotificationAdapters()
@@ -30,6 +32,26 @@ const NotificationAdapterSection: React.FC<NotificationAdapterSectionProps> = ({
         setNotificationAdapters([]);
       });
   }, []);
+
+
+  const handleTestAdapter = async (adapter: NotificationAdapter) => {
+    if (!adapter) return;
+    setTestingAdapterId(adapter.id);
+
+    try {
+      const fields: Record<string, any> = {};
+      Object.entries(adapter.fields || {}).forEach(([key, field]) => {
+        fields[key] = { value: field.value || '' };
+      });
+
+      await sendTestNotification(adapter.id, { fields });
+      toast.success(`Test notification sent via ${adapter.name}`);
+    } catch (err: any) {
+      toast.error(err?.response?.data?.message || 'Failed to send test notification');
+    } finally {
+      setTestingAdapterId(null);
+    }
+  };
 
   const handleAdd = (e?: React.FormEvent) => {
     e?.preventDefault();
@@ -128,13 +150,29 @@ const NotificationAdapterSection: React.FC<NotificationAdapterSectionProps> = ({
                 </span>
                 <div className="flex items-center gap-2">
                   {adapterInfo?.fields && (
-                    <button
-                      type="button"
-                      onClick={() => handleEdit(adapter)}
-                      className="p-2 rounded-full hover:bg-blue-100 dark:hover:bg-blue-900/30 text-blue-600 dark:text-blue-400 transition-colors"
-                    >
-                      <Edit className="h-5 w-5" />
-                    </button>
+                    <>
+                      {/* Test-Button nutzt dieselbe Logik */}
+                      <button
+                        type="button"
+                        onClick={() => handleTestAdapter(adapter)}
+                        disabled={testingAdapterId === adapter.id}
+                        className="p-2 rounded-full hover:bg-green-100 dark:hover:bg-green-900/30 text-green-600 dark:text-green-400 transition-colors"
+                      >
+                        {testingAdapterId === adapter.id ? (
+                          <span className="animate-pulse">...</span>
+                        ) : (
+                          <Send className="h-5 w-5" />
+                        )}
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => handleEdit(adapter)}
+                        className="p-2 rounded-full hover:bg-blue-100 dark:hover:bg-blue-900/30 text-blue-600 dark:text-blue-400 transition-colors"
+                      >
+                        <Edit className="h-5 w-5" />
+                      </button>
+                    </>
                   )}
                   <button
                     type="button"
@@ -150,6 +188,7 @@ const NotificationAdapterSection: React.FC<NotificationAdapterSectionProps> = ({
         </div>
       )}
 
+      {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
           <div className="bg-white dark:bg-gray-900 rounded-xl shadow-xl p-6 w-full max-w-md max-h-[90vh] overflow-y-auto space-y-4">
@@ -204,13 +243,30 @@ const NotificationAdapterSection: React.FC<NotificationAdapterSectionProps> = ({
               >
                 Cancel
               </button>
+
+              {selectedAdapter && (
+                <button
+                  onClick={() => handleTestAdapter(selectedAdapter)}
+                  disabled={testingAdapterId === selectedAdapter.id}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-md text-white ${
+                    testingAdapterId === selectedAdapter.id
+                      ? 'bg-green-400 cursor-wait'
+                      : 'bg-green-600 hover:bg-green-700'
+                  }`}
+                >
+                  <Send className="h-4 w-4" />
+                  {testingAdapterId === selectedAdapter.id ? 'Testing...' : 'Test Notification'}
+                </button>
+              )}
+
               <button
                 onClick={handleAdd}
                 disabled={!selectedAdapter}
-                className={`px-4 py-2 rounded-md text-white ${!selectedAdapter
-                  ? 'bg-blue-400 cursor-not-allowed'
-                  : 'bg-blue-600 hover:bg-blue-700'
-                  }`}
+                className={`px-4 py-2 rounded-md text-white ${
+                  !selectedAdapter
+                    ? 'bg-blue-400 cursor-not-allowed'
+                    : 'bg-blue-600 hover:bg-blue-700'
+                }`}
               >
                 {editMode ? 'Save Changes' : 'Add Adapter'}
               </button>
