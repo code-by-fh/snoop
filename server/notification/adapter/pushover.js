@@ -25,30 +25,36 @@ export const send = async ({ serviceName, listings, notificationAdapters }) => {
 
   const results = await Promise.all(
     listings.map(async (payload) => {
-      const form = new FormData();
-      form.append("token", token.value.trim());
-      form.append("user", user.value.trim());
-      if (device) form.append('device', device);
+      try {
+        const form = new FormData();
+        form.append("token", token.value.trim());
+        form.append("user", user.value.trim());
+        if (device) form.append('device', device);
 
-      if (payload.image || payload.lazyImage) {
-        const imageBuffer = await getImageBuffer(payload.image || payload.lazyImage);
-        if (imageBuffer) form.append("attachment", imageBuffer, { filename: "image.jpg" });
+        if (payload.imageUrl || payload.lazyImage) {
+          const imageBuffer = await getImageBuffer(payload.imageUrl || payload.lazyImage);
+          if (imageBuffer) form.append("attachment", imageBuffer, { filename: "image.jpg" });
+        }
+
+        const address = getDefaultOrUnknown(payload.address);
+        const price = getDefaultOrUnknown(payload.price);
+        const size = getDefaultOrUnknown(payload.size);
+        const description = getDefaultOrUnknown(payload.description);
+
+        const msg = `${serviceName} | ${payload.title}\n\nAdresse: ${address} \nPreis: ${price} \nWohnfläche: ${size} \n\n${payload.url}`;
+        form.append("message", msg);
+
+        const res = await fetch('https://api.pushover.net/1/messages.json', {
+          method: 'POST',
+          body: form,
+        });
+
+        return res.json();
+
+      } catch (error) {
+        logger.error(error, `Error while sending pushover notification`);
+        return Promise.reject(error);
       }
-
-      const address = getDefaultOrUnknown(payload.address);
-      const price = getDefaultOrUnknown(payload.price);
-      const size = getDefaultOrUnknown(payload.size);
-      const description = getDefaultOrUnknown(payload.description);
-
-      const msg = `${serviceName} | ${payload.title}\n\nAdresse: ${address} \nPreis: ${price} \nWohnfläche: ${size} \n\nBeschreibung: ${description}\n\n${payload.link}`;
-      form.append("message", msg);
-
-      const res = await fetch('https://api.pushover.net/1/messages.json', {
-        method: 'POST',
-        body: form,
-      });
-
-      return res.json();
     })
   );
 
