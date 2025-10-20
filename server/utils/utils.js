@@ -19,24 +19,46 @@ function nullOrEmpty(val) {
     return val == null || val.length === 0;
 }
 
-function timeStringToMs(timeString, now) {
-    const d = new Date(now);
-    const parts = timeString.split(':');
-    d.setHours(parts[0]);
-    d.setMinutes(parts[1]);
-    d.setSeconds(0);
-    return d.getTime();
+function timeStringToMsOfDay(timeString) {
+    const parts = String(timeString).split(':').map((p) => parseInt(p, 10));
+    const hours = Number.isFinite(parts[0]) ? parts[0] : 0;
+    const minutes = Number.isFinite(parts[1]) ? parts[1] : 0;
+
+    if (hours === 0 && minutes === 0 && String(timeString).trim() === '00:00') {
+        return 24 * 3600_000; // 86400000
+    }
+
+    return hours * 3600_000 + minutes * 60_000;
 }
 
 function duringWorkingHoursOrNotSet(config, now) {
+    if (!config) return true;
+
     const { workingHoursFrom, workingHoursTo } = config;
-    if (nullOrEmpty(workingHoursFrom) || nullOrEmpty(workingHoursTo)) {
+
+    if (!workingHoursFrom || !workingHoursTo) return true;
+
+    if (
+        workingHoursFrom.trim() === '00:00' &&
+        workingHoursTo.trim() === '00:00'
+    ) {
         return true;
     }
-    const toDate = timeStringToMs(workingHoursTo, now);
-    const fromDate = timeStringToMs(workingHoursFrom, now);
-    return fromDate <= now && toDate >= now;
+
+    const d = new Date(now);
+    const msOfDay =
+        d.getHours() * 3600_000 + d.getMinutes() * 60_000 + d.getSeconds() * 1000;
+
+    const fromMs = timeStringToMsOfDay(workingHoursFrom);
+    const toMs = timeStringToMsOfDay(workingHoursTo);
+
+    if (fromMs <= toMs) {
+        return msOfDay >= fromMs && msOfDay <= toMs;
+    }
+
+    return msOfDay >= fromMs || msOfDay <= toMs;
 }
+
 
 function getDirName() {
     return dirname(fileURLToPath(import.meta.url));
@@ -62,10 +84,11 @@ function buildHash(...inputs) {
 }
 
 
-export { buildHash, duringWorkingHoursOrNotSet, getDirName, inDevMode, isOneOf, nullOrEmpty };
+export { buildHash, duringWorkingHoursOrNotSet, getDirName, inDevMode, isOneOf, nullOrEmpty, timeStringToMsOfDay };
 export default {
     isOneOf,
     nullOrEmpty,
     duringWorkingHoursOrNotSet,
+    timeStringToMsOfDay,
     getDirName,
 };
