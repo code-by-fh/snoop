@@ -3,7 +3,7 @@ import { JobStatus } from "@/utils/jobStatusStyles";
 export interface Job {
   id: string;
   name: string;
-  errors: JobError[];
+  runtimeErrors: JobError[];
   isActive: boolean;
   status: JobStatus;
   progress: number;

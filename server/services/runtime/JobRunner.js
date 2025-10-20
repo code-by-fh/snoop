@@ -19,12 +19,11 @@ async function executeJob(job) {
       continue;
     }
 
-    providerModule.init(prov, job.blacklist);
 
-
-    jobExecutions.push(async () => {
-      await new JobRuntime(providerModule, job, prov.id, prov.listings.map(l => l.id))
-        .execute()
+    jobExecutions.push(() =>
+      Promise.resolve()
+        .then(() => providerModule.init(prov, job.blacklist))
+        .then(() => new JobRuntime(providerModule, job, prov.id, prov.listings.map(l => l.id)).execute())
         .then(() => Job.getJob(job.id))
         .then(addOrUpdateCommonAttributes)
         .then(async (updatedJob) => {
@@ -34,14 +33,16 @@ async function executeJob(job) {
         .catch(async (err) => {
           jobEvents.emit("jobStatusEvent", { ...job, status: "Failed" });
           logger.error(err, `Job ${job.id} failed:`);
+
           await Job.addProviderError(job.id, {
             providerId: prov.id,
             providerName: providerModule.config.name,
             providerUrl: prov.url,
             message: err.message || String(err)
           });
-        });
-    });
+        })
+    );
+    ;
   }
 
   logger.info(`Job with id: ${job.id} has ${jobExecutions.length} executions.`);

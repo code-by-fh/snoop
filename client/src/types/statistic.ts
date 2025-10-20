@@ -111,7 +111,7 @@ export interface TimeStats {
 export interface JobStatistics {
   jobId: string;
   jobName: string;
-  errors: JobError[];
+  runtimeErrors: JobError[];
   providerCount: number;
   totalListings: number;
   newListingsToday: number;

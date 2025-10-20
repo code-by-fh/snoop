@@ -422,7 +422,7 @@ export const getJobStats = async (req, res) => {
         res.json({
             jobId: job.id,
             jobName: job.name,
-            errors: job.errors,
+            runtimeErrors: job.runtimeErrors,
             lastRun: job.lastRun,
             createdAt: job.createdAt,
             providerCount,
