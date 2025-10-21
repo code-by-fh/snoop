@@ -84,7 +84,7 @@ const JobCard: React.FC<JobCardProps> = ({ job, onDelete, onJobRun, onToggleActi
         </div>
         <div className="grid grid-cols-2 gap-2">
           {/* Job Status */}
-          <JobStatusBadge status={job.status} isJobActive={job.isActive} />
+          <JobStatusBadge jobid={job.id} status={job.status} isJobActive={job.isActive} />
 
           {/* Active Toggle */}
           <div className={`text-center p-3 rounded-lg ${isJobInactive ? "bg-gray-200 dark:bg-gray-700" : "bg-gray-50 dark:bg-gray-800"}`}>

@@ -109,11 +109,7 @@ class JobRuntime {
   }
 
   _save(newListings) {
-    if (newListings.length > 0) {
-      return Listing.saveListings(newListings, this._job.id, this._providerId)
-        .then(savedListings => Job.addListingsIds(savedListings.map(l => l.id), this._job.id, this._providerId))
-        .then(() => newListings);
-    }
+
     return newListings;
   }
 

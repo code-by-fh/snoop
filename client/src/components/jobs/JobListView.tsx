@@ -171,7 +171,7 @@ const JobListView: React.FC<JobListViewProps> = ({ jobs, onDelete, onJobRun, onT
                   </div>
                 </td>
                 <td className="px-2 py-4">
-                  <JobStatusBadge status={job.status} isJobActive={job.isActive} />
+                  <JobStatusBadge jobid={job.id} status={job.status} isJobActive={job.isActive} />
                 </td>
               </tr>
             );

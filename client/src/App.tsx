@@ -17,11 +17,13 @@ import NotificationsPage from './pages/NotificationsPage';
 import UsersPage from './pages/UsersPage';
 
 import 'mapbox-gl/dist/mapbox-gl.css';
+import { ScrollToHash } from './hooks/scrollTo';
 
 const App: React.FC = () => {
   return (
     <AuthProvider>
       <Router>
+      <ScrollToHash />
         <Routes>
           {/* Public Routes */}
           <Route path="/login" element={<LoginForm />} />
