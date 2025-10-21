@@ -5,19 +5,14 @@ const JobErrorPanel: React.FC<{ stats: JobStatistics }> = ({ stats }) => {
 
     if (!stats.runtimeErrors || stats.runtimeErrors.length === 0) {
         return (
-            <div className="bg-white dark:bg-gray-900 p-6 rounded-lg shadow border border-gray-100 dark:border-gray-700">
-                <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
-                    Error Infos
-                </h2>
-                <p className="text-gray-500 dark:text-gray-400 text-sm">
-                    Keine Fehler vorhanden 🎉
-                </p>
-            </div>
+            <p className="text-gray-500 dark:text-gray-400 text-sm">
+                Keine Fehler vorhanden 🎉
+            </p>
         );
     }
 
     return (
-        <div className="space-y-4">
+        <div id="runtimeErrors" className="space-y-4">
             {stats.runtimeErrors.map((error, index) => (
                 <div
                     key={index}

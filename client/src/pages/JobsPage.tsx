@@ -117,6 +117,7 @@ const JobsPage: React.FC = () => {
       setError(null);
       await runJob(id);
     } catch (err: any) {
+      toast.error(err.response?.data?.message || 'Failed to run job');
       setError(err.response?.data?.message || 'Failed to run job');
     }
   };
