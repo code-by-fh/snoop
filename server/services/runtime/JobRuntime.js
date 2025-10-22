@@ -1,4 +1,5 @@
 import logger from '#utils/logger.js';
+import { buildHash } from '#utils/utils.js';
 import Job from "../../models/Job.js";
 import Listing from "../../models/Listing.js";
 import * as notify from '../../notification/notify.js';
@@ -76,7 +77,12 @@ class JobRuntime {
   }
 
   _normalize(listings) {
-    return listings.map(this._providerConfig.normalize);
+    return listings
+      .map(this._providerConfig.normalize)
+      .map(listing => {
+        listing.id = buildHash(listing.id, this._providerId, this._job.id);
+        return listing;
+      });
   }
 
   _filter(listings) {

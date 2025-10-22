@@ -88,7 +88,7 @@ ListingSchema.statics.saveListings = async function (newListings, jobId) {
 
   for (const listingData of newListings) {
     const filter = {
-      id: listingData.id,
+      _id: listingData.id,
       jobId: jobId,
     };
 

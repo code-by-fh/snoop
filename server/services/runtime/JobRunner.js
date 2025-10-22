@@ -19,7 +19,6 @@ async function executeJob(job) {
       continue;
     }
 
-
     jobExecutions.push(() =>
       Promise.resolve()
         .then(() => providerModule.init(prov, job.blacklist))
