@@ -44,7 +44,7 @@ const config = {
     rooms: 'div[data-testid="cardmfe-keyfacts-testid"] div:nth-of-type(1) | trim',
     size: 'div[data-testid="cardmfe-keyfacts-testid"] div:nth-of-type(3) | trim',
     address: 'div[data-testid="cardmfe-description-box-address"] | trim',
-    imageUrl: 'div[aria-label="Hauptbild"] img@src | trim'
+    imageUrl: 'img[aria-label="Hauptbild"]@src | trim'
   },
   normalize: normalize,
   filter: applyBlacklist,

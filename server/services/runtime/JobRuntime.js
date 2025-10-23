@@ -81,6 +81,8 @@ class JobRuntime {
       .map(this._providerConfig.normalize)
       .map(listing => {
         listing.id = buildHash(listing.id, this._providerId, this._job.id);
+        listing.providerName = this._providerMetaInformation.name;
+        listing.providerId = this._providerMetaInformation.id;
         return listing;
       });
   }
@@ -116,7 +118,7 @@ class JobRuntime {
 
   _save(newListings) {
     if (newListings.length > 0) {
-      return Listing.saveListings(newListings, this._job.id, this._providerId)
+      return Listing.saveListings(newListings, this._job.id)
         .then(savedListings => Job.addListingsIds(savedListings.map(l => l.id), this._job.id, this._providerId))
         .then(() => newListings);
     }
