@@ -27,7 +27,6 @@ const ListingsPage: React.FC = () => {
     minRooms: '',
     minArea: '',
     location: '',
-    selectedProviders: [],
   });
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -215,7 +214,7 @@ const ListingsPage: React.FC = () => {
               onChange={setSelectedProviders}
               labelledBy="Select Providers"
               hasSelectAll={true}
-              className={`${multiSelectTheme} block w-full px-3 mr-0 border border-gray-300 rounded-md bg-white placeholder-gray-500 focus:outline-none focus:ring-1 sm:text-sm dark:bg-gray-700 dark:text-gray-200`}
+              className={`${multiSelectTheme} block w-full px-3 border border-gray-300 rounded-md bg-white placeholder-gray-500 focus:outline-none focus:ring-1 sm:text-sm dark:bg-gray-700 dark:text-gray-200`}
               overrideStrings={{
                 selectSomeItems: "Select Providers...",
                 allItemsAreSelected: "All selected",
@@ -226,7 +225,17 @@ const ListingsPage: React.FC = () => {
               }}
             />
             <button
-              onClick={() => setFilters({ minPrice: '', maxPrice: '', minRooms: '', minArea: '', location: '', selectedProviders: [] })}
+              onClick={() => {
+                setFilters({
+                  minPrice: '',
+                  maxPrice: '',
+                  minRooms: '',
+                  minArea: '',
+                  location: '',
+                });
+                setSelectedProviders([]);
+                setPage(1);
+              }}
               className="flex items-center justify-center px-3 py-2 border border-gray-300 rounded-md bg-white text-gray-500 hover:text-gray-700 hover:bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200 dark:hover:text-white dark:hover:bg-gray-600"
               title="Reset Filters"
             >
