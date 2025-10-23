@@ -154,6 +154,12 @@ If you prefer a manual setup for development or debugging:
 2. Install dependencies:
    ```bash
    npm install
+   cd client
+   npm install
+   cd ..
+   cd server
+   npm install
+   cd ..
    ```
 
 3. Copy and configure environment variables:

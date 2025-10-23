@@ -1,10 +1,6 @@
 {
   "name": "snoop",
   "private": true,
-  "workspaces": [
-    "client",
-    "server"
-  ],
   "version": "0.1.0",
   "description": "[S]earch & [N]avigate [O]ffers [O]n [P]latform",
   "author": "Doublelayer",
@@ -34,11 +30,8 @@
   },
   "homepage": "https://github.com/Doublelayer/snoop#readme",
   "scripts": {
-    "start": "concurrently -k -n BACKEND,FRONTEND -c cyan,green \"npm --prefix server run start\" \"npm --prefix client start\"",
-    "dev": "concurrently -k -n BACKEND,FRONTEND -c cyan,green \"npm run server\" \"npm run client\"",
-    "clean:all": "rm -rf node_modules client/node_modules server/node_modules",
-    "client": "npm --prefix client run dev",
-    "server": "npm --prefix server run dev"
+    "start": "concurrently -k -n BACKEND,FRONTEND -c cyan,green \"npm --prefix server run start\" \"npm --prefix client run start\"",
+    "dev": "concurrently -k -n BACKEND,FRONTEND -c cyan,green \"npm --prefix server run dev\" \"npm --prefix client run dev\""
   },
   "devDependencies": {
     "concurrently": "^9.2.0"
