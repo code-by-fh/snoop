@@ -1,57 +1,32 @@
 import puppeteer from 'puppeteer-extra';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 import { debug, DEFAULT_HEADER, botDetected } from './utils.js';
-import fs from 'fs';
-import os from 'os';
-import path from 'path';
 import logger from '#utils/logger.js';
 
 puppeteer.use(StealthPlugin());
 
 export default async function execute(url, waitForSelector, options) {
   let browser;
-  let page;
-  let result = null;
-  let userDataDir;
-  let removeUserDataDir = false;
   try {
     debug(`Sending request to ${url} using Puppeteer.`);
 
-    // Prepare a dedicated temporary userDataDir to avoid leaking /tmp/.org.chromium.* dirs
-    if (options && options.userDataDir) {
-      userDataDir = options.userDataDir;
-      removeUserDataDir = !!options.cleanupUserDataDir;
-    } else {
-      const prefix = path.join(os.tmpdir(), 'puppeteer-snoop-');
-      userDataDir = fs.mkdtempSync(prefix);
-      removeUserDataDir = true;
-    }
-
     browser = await puppeteer.launch({
       headless: options.puppeteerHeadless ?? true,
-      args: [
-        '--no-sandbox',
-        '--disable-gpu',
-        '--disable-setuid-sandbox',
-        '--disable-dev-shm-usage',
-        '--disable-crash-reporter',
-      ],
+      args: ['--no-sandbox', '--disable-gpu', '--disable-setuid-sandbox'],
       timeout: options.puppeteerTimeout || 30_000,
-      userDataDir,
     });
-    page = await browser.newPage();
+    let page = await browser.newPage();
     await page.setExtraHTTPHeaders(DEFAULT_HEADER);
+    logger.info(`browser is calling url: ${url}`)
     const response = await page.goto(url, {
       waitUntil: 'domcontentloaded',
     });
     let pageSource;
-    // if we're extracting data from a SPA, we must wait for the selector
+    //if we're extracting data from a spa, we must wait for the selector
     if (waitForSelector != null) {
-      const selectorTimeout = options?.puppeteerSelectorTimeout ?? options?.puppeteerTimeout ?? 30_000;
-      await page.waitForSelector(waitForSelector, { timeout: selectorTimeout });
+      await page.waitForSelector(waitForSelector);
       pageSource = await page.evaluate((selector) => {
-        const el = document.querySelector(selector);
-        return el ? el.innerHTML : '';
+        return document.querySelector(selector).innerHTML;
       }, waitForSelector);
     } else {
       pageSource = await page.content();
@@ -60,36 +35,17 @@ export default async function execute(url, waitForSelector, options) {
     const statusCode = response.status();
 
     if (botDetected(pageSource, statusCode)) {
-      logger.warn('We have been detected as a bot :-/ Tried url: => ', url);
-      result = null;
-    } else {
-      result = pageSource || (await page.content());
+      logger.warn({ url }, 'Bot detection triggered for URL:');
+      return null;
     }
+
+    return await page.content();
   } catch (error) {
-    logger.warn('Error executing with puppeteer executor', error);
-    result = null;
+    logger.error(error, 'Error executing Puppeteer extractor:');
+    return null;
   } finally {
-    try {
-      if (page) {
-        await page.close();
-      }
-    } catch {
-      // ignore
-    }
-    try {
-      if (browser != null) {
-        await browser.close();
-      }
-    } catch {
-      // ignore
-    }
-    try {
-      if (removeUserDataDir && userDataDir) {
-        await fs.promises.rm(userDataDir, { recursive: true, force: true });
-      }
-    } catch {
-      // ignore
+    if (browser != null) {
+      await browser.close();
     }
   }
-  return result;
 }
