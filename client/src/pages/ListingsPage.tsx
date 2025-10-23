@@ -10,6 +10,8 @@ import { Link } from 'react-router-dom';
 import { getListings } from '../api';
 import { useViewPreference } from '../hooks/useViewPreference';
 import { Listing } from '../types';
+import { isAppDarkMode, onAppDarkModeChange } from '@/utils/theme';
+import { is } from 'date-fns/locale';
 
 const ListingsPage: React.FC = () => {
   const [listings, setListings] = useState<Listing[]>([]);
@@ -33,6 +35,14 @@ const ListingsPage: React.FC = () => {
   const [viewMode, setViewMode] = useViewPreference('grid', 'listings-view-preference');
   const [providers, setProviders] = useState<{ label: string; value: string }[]>([]);
   const [selectedProviders, setSelectedProviders] = useState<{ label: string; value: string }[]>([]);
+  const [multiSelectTheme, setMultiSelectTheme] = useState(isAppDarkMode() ? "dark" : "light");
+
+  useEffect(() => {
+    const cleanup = onAppDarkModeChange((dark) => {
+      setMultiSelectTheme(dark ? "dark" : "light");
+    });
+    return cleanup;
+  }, []);
 
   useEffect(() => {
     const fetchListings = async () => {
@@ -205,7 +215,7 @@ const ListingsPage: React.FC = () => {
               onChange={setSelectedProviders}
               labelledBy="Select Providers"
               hasSelectAll={true}
-              className="dark block w-full px-3 border border-gray-300 rounded-md bg-white placeholder-gray-500 focus:outline-none focus:ring-1 sm:text-sm dark:bg-gray-700 dark:text-gray-200"
+              className={`${multiSelectTheme} block w-full px-3 mr-0 border border-gray-300 rounded-md bg-white placeholder-gray-500 focus:outline-none focus:ring-1 sm:text-sm dark:bg-gray-700 dark:text-gray-200`}
               overrideStrings={{
                 selectSomeItems: "Select Providers...",
                 allItemsAreSelected: "All selected",

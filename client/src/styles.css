@@ -144,3 +144,12 @@ body {
   --rmsc-bg: #374151;
   color: #e5e7eb;
 }
+
+.rmsc .dropdown-container {
+  border: none;
+}
+
+.rmsc .dropdown-container:focus-within {
+  border: none;
+  box-shadow: none;
+}
