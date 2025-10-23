@@ -102,6 +102,7 @@ body {
   from {
     width: 100%;
   }
+
   to {
     width: 0%;
   }
@@ -122,6 +123,7 @@ body {
   0% {
     transform: translateX(-100%);
   }
+
   100% {
     transform: translateX(100%);
   }
@@ -130,4 +132,15 @@ body {
 .animate-shimmer {
   animation: shimmer 1s infinite linear;
   background-size: 200% 100%;
+}
+
+/* multiselect dropdonw */
+.rmsc.dark {
+  --rmsc-main: #374151;
+  --rmsc-hover: #374151;
+  --rmsc-selected: #4b5563;
+  --rmsc-border: #374151;
+  --rmsc-gray: #9ca3af;
+  --rmsc-bg: #374151;
+  color: #e5e7eb;
 }

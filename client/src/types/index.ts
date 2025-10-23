@@ -76,6 +76,7 @@ export interface ListingsApiResponse {
   listings: Listing[];
   totalPages: number;
   total: number;
+  providers?: Provider[]
 }
 
 export interface Settings {
@@ -83,4 +84,9 @@ export interface Settings {
   port: number;
   workingHoursFrom: string;
   workingHoursTo: string;
+}
+
+export interface Provider {
+  providerId: string;
+  providerName: string;
 }

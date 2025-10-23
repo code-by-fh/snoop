@@ -7,7 +7,7 @@ function randomCreatedAt() {
   return Math.random() < 0.3 ? today : faker.date.recent({ days: 50 });
 }
 
-export function generateListings(jobId, count) {
+export function generateListings(jobId, provider, count) {
   const listings = [];
 
   for (let i = 0; i < count; i++) {
@@ -32,6 +32,8 @@ export function generateListings(jobId, count) {
       imageUrl: `https://picsum.photos/seed/${faker.string.uuid()}/600/400`,
       url: faker.internet.url(),
       jobId: jobId,
+      providerId: provider.id,
+      providerName: provider.name,
       createdAt: randomCreatedAt(),
       updatedAt: new Date()
     });

@@ -43,6 +43,7 @@ export const getListings = (params?: {
   sortBy?: string,
   sortOrder?: string,
   searchTerm?: string,
+  providerIds?: string[];
 }) => api.get<ListingsApiResponse>('/listings', { params });
 export const createListing = (listingData: Partial<Listing>) => api.post<Listing>('/listings', listingData);
 export const deleteListing = (id: string) => api.delete(`/listings/${id}`);

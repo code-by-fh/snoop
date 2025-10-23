@@ -63,6 +63,14 @@ const ListingSchema = new mongoose.Schema({
     ref: 'Job',
     required: true
   },
+  providerId: {
+    type: String,
+    required: true
+  },
+  providerName: {
+    type: String,
+    required: true
+  },
   createdAt: {
     type: Date,
     default: Date.now
