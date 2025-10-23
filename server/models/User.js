@@ -26,7 +26,11 @@ const UserSchema = new mongoose.Schema({
     type: String,
     enum: ['user', 'admin'],
     default: 'user'
-  }
+  },
+  favoriteListings: [{
+    type: String,
+    ref: 'Listing'
+  }]
 }, {
   timestamps: true,
   versionKey: false,
