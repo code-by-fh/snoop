@@ -1,44 +1,34 @@
+import logger from '#utils/logger.js';
+import Favorite from '../models/Favorite.js';
 import Listing from '../models/Listing.js';
 
 export const addFavorite = async (req, res) => {
-  try {
-    const { listingId } = req.params;
-    const userId = req.user.id;
+    try {
+        const { listingId } = req.params;
+        const userId = req.user.id;
 
-    const listing = await Listing.findById(listingId);
-    if (!listing) return res.status(404).json({ message: 'Listing not found' });
+        const existing = await Favorite.findOne({ userId, listingId });
+        if (existing) {
+            return res.status(200).json({ message: 'Already favorited' });
+        }
 
-    listing.isFavorite = true;
-    await listing.save();
-
-    res.json({ listingId: listing.id, isFavorite: listing.isFavorite });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
+        const favorite = await Favorite.create({ userId, listingId });
+        res.json(favorite);
+    } catch (err) {
+        logger.error(err, 'Error adding favorite:');
+        res.status(500).json({ message: err.message });
+    }
 };
 
 export const removeFavorite = async (req, res) => {
-  try {
-    const { listingId } = req.params;
-    const userId = req.user.id;
+    try {
+        const { listingId } = req.params;
+        const userId = req.user.id;
 
-    const listing = await Listing.findById(listingId);
-    if (!listing) return res.status(404).json({ message: 'Listing not found' });
-
-    listing.isFavorite = false;
-    await listing.save();
-
-    res.json({ listingId: listing.id, isFavorite: listing.isFavorite });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-};
-
-export const getFavorites = async (req, res) => {
-  try {
-    const listings = await Listing.find({ isFavorite: true });
-    res.json(listings);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
+        await Favorite.deleteOne({ userId, listingId });
+        res.json({ message: 'Removed from favorites' });
+    } catch (err) {
+        logger.error(err, 'Error removing favorite:');
+        res.status(500).json({ message: err.message });
+    }
 };
