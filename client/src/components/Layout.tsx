@@ -37,14 +37,14 @@ const Layout: React.FC = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const navItems = [
-    { icon: LayoutDashboard, label: 'Dashboard', path: '/', allowedRoles: ['user', 'admin'] },
-    { icon: Hammer, label: 'Jobs', path: '/jobs', allowedRoles: ['user', 'admin'] },
-    { icon: List, label: 'Listings', path: '/listings', allowedRoles: ['user', 'admin'] },
-    { icon: Users, label: 'Users', path: '/users', allowedRoles: ['admin'] },
-    { icon: Settings, label: 'Settings', path: '/settings', allowedRoles: ['admin'] },
-    { icon: Megaphone, label: 'Notifications', path: '/notifications', allowedRoles: ['admin'] }
-  ];
+const navItems = [
+  { icon: LayoutDashboard, label: 'Dashboard', path: '/', allowedRoles: ['user', 'admin'] },
+  { icon: Hammer, label: 'Jobs', path: '/jobs', allowedRoles: ['user', 'admin'] },
+  { icon: List, label: 'Listings', path: '/listings', allowedRoles: ['user', 'admin'] },
+  { icon: Users, label: 'Users', path: '/users', allowedRoles: ['admin'] },
+  { icon: Settings, label: 'Settings', path: '/settings', allowedRoles: ['admin'] },
+  { icon: Megaphone, label: 'Notifications', path: '/notifications', allowedRoles: ['admin'] },
+];
 
   const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
   const closeMobileMenu = () => setIsMobileMenuOpen(false);

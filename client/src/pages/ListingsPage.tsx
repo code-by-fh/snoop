@@ -3,7 +3,7 @@ import ListingsViewToggle from '@/components/common/ViewToggle';
 import ListingsGridView from '@/components/listings/ListingsGridView';
 import ListingsListView from '@/components/listings/ListingsListView';
 import ListingsMapView from '@/components/listings/ListingsMapView';
-import { BarChart3, Filter, Grid3X3, List, Map, Plus, SortAsc, SortDesc, X } from 'lucide-react';
+import { BarChart3, Filter, Grid3X3, List, Map, Plus, SortAsc, SortDesc, Star, X } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { MultiSelect } from 'react-multi-select-component';
 import { Link } from 'react-router-dom';
@@ -27,6 +27,7 @@ const ListingsPage: React.FC = () => {
     minRooms: '',
     minArea: '',
     location: '',
+    showFavorites: false,
   });
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -61,6 +62,7 @@ const ListingsPage: React.FC = () => {
           sortOrder,
           searchTerm,
           providerIds: providerIds,
+          showFavorites: filters.showFavorites
         });
         setListings(response.data.listings);
         setTotalPages(response.data.totalPages);
@@ -124,6 +126,19 @@ const ListingsPage: React.FC = () => {
         />
 
         <div className="w-full grid grid-cols-2 gap-2 sm:flex sm:space-x-2 sm:w-auto">
+          <button
+            onClick={() =>
+              setFilters((prev) => ({ ...prev, showFavorites: !prev.showFavorites }))
+            }
+            className={`px-3 py-2 text-sm rounded-md border flex items-center gap-1 transition ${filters.showFavorites
+              ? 'bg-yellow-100 border-yellow-300 text-yellow-800 dark:bg-yellow-400/20 dark:border-yellow-500 dark:text-yellow-300'
+              : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-700'
+              }`}
+            title="Show only favorites"
+          >
+            <Star className="w-5 h-5" />
+            Favorites
+          </button>
           <button
             onClick={() => setSortBy('date')}
             className={`px-3 py-2 text-sm rounded-md border text-center flex-1 sm:flex-none ${sortBy === 'date'
@@ -232,6 +247,7 @@ const ListingsPage: React.FC = () => {
                   minRooms: '',
                   minArea: '',
                   location: '',
+                  showFavorites: false
                 });
                 setSelectedProviders([]);
                 setPage(1);

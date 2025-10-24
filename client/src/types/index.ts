@@ -68,6 +68,9 @@ export interface Listing {
   address?: string;
   url: string;
   job: string | Job;
+  providerId: string;
+  providerName: string;
+  isFavorite?: boolean;
   createdAt: string;
   updatedAt: string;
 }

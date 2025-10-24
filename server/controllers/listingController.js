@@ -66,6 +66,7 @@ export const getListings = async (req, res) => {
       sortBy = 'date',
       sortOrder = 'desc',
       providerIds,
+      showFavorites,
     } = req.query;
 
     const jobFilter = req.user.role === 'admin' ? {} : { user: req.user.id };
@@ -91,6 +92,7 @@ export const getListings = async (req, res) => {
     if (location) filter['location.city'] = { $regex: location, $options: 'i' };
     if (jobId) filter.job = jobId;
     if (providerIds && providerIds.length > 0) filter.providerId = providerIds;
+    if(showFavorites === true || showFavorites === 'true') filter.isFavorite = true;
     if (searchTerm) {
       filter.$or = [
         { title: { $regex: searchTerm, $options: 'i' } },

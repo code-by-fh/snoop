@@ -1,51 +1,44 @@
-import User from '../models/User.js';
+import Listing from '../models/Listing.js';
 
 export const addFavorite = async (req, res) => {
-    try {
-        const { listingId } = req.params;
-        const userId = req.user.id;
+  try {
+    const { listingId } = req.params;
+    const userId = req.user.id;
 
-        const user = await User.findById(userId);
-        if (!user) return res.status(404).json({ message: 'User not found' });
+    const listing = await Listing.findById(listingId);
+    if (!listing) return res.status(404).json({ message: 'Listing not found' });
 
-        if (user.favoriteListings.includes(listingId)) {
-            return res.status(200).json({ message: 'Already favorited' });
-        }
+    listing.isFavorite = true;
+    await listing.save();
 
-        user.favoriteListings.push(listingId);
-        await user.save();
-
-        res.json({ favoriteListings: user.favoriteListings });
-    } catch (err) {
-        res.status(500).json({ message: err.message });
-    }
+    res.json({ listingId: listing.id, isFavorite: listing.isFavorite });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 };
 
 export const removeFavorite = async (req, res) => {
-    try {
-        const { listingId } = req.params;
-        const userId = req.user.id;
+  try {
+    const { listingId } = req.params;
+    const userId = req.user.id;
 
-        const user = await User.findById(userId);
-        if (!user) return res.status(404).json({ message: 'User not found' });
+    const listing = await Listing.findById(listingId);
+    if (!listing) return res.status(404).json({ message: 'Listing not found' });
 
-        user.favoriteListings = user.favoriteListings.filter(id => id !== listingId);
-        await user.save();
+    listing.isFavorite = false;
+    await listing.save();
 
-        res.json({ favoriteListings: user.favoriteListings });
-    } catch (err) {
-        res.status(500).json({ message: err.message });
-    }
+    res.json({ listingId: listing.id, isFavorite: listing.isFavorite });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 };
 
 export const getFavorites = async (req, res) => {
-    try {
-        const userId = req.user.id;
-        const user = await User.findById(userId).populate('favoriteListings');
-        if (!user) return res.status(404).json({ message: 'User not found' });
-
-        res.json(user.favoriteListings);
-    } catch (err) {
-        res.status(500).json({ message: err.message });
-    }
+  try {
+    const listings = await Listing.find({ isFavorite: true });
+    res.json(listings);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 };
