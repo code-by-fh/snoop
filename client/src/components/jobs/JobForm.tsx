@@ -91,7 +91,7 @@ const JobForm: React.FC<JobFormProps> = ({ onSubmit, isLoading, error, initialDa
               maxLength: { value: 100, message: 'Max 100 characters' },
             })}
             placeholder="e.g., Daily Job Scrape"
-            className={`flex justify-between w-full items-center font-bold dark:text-gray-100 bg-white dark:bg-gray-800 p-4 rounded-lg border hover:shadow-sm`}
+            className={`snoop-input`}
           />
           {errors.name && (
             <p className="mt-1 text-sm font-medium text-red-600 dark:text-red-400">

@@ -1,5 +1,3 @@
-// jobStatus.ts
-
 export const jobStatusStyles = {
   waiting: {
     bgLight: "bg-gray-100",

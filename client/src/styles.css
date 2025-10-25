@@ -20,6 +20,10 @@ body {
   @apply inline-flex items-center px-5 py-2.5 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-300;
 }
 
+.snoop-input {
+  @apply flex justify-between w-full items-center font-bold dark:text-gray-100 bg-white dark:bg-gray-800 p-4 rounded-lg border hover:shadow-sm
+}
+
 @layer components {
   .card-base {
     @apply rounded-2xl border bg-white dark:bg-gray-900 dark:border-gray-700 shadow-md hover:shadow-lg transition-all duration-300 hover:scale-[1.01];

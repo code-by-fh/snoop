@@ -18,6 +18,7 @@ import UsersPage from './pages/UsersPage';
 
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { ScrollToHash } from './hooks/scrollTo';
+import AccountPage from './pages/AccountPage';
 
 const App: React.FC = () => {
   return (
@@ -39,6 +40,7 @@ const App: React.FC = () => {
               <Route path="jobs/new" element={<NewJobPage />} />
               <Route path="jobs/:id" element={<EditJobPage />} />
               <Route path="jobs/:id/statistics" element={<JobStatisticsPage />} />
+              <Route path="account" element={<AccountPage />} />
 
               {/* Admin Routes (with role-based access) */}
               <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
