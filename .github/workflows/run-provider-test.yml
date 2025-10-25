@@ -19,10 +19,23 @@ jobs:
         working-directory: ./server
 
     steps:
-      - name: Checkout repository
+      - name: Checkout repository (without ref first)
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event_name == 'schedule' && 'refs/tags/latest' || github.ref }}
+          fetch-depth: 0 # We need all tags to detect the latest
+
+      - name: Determine latest tag
+        id: get_latest_tag
+        run: |
+          TAG=$(git describe --tags "$(git rev-list --tags --max-count=1)")
+          echo "Latest tag is $TAG"
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+
+      - name: Checkout latest tag if schedule
+        if: ${{ github.event_name == 'schedule' }}
+        run: |
+          git fetch --tags
+          git checkout ${{ steps.get_latest_tag.outputs.tag }}
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -35,7 +48,9 @@ jobs:
         run: |
           pwd
           ls -la
-          
+          git status
+          git describe --tags || echo "No tag found"
+
       - name: Install dependencies
         run: npm install
 
