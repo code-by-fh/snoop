@@ -1,15 +1,15 @@
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
-import { generateUsers } from './users.js';
+import { SEED_CONFIG } from './config.js';
 import { generateJobs as generateJob } from './jobs.js';
 import { generateListings } from './listings.js';
-import { SEED_CONFIG } from './config.js';
+import { generateUsers } from './users.js';
 
-import User from '../models/User.js';
+import logger from '#utils/logger.js';
 import Job from '../models/Job.js';
 import Listing from '../models/Listing.js';
 import Settings from '../models/Settings.js';
-import logger from '#utils/logger.js';
+import User from '../models/User.js';
 
 dotenv.config();
 
@@ -38,26 +38,26 @@ async function seedDatabase() {
                 const job = await Job.create(generateJob(user._id, provider));
                 logger.info(`Created job "${job.name}" for ${user.username}`);
 
-                // const listings = await Listing.create(generateListings(job._id,provider, SEED_CONFIG.listingsPerJob));
-                // const listingIds = listings.map(listing => listing._id);
+                const listings = await Listing.create(generateListings(job._id, provider, SEED_CONFIG.listingsPerJob));
+                const listingIds = listings.map(listing => listing._id);
 
-                // await Job.updateOne(
-                //     { _id: job._id },
-                //     {
-                //         $push: {
-                //             'providers.$[provider].listings': {
-                //                 $each: listingIds
-                //             }
-                //         }
-                //     },
-                //     {
-                //         arrayFilters: [{ 'provider.id': provider.id }]
-                //     }
-                // );
+                await Job.updateOne(
+                    { _id: job._id },
+                    {
+                        $push: {
+                            'providers.$[provider].listings': {
+                                $each: listingIds
+                            }
+                        }
+                    },
+                    {
+                        arrayFilters: [{ 'provider.id': provider.id }]
+                    }
+                );
 
-                // logger.info(
-                //     `Added "${listingIds.length}" listings to provider "${provider.id}" in job "${job.name}"`
-                // );
+                logger.info(
+                    `Added "${listingIds.length}" listings to provider "${provider.id}" in job "${job.name}"`
+                );
             }
         }
 

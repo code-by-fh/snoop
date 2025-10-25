@@ -61,7 +61,7 @@ const ListingDetailSidebar: React.FC<ListingDetailSidebarProps> = ({ listing, on
         isFavorite={favorited}
         onToggle={() => toggleFavorite(listing.id)}
         loading={loading}
-        className="absolute top-[150px] left-[23px] z-10"
+        className="absolute top-[150px] left-[23px]"
       />
 
       {/* Header */}
