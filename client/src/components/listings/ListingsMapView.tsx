@@ -1,10 +1,10 @@
-import { ExternalLink, X, Star, StarOff } from "lucide-react";
+import { useFavorite } from '@/hooks/useFavorite';
+import { formatPrice } from "@/utils/formatters";
+import { ExternalLink, X } from "lucide-react";
 import React, { useState } from "react";
 import { Listing } from "../../types";
-import Map from "../map/Map";
-import { formatPrice } from "@/utils/formatters";
-import { useFavorite } from '@/hooks/useFavorite';
 import FavoriteButton from "../common/FavoriteButton";
+import Map from "../map/Map";
 
 interface ListingsMapViewProps {
   listings: Listing[];

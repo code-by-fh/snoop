@@ -1,8 +1,8 @@
-import { Calendar, Home, MapPin, Star, StarOff } from 'lucide-react';
+import { useFavorite } from '@/hooks/useFavorite';
+import { formatDate, formatPrice } from '@/utils/formatters';
+import { Calendar, Home, MapPin } from 'lucide-react';
 import React from 'react';
 import { Listing } from '../../types';
-import { formatDate, formatPrice } from '@/utils/formatters';
-import { useFavorite } from '@/hooks/useFavorite';
 import FavoriteButton from '../common/FavoriteButton';
 
 interface ListingCardProps {
