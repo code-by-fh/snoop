@@ -78,7 +78,10 @@ class JobRuntime {
   }
 
   _normalize(listings) {
-    return listings.map(this._providerConfig.normalize)
+    return listings.map(this._providerConfig.normalize).map(listing => {
+      listing.id = buildHash(listing.id, this._providerId, this._job.id);
+      return listing;
+    })
   }
 
   _filter(listings) {
@@ -95,7 +98,6 @@ class JobRuntime {
 
   async _polish(lisintgs) {
     return lisintgs.map(listing => {
-      listing.id = buildHash(listing.id, this._providerId, this._job.id);
       listing.providerName = this._providerMetaInformation.name;
       listing.providerId = this._providerMetaInformation.id;
       return listing;

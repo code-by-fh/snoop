@@ -115,12 +115,18 @@ JobSchema.statics.getAllJobs = async function (filter) {
 };
 
 JobSchema.statics.getJob = async function (id, filter = {}) {
+  const job = await this.getJobRaw({ _id: id, ...filter });
+  return job?.toJSON() || null;
+};
+
+
+JobSchema.statics.getJobRaw = async function (id, filter = {}) {
   const job = await this.findOne({ _id: id, ...filter })
     .populate({
       path: 'providers.listings',
       model: 'Listing'
     });
-  return job?.toJSON() || null;
+  return job ||null;
 };
 
 JobSchema.statics.addProviderError = async function (jobId, error) {

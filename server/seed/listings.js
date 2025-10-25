@@ -17,7 +17,7 @@ export function generateListings(jobId, provider, count) {
     const price = faker.number.int({ min: 600, max: 3000 });
 
     listings.push({
-      id: buildHash(title, price, city, street, faker.string.uuid()),
+      _id: buildHash(title, price, city, street, faker.string.uuid()),
       title: title,
       price: price,
       location: {

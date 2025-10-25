@@ -8,10 +8,6 @@ const ListingSchema = new mongoose.Schema({
     required: true,
     default: uuidv4
   },
-  id: {
-    type: String,
-    required: true,
-  },
   title: {
     type: String,
     required: true,
@@ -91,7 +87,7 @@ ListingSchema.statics.saveListings = async function (newListings, jobId) {
 
   for (const listingData of newListings) {
     const filter = {
-      id: listingData.id,
+      _id: listingData.id,
       jobId: jobId,
     };
 

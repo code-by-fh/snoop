@@ -56,57 +56,53 @@ export const getJobById = async (req, res) => {
 export const updateJob = async (req, res) => {
   try {
     const filter = req.user.role === 'admin' ? {} : { user: req.user.id };
-    const job = await Job.findById(req.params.id, filter);
+    const job = await Job.getJobRaw(req.params.id, filter);
 
     if (!job) {
       return res.status(404).json({ message: 'Job not found' });
     }
 
-    const updateFields = [
-      'name',
-      'blacklistTerms',
-      'isActive'
-    ];
+    const allowedFields = ['name', 'blacklistTerms', 'isActive'];
 
-    updateFields.forEach(field => {
-      if (req.body[field] !== undefined) {
+    for (const field of allowedFields) {
+      if (Object.prototype.hasOwnProperty.call(req.body, field)) {
         job[field] = req.body[field];
       }
-    });
+    }
 
-    // do not overwrite the lisintgs in the providers
     if (Array.isArray(req.body.providers)) {
       job.providers = req.body.providers.map(newProvider => {
         const existing = job.providers.find(p => p.id === newProvider.id);
         return {
-          ...(existing ? existing.toObject() : {}),
+          ...(existing || {}),
           ...newProvider,
-          listings: existing?.listings || []
+          listings: existing?.listings ?? []
         };
       });
     }
 
-    // only save nessesary fields for notification adapters
     if (Array.isArray(req.body.notificationAdapters)) {
       job.notificationAdapters = req.body.notificationAdapters.map(adapter => ({
         id: adapter.id,
         fields: Object.fromEntries(
-          Object.entries(adapter.fields || {}).map(([fieldKey, fieldConfig]) => [
-            fieldKey,
-            { value: fieldConfig.value }
+          Object.entries(adapter.fields || {}).map(([key, value]) => [
+            key,
+            { value: value?.value ?? '' }
           ])
         )
       }));
     }
 
     await job.save();
-    logger.debug({ jobId: job._id, updatedFields: req.body }, 'Job updated successfully:');
-    res.status(200).send();
+
+    logger.debug({ jobId: job._id }, 'Job updated successfully');
+    res.status(200).json({ message: 'Job updated successfully' });
   } catch (error) {
     logger.error(error, 'Error updating job:');
-    res.status(400).json({ message: error.message });
+    res.status(500).json({ message: 'Error updating job', error: error.message });
   }
 };
+
 
 
 export const deleteJob = async (req, res) => {
