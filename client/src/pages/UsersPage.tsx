@@ -1,21 +1,17 @@
+import { ApiError } from '@/types/common';
 import { PlusCircle } from 'lucide-react';
 import React, { useCallback, useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 import { createUser, deleteUser, getUsers, updateUser } from '../api';
 import ConfirmationModal from '../components/modals/ConfirmationModal';
 import UserFormModal from '../components/users/UserFormModal';
 import UserTable from '../components/users/UserTable';
 import { User, UserCreate, UserUpdate } from '../types/user';
-import toast from 'react-hot-toast';
-
-interface Error {
-  message: string;
-  error: string;
-}
 
 const UsersPage: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
+  const [error, setError] = useState<ApiError | null>(null);
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
@@ -28,7 +24,7 @@ const UsersPage: React.FC = () => {
       const response = await getUsers();
       setUsers(response.data);
     } catch (err: any) {
-      setError(err?.response?.data as Error);
+      setError(err?.response?.data as ApiError);
     } finally {
       setLoading(false);
     }
@@ -66,7 +62,7 @@ const UsersPage: React.FC = () => {
       fetchUsers();
       setIsFormModalOpen(false);
     } catch (err: any) {
-      setError(err?.response?.data as Error);
+      setError(err?.response?.data as ApiError);
     }
   };
 
@@ -78,7 +74,7 @@ const UsersPage: React.FC = () => {
       fetchUsers();
       toast('User deleted successfully!', { icon: '🗑️' });
     } catch (err: any) {
-      setError(err?.response?.data as Error);
+      setError(err?.response?.data as ApiError);
     } finally {
       setIsConfirmModalOpen(false);
       setUserToDeleteId(null);

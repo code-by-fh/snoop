@@ -61,6 +61,7 @@ export const deleteUser = (id: string) => api.delete(`/admin/users/${id}`);
 
 // user profile API methods
 export const getUserProfile = () => api.get<User>('/me');
+export const updateUserProfile = (userData: Partial<User>) => api.patch<User>('/me', userData);
 
 // Statistics-related API methods
 export const getdStats = () => api.get<Statistics>('/statistics');
