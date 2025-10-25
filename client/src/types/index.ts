@@ -69,7 +69,6 @@ export interface Listing {
   rooms?: number;
   description?: string;
   imageUrl?: string;
-  address?: string;
   url: string;
   job: string | Job;
   providerId: string;

@@ -38,26 +38,26 @@ async function seedDatabase() {
                 const job = await Job.create(generateJob(user._id, provider));
                 logger.info(`Created job "${job.name}" for ${user.username}`);
 
-                const listings = await Listing.create(generateListings(job._id,provider, SEED_CONFIG.listingsPerJob));
-                const listingIds = listings.map(listing => listing._id);
+                // const listings = await Listing.create(generateListings(job._id,provider, SEED_CONFIG.listingsPerJob));
+                // const listingIds = listings.map(listing => listing._id);
 
-                await Job.updateOne(
-                    { _id: job._id },
-                    {
-                        $push: {
-                            'providers.$[provider].listings': {
-                                $each: listingIds
-                            }
-                        }
-                    },
-                    {
-                        arrayFilters: [{ 'provider.id': provider.id }]
-                    }
-                );
+                // await Job.updateOne(
+                //     { _id: job._id },
+                //     {
+                //         $push: {
+                //             'providers.$[provider].listings': {
+                //                 $each: listingIds
+                //             }
+                //         }
+                //     },
+                //     {
+                //         arrayFilters: [{ 'provider.id': provider.id }]
+                //     }
+                // );
 
-                logger.info(
-                    `Added "${listingIds.length}" listings to provider "${provider.id}" in job "${job.name}"`
-                );
+                // logger.info(
+                //     `Added "${listingIds.length}" listings to provider "${provider.id}" in job "${job.name}"`
+                // );
             }
         }
 

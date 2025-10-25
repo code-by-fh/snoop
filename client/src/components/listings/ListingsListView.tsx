@@ -52,7 +52,7 @@ const ListingsListView: React.FC<ListingsListViewProps> = ({ listings }) => {
                     <div className="flex items-center text-gray-600 dark:text-gray-400 mb-3">
                       <MapPin className="w-4 h-4 mr-1 flex-shrink-0" />
                       <span className="text-sm truncate">
-                        {[listing.location?.street, listing.location?.city].filter(Boolean).join(', ') || 'No location'}
+                        {listing.location?.fullAddress || 'No location'}
                       </span>
                     </div>
 

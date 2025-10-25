@@ -46,7 +46,7 @@ const ListingCard: React.FC<ListingCardProps> = ({ listing }) => {
         <div className="mt-2 flex items-center text-gray-600 dark:text-gray-400">
           <MapPin className="w-4 h-4 mr-1" />
           <span className="text-sm truncate">
-            {[listing.location?.street, listing.location?.city].filter(Boolean).join(', ') || listing.address || 'No location'}
+            {listing.location?.fullAddress || 'No location'}
           </span>
         </div>
 
