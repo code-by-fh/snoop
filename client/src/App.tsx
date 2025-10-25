@@ -12,8 +12,8 @@ import NewJobPage from './pages/JobPageNew';
 import JobsPage from './pages/JobsPage';
 import JobStatisticsPage from './pages/JobStatisticsPage';
 import ListingsPage from './pages/ListingsPage';
-import SettingsPage from './pages/SettingsPage';
 import NotificationsPage from './pages/NotificationsPage';
+import SettingsPage from './pages/SettingsPage';
 import UsersPage from './pages/UsersPage';
 
 import 'mapbox-gl/dist/mapbox-gl.css';
@@ -23,7 +23,7 @@ const App: React.FC = () => {
   return (
     <AuthProvider>
       <Router>
-      <ScrollToHash />
+        <ScrollToHash />
         <Routes>
           {/* Public Routes */}
           <Route path="/login" element={<LoginForm />} />
