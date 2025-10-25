@@ -71,6 +71,15 @@ const ListingSchema = new mongoose.Schema({
   }
 }, {
   timestamps: true,
+  toObject: {
+    virtuals: true,
+    transform: (doc, ret) => {
+      ret.id = ret._id;
+      delete ret._id;
+      delete ret.__v;
+      return ret;
+    }
+  },
   toJSON: {
     transform: (doc, ret) => {
       ret.id = ret._id;

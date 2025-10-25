@@ -73,7 +73,7 @@ export const getListings = async (req, res) => {
 
     const jobFilter = req.user.role === 'admin' ? {} : { user: req.user.id };
     const jobs = await Job.find(jobFilter);
-    const jobIds = jobs.map((job) => job._id.toString());
+    const jobIds = jobs.map((job) => job.id.toString());
 
     if (!jobs.length) {
       return res.json({ listings: [], total: 0, page: 1, totalPages: 0, providers: [] });
@@ -102,7 +102,7 @@ export const getListings = async (req, res) => {
     const favorites = await Favorite.find({ userId: req.user.id });
     const favoriteListingIds = favorites.map(fav => fav.listingId);
     if (showFavorites === true || showFavorites === 'true') {
-      filter.id = { $in: favoriteListingIds };
+      filter._id = { $in: favoriteListingIds };
     }
 
     const skip = (parseInt(page) - 1) * parseInt(limit);
@@ -125,7 +125,7 @@ export const getListings = async (req, res) => {
 
     const listingsWithFavorites = listings.map(listing => ({
       ...listing.toObject(),
-      isFavorite: favoriteListingIds.includes(listing.id.toString()),
+      isFavorite: favoriteListingIds.includes(listing._id.toString()),
     }));
 
     res.json({
