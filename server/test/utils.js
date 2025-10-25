@@ -1,17 +1,17 @@
 import esmock from 'esmock';
 import { readFile } from 'fs/promises';
 import logger from "../utils/logger.js";
+import { addGeoCoordinatesWithMapbox } from './mocks/mockMapboxGeo.js';
 import { send } from './mocks/mockNotification.js';
 
 export const providerConfig = JSON.parse(await readFile(new URL('./provider/testProvider.json', import.meta.url)));
 
 export const mockJobRuntime = async () => {
-  return await esmock('../services/runtime/JobRuntime', {
+  return await esmock('../services/runtime/JobRuntime.js', {
     '../models/Job.js': (await import('./mocks/mockJob.js')).default,
     '../models/Listing.js': (await import('./mocks/mockListing.js')).default,
-    '../notification/notify.js': {
-      send,
-    },
+    '../services/mapboxGeo.js': { addGeoCoordinatesWithMapbox },
+    '../notification/notify.js': { send },
   });
 };
 

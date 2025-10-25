@@ -1,6 +1,6 @@
 import { useFavorite } from '@/hooks/useFavorite';
 import { formatPrice } from "@/utils/formatters";
-import { ExternalLink, X } from "lucide-react";
+import { ExternalLink, MapPin, X } from "lucide-react";
 import React, { useState } from "react";
 import { Listing } from "../../types";
 import FavoriteButton from "../common/FavoriteButton";
@@ -50,54 +50,105 @@ const ListingDetailSidebar: React.FC<ListingDetailSidebarProps> = ({ listing, on
   const { favorited, toggleFavorite, loading } = useFavorite(listing.isFavorite || false);
 
   return (
-    <div className={`bg-white dark:bg-gray-800 ${mobile ? "rounded-t-lg shadow-lg relative" : "h-full flex flex-col relative"}`}>
+    <div
+      className={`bg-white dark:bg-gray-900 ${mobile
+        ? "rounded-t-2xl shadow-2xl relative overflow-hidden"
+        : "h-full flex flex-col relative rounded-2xl shadow-xl"
+        } transition-all duration-300`}
+    >
+      {/* Favorite Button */}
       <FavoriteButton
         isFavorite={favorited}
         onToggle={() => toggleFavorite(listing.id)}
         loading={loading}
-        className="absolute top-[80px] left-[20px]"
+        className="absolute top-[150px] left-[23px]"
       />
-      <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{listing.title}</h2>
+
+      {/* Header */}
+      <div className="flex items-center justify-between p-5 border-b border-gray-100 dark:border-gray-700">
+        <h2 className="text-xl font-semibold text-gray-900 dark:text-white leading-snug">
+          {listing.title}
+        </h2>
         <button
           onClick={onClose}
-          className="rounded-md text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="rounded-full p-1.5 hover:bg-gray-100 dark:hover:bg-gray-800 transition"
         >
-          <X className="h-6 w-6" />
+          <X className="h-5 w-5 text-gray-500 dark:text-gray-300" />
         </button>
       </div>
-      <div className={`p-4 ${mobile ? "space-y-3 max-h-[60vh] overflow-y-auto" : "overflow-y-auto flex-1 space-y-4"}`}>
+
+      {/* Content */}
+      <div
+        className={`p-5 ${mobile
+          ? "space-y-4 max-h-[70vh] overflow-y-auto"
+          : "overflow-y-auto flex-1 space-y-6"
+          }`}
+      >
+
+        {/* Image */}
         {listing.imageUrl && (
-          <img
-            src={listing.imageUrl}
-            alt={listing.title}
-            className={`w-full ${mobile ? "h-40" : "h-48"} object-cover rounded-lg`}
-          />
+          <div className="relative group rounded-xl overflow-hidden">
+            <img
+              src={listing.imageUrl}
+              alt={listing.title}
+              className="w-full h-56 object-cover transition-transform duration-500 group-hover:scale-105"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-70 group-hover:opacity-50 transition"></div>
+          </div>
         )}
-        <p className="text-sm text-gray-700 dark:text-gray-300">{listing.description}</p>
-        <div className="space-y-1 text-sm text-gray-600 dark:text-gray-400">
-          <p>
-            <strong>Location:</strong>{" "}
-            {[listing.location?.street, listing.location?.city].filter(Boolean).join(", ")}
+
+        {/* Description */}
+        {listing.description && (
+          <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
+            {listing.description}
           </p>
-          <p><strong>Rooms:</strong> {listing.rooms}</p>
-          <p><strong>Size:</strong> {listing.size} m²</p>
-          <p>
-            <strong>Price:</strong>{" "}
-            <span className="font-semibold text-green-600 dark:text-green-400">{formatPrice(listing.price)}</span>
-          </p>
+        )}
+
+        {/* Info Section */}
+        <div className="grid grid-cols-1 gap-3 text-sm text-gray-700 dark:text-gray-300">
+          <div className="flex items-center">
+            <MapPin className="w-4 h-4 mr-2 text-blue-500 flex-shrink-0" />
+            <span className="truncate" title={listing.location?.fullAddress}>
+              {listing.location?.fullAddress ||
+                listing.location?.street ||
+                "No location"}
+            </span>
+          </div>
+          {listing.rooms && (
+            <div>
+              <strong className="text-gray-900 dark:text-gray-100">Rooms:</strong>{" "}
+              {listing.rooms}
+            </div>
+          )}
+          {listing.size && (
+            <div>
+              <strong className="text-gray-900 dark:text-gray-100">Size:</strong>{" "}
+              {listing.size} m²
+            </div>
+          )}
+          {listing.price && (
+            <div>
+              <strong className="text-gray-900 dark:text-gray-100">Price:</strong>{" "}
+              <span className="font-semibold text-green-600 dark:text-green-400">
+                {formatPrice(listing.price)}
+              </span>
+            </div>
+          )}
         </div>
+
+        {/* Link */}
         <a
           href={listing.url}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center text-blue-600 dark:text-blue-400 hover:underline text-sm"
+          className="inline-flex items-center justify-center w-full py-2.5 mt-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 rounded-lg shadow-md transition"
         >
-          <ExternalLink className="w-4 h-4 mr-1" />
+          <ExternalLink className="w-4 h-4 mr-2" />
           View Listing
         </a>
       </div>
     </div>
+
   );
 };
 

@@ -31,6 +31,7 @@ const config = {
     rooms: '.tabelle .tabelle_inhalt_infos .single_data_box:nth-of-type(2)  | removeNewline | trim',
     title: '.inner_object_data .tabelle_inhalt_titel_black | removeNewline | trim',
     imageUrl: ".tabelle .inner_object_pic img@src",
+    rawAddress: '.tabelle .tabelle_inhalt_infos .left_information > div:nth-child(2) | removeNewline | trim',
   },
   normalize: normalize,
   filter: applyBlacklist,

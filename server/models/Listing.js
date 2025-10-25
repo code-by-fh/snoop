@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import { v4 as uuidv4 } from 'uuid';
 
+
 const ListingSchema = new mongoose.Schema({
   _id: {
     type: String,
@@ -21,22 +22,15 @@ const ListingSchema = new mongoose.Schema({
     required: false
   },
   location: {
-    city: {
-      type: String,
-      required: false
-    },
-    street: {
-      type: String,
-      required: false
-    },
-    lat: {
-      type: Number,
-      required: false
-    },
-    lng: {
-      type: Number,
-      required: false
-    }
+    lat: { type: Number, required: false },
+    lng: { type: Number, required: false },
+    street: { type: String, required: false },
+    city: { type: String, required: false },
+    district: { type: String, required: false },
+    zipcode: { type: String, required: false },
+    state: { type: String, required: false },
+    country: { type: String, required: false },
+    fullAddress: { type: String, required: false }
   },
   size: {
     type: Number,
@@ -59,7 +53,7 @@ const ListingSchema = new mongoose.Schema({
     required: true
   },
   jobId: {
-    type: mongoose.Schema.Types.String,
+    type: String,
     ref: 'Job',
     required: true
   },
@@ -91,12 +85,13 @@ const ListingSchema = new mongoose.Schema({
   }
 });
 
+
 ListingSchema.statics.saveListings = async function (newListings, jobId) {
   const savedListings = [];
 
   for (const listingData of newListings) {
     const filter = {
-      _id: listingData.id,
+      id: listingData.id,
       jobId: jobId,
     };
 

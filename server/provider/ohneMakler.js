@@ -9,10 +9,7 @@ function normalize(o) {
   const url = `${metaInformation.baseUrl}${o.url}`;
   const price = extractNumber(o.price);
   const size = extractNumber(o.size);
-  const location = {
-    ...(o.address && { city: o.address })
-  };
-  return Object.assign(o, { id, url, price, size, location });
+  return Object.assign(o, { id, url, price, size });
 }
 
 function applyBlacklist(o) {
@@ -30,7 +27,7 @@ const config = {
     id: "a@href",
     price: "span.text-primary-500 | removeNewline | trim",
     size: "div[title='Wohnfläche'] span | removeNewline | trim",
-    address: "div.text-slate-800 span | removeNewline | trim",
+    rawAddress: "div.text-slate-800 span | removeNewline | trim",
     title: "h4 | removeNewline | trim",
     url: "a@href",
     imageUrl: "img@src"

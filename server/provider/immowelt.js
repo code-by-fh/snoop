@@ -1,5 +1,5 @@
-import utils, { buildHash } from '../utils/utils.js';
 import { extractNumber } from '../utils/numberParser.js';
+import utils, { buildHash } from '../utils/utils.js';
 
 let appliedBlackList = [];
 
@@ -7,13 +7,8 @@ function normalize(o) {
   const id = buildHash(o.id, o.price);
   const url = o.url ? new URL(o.url).origin + new URL(o.url).pathname : null;
   const [rooms, size] = (o.size || "").split("·").map(v => v.trim()).map(v => extractNumber(v))
-  const [street, district, city] = (o.address || "").split(",").map(v => v.trim())
-  const location = {
-    ...(street && { street }),
-    ...city && { city }
-  };
   const price = extractNumber(o.price)
-  return Object.assign(o, { id, url, price, rooms, size, location });
+  return Object.assign(o, { id, url, price, rooms, size });
 }
 
 function applyBlacklist(o) {
@@ -34,7 +29,7 @@ const config = {
     size: 'div[data-testid="cardmfe-keyfacts-testid"] | removeNewline | trim',
     title: 'div[data-testid="cardmfe-description-box-text-test-id"]  div:nth-child(2) | removeNewline | trim',
     url: 'a@href',
-    address: 'div[data-testid="cardmfe-description-box-address"] | removeNewline | trim',
+    rawAddress: 'div[data-testid="cardmfe-description-box-address"] | removeNewline | trim',
     imageUrl: 'div[data-testid="card-mfe-picture-box-gallery-thumbnail-test-id"] img@src'
   },
   normalize: normalize,
@@ -54,3 +49,4 @@ export const metaInformation = {
 };
 
 export { config };
+

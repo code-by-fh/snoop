@@ -15,15 +15,10 @@ function normalize(o) {
   const size = o.size ? extractNumber(o.size) : null;
   const rooms = o.size ? extractNumber(o.rooms) : null;
   const price = o.price ? extractNumber(o.price) : null;
-  const [street, district, city] = o.address.split(",").map(v => v.trim());
-  const location = {
-  ...(street && { street }),
-  ...(city && { city })
-  }
   const title = o.title ? o.title.split("-")[0].trim() : "No title available";
   const url = urlModifier(config.url, config.sortByDateParam, config.urlParamsToRemove);
   const id = buildHash(title, price);
-  return Object.assign(o, { id, price, size, title, url, rooms, location });
+  return Object.assign(o, { id, price, size, title, url, rooms });
 }
 
 function applyBlacklist(o) {
@@ -43,7 +38,7 @@ const config = {
     price: 'div[data-testid="cardmfe-price-testid"] | trim',
     rooms: 'div[data-testid="cardmfe-keyfacts-testid"] div:nth-of-type(1) | trim',
     size: 'div[data-testid="cardmfe-keyfacts-testid"] div:nth-of-type(3) | trim',
-    address: 'div[data-testid="cardmfe-description-box-address"] | trim',
+    rawAddress: 'div[data-testid="cardmfe-description-box-address"] | trim',
     imageUrl: 'img[aria-label="Hauptbild"]@src | trim'
   },
   normalize: normalize,

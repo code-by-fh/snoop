@@ -8,13 +8,10 @@ function normalize(o) {
   const url = `${metaInformation.baseUrl}${o.url}`;
   const id = buildHash(o.id, o.price);
   const price = extractNumber(o.price);
-  const location = {
-    ...(o.address && { city: o.address })
-  };
   const splitSizeRooms = o.size && o.size.split('·');
   const rooms = splitSizeRooms && splitSizeRooms[1] ? extractNumber(splitSizeRooms[0].trim()) : null;
   const size = splitSizeRooms && splitSizeRooms[1] ? extractNumber(splitSizeRooms[1].trim()) : null;
-  return Object.assign(o, { id, size, url, price, location, rooms });
+  return Object.assign(o, { id, size, url, price, rooms });
 }
 
 function applyBlacklist(o) {
@@ -38,7 +35,7 @@ const config = {
     title: '.aditem-main .text-module-begin a | removeNewline | trim',
     url: '.aditem-main .text-module-begin a@href | removeNewline | trim',
     description: '.aditem-main .aditem-main--middle--description | removeNewline | trim',
-    address: '.aditem-main--top--left | trim | removeNewline',
+    rawAddress: '.aditem-main--top--left | trim | removeNewline',
     imageUrl: ".aditem-image .imagebox img@src",
   },
   normalize: normalize,
