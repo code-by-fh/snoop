@@ -25,7 +25,7 @@ const config = {
     id: 'a@href',
     title: 'a@title | removeNewline | trim',
     url: 'a@href',
-    address: '.nbk-project-card__description | removeNewline | trim',
+    rawAddress: '.nbk-project-card__description | removeNewline | trim',
     price: '.nbk-project-card__list li:nth-of-type(1) .nbk-project-card__spec-value | removeNewline | trim',
     size: '.nbk-project-card__list li:nth-of-type(2) .nbk-project-card__spec-value | removeNewline | trim',
     rooms: '.nbk-project-card__list li:nth-of-type(3) .nbk-project-card__spec-value | removeNewline | trim',

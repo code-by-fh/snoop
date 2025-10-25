@@ -1,5 +1,5 @@
-import { isOneOf, buildHash } from '../utils/utils.js';
-import {extractNumber} from '../utils/numberParser.js';
+import { extractNumber } from '../utils/numberParser.js';
+import { buildHash, isOneOf } from '../utils/utils.js';
 
 let appliedBlackList = [];
 
@@ -9,9 +9,9 @@ function normalize(o) {
   const size = o.size ? extractNumber(o.size.split("|")[1].trim()) : null;
   const rooms = o.size ? extractNumber(o.size.split("|")[0].trim()) : null;
   const title = o.title || 'No title available';
-  const address = o.address?.replace(' / ', ' ') || null;
+  const rawAddress = o.rawAddress?.replace(' / ', ' ') || null;
   const url = o.url != null ? `https://www.mcmakler.de${o.url}` : config.url;
-  return Object.assign(o, { id, size, title, url, address, rooms });
+  return Object.assign(o, { id, size, title, url, rawAddress, rooms });
 }
 function applyBlacklist(o) {
   const titleNotBlacklisted = !isOneOf(o.title, appliedBlackList);
@@ -29,7 +29,7 @@ const config = {
     price: 'footer > p:first-of-type | parseNumber',
     size: 'footer > p:nth-of-type(2) | trim',
     rooms: 'footer > p:nth-of-type(2) | trim',
-    address: 'div > h2 + p | removeNewline | trim',
+    rawAddress: 'div > h2 + p | removeNewline | trim',
     imageUrl: 'img@src',
     url: 'h2 a@href',
   },

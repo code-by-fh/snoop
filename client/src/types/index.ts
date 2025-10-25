@@ -50,16 +50,20 @@ export interface AdapterFieldConfig {
   type?: 'text' | 'password' | 'number' | 'select' | 'textarea';
 }
 
-
 export interface Listing {
   id: string;
   title: string;
   price?: number;
   location?: {
-    city?: string;
-    street?: string;
     lat?: number;
     lng?: number;
+    street?: string;
+    city?: string;
+    district?: string;
+    zipcode?: string;
+    state?: string;
+    country?: string;
+    fullAddress?: string;
   };
   size?: number;
   rooms?: number;

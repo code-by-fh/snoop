@@ -1,18 +1,18 @@
-import { isOneOf, buildHash } from '../utils/utils.js';
-import {extractNumber} from '../utils/numberParser.js';
+import { extractNumber } from '../utils/numberParser.js';
+import { buildHash, isOneOf } from '../utils/utils.js';
 
 let appliedBlackList = [];
 
 function normalize(o) {
   const id = buildHash(o.id, o.price);
-  const address = o.address?.replace(/^adresse /i, '') ?? null;
+  const rawAddress = o.rawAddress?.replace(/^adresse /i, '') ?? null;
   const title = o.title || 'No title available';
   const link = o.link != null ? decodeURIComponent(o.link) : config.url;
   const price = extractNumber(o.price) ?? null;
   const size = extractNumber(o.size) ?? null;
   var urlReg = new RegExp(/url\((.*?)\)/gim);
   const imageUrl = o.imageUrl != null ? urlReg.exec(o.imageUrl)[1] : null;
-  return Object.assign(o, { id, address, title, link, imageUrl, price, size });
+  return Object.assign(o, { id, rawAddress, title, link, imageUrl, price, size });
 }
 function applyBlacklist(o) {
   const titleNotBlacklisted = !isOneOf(o.title, appliedBlackList);
@@ -29,7 +29,7 @@ const config = {
     title: 'h2 | trim',
     price: '.listentry-details-price .listentry-details-v | trim',
     size: '.listentry-details-size .listentry-details-v | trim',
-    address: '.listentry-adress | trim',
+    rawAddress: '.listentry-adress | trim',
     imageUrl: '.listentry-img@style',
     url: '.shariff@data-url',
     description: '.listentry-extras | trim',

@@ -1,5 +1,5 @@
-import utils from "../utils/utils.js";
 import { extractNumber } from '../utils/numberParser.js';
+import utils from "../utils/utils.js";
 
 let appliedBlackList = [];
 
@@ -9,10 +9,8 @@ function normalize(o) {
   const size = extractNumber(o.size);
   const rooms = extractNumber(o.rooms)
   const [city] = (o.details || "").split("-").map(v => v.trim())
-  const location = {
-    ...(city && { city })
-  }
-  return Object.assign(o, { id, price, size, rooms, location });
+  const rawAddress = city?.trim();
+  return Object.assign(o, { id, price, size, rooms, rawAddress });
 }
 
 function applyBlacklist(o) {
@@ -52,3 +50,4 @@ export const metaInformation = {
 };
 
 export { config };
+

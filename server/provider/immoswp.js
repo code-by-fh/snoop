@@ -33,6 +33,7 @@ const config = {
     details: 'div.align-items-start | trim',
     title: '.js-item-title-link@title | trim',
     url: '.ci-search-result__link@href',
+    rawAddress: '.card-body div:nth-of-type(3) | removeNewline | trim',
     imageUrl: "div img@src",
   },
   normalize: normalize,

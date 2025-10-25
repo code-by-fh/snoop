@@ -17,13 +17,10 @@ function normalize(o) {
   const url = `${metaInformation.baseUrl}${o.url}`;
   const price = extractNumber(o.price);
   const size = extractNumber(o.size);
-  const [rawRooms, city, street] = (o.details || "").split("|").map(v => v.trim())
-  const rooms = extractNumber(rawRooms)
-  const location = {
-    ...(city && { city }),
-    ...(street && { street })
-  }
-  return Object.assign(o, { id, url, price, size, rooms, location });
+  const [rawRooms, city, street] = (o.details || "").split("|").map(v => v.trim());
+  const rooms = extractNumber(rawRooms);
+  const rawAddress = `${city} ${street}`?.trim();
+  return Object.assign(o, { id, url, price, size, rooms, rawAddress });
 }
 
 function applyBlacklist(o) {

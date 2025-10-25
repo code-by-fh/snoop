@@ -75,7 +75,7 @@ async function getListings(url) {
         title: item.title,
         description: item.description || '',
         url: `${metaInformation.baseUrl}expose/${item.id}`,
-        address: item.address?.line,
+        rawAddress: item.address?.line,
         imageUrl: item?.titlePicture?.preview ?? null
       };
     });
@@ -105,9 +105,8 @@ function nullOrEmpty(val) {
 }
 function normalize(o) {
   const title = nullOrEmpty(o.title) ? 'NO TITLE FOUND' : o.title.replace('NEU', '');
-  const address = nullOrEmpty(o.address) ? 'NO ADDRESS FOUND' : (o.address || '').replace(/\(.*\),.*$/, '').trim();
   const id = buildHash(o.id, o.price);
-  return Object.assign(o, { id, title, address });
+  return Object.assign(o, { id, title });
 }
 function applyBlacklist(o) {
   return !isOneOf(o.title, appliedBlackList);
@@ -120,7 +119,7 @@ const config = {
     size: "",
     title: "",
     url: "",
-    address: "",
+    rawAddress: "",
     imageUrl: "",
   },
   // Not required - used by filter to remove and listings that failed to parse

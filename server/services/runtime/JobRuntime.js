@@ -3,10 +3,10 @@ import { buildHash } from '#utils/utils.js';
 import Job from "../../models/Job.js";
 import Listing from "../../models/Listing.js";
 import * as notify from '../../notification/notify.js';
+import { addGeoCoordinatesWithMapbox } from "../mapboxGeo.js";
 import Extractor from './extractor/extractor.js';
 import jobEvents from './JobEvents.js';
 import urlModifier from "./queryStringMutator.js";
-import * as reverseGeoCoder from "./reverseGeoCoder.js";
 import * as similarityCache from "./similarity-check/similarityCache.js";
 
 class JobRuntime {
@@ -44,6 +44,7 @@ class JobRuntime {
         .then(this._findNew.bind(this))
         //add geo coordinates to the listings using reverse geocoding if needed.
         .then(listings => this._emitSocketEvent('Polishing').then(() => listings))
+        .then(this._polish.bind(this))
         .then(this._addGeoCoordinates.bind(this))
         //store everything in db
         .then(listings => this._emitSocketEvent('Saving').then(() => listings))
@@ -77,14 +78,7 @@ class JobRuntime {
   }
 
   _normalize(listings) {
-    return listings
-      .map(this._providerConfig.normalize)
-      .map(listing => {
-        listing.id = buildHash(listing.id, this._providerId, this._job.id);
-        listing.providerName = this._providerMetaInformation.name;
-        listing.providerId = this._providerMetaInformation.id;
-        return listing;
-      });
+    return listings.map(this._providerConfig.normalize)
   }
 
   _filter(listings) {
@@ -99,21 +93,20 @@ class JobRuntime {
     return newListings;
   }
 
-  async _addGeoCoordinates(newListings) {
-    if (!process.env.OPEN_CAGE_DATA_API_KEY) {
-      return newListings;
-    }
-    for (const listing of newListings) {
-      if (listing.address) {
-        const latAndLng = await reverseGeoCoder.getCoordinatesFromAddress(listing.address);
-        if (latAndLng.lat && latAndLng.lng) {
-          logger.info(`Found coordinates for listing ${listing.id} for provider: ${this._providerId}, jobId: ${this._job.id}`);
-          listing.lat = latAndLng.lat;
-          listing.lng = latAndLng.lng;
-        }
-      }
-    }
-    return newListings;
+  async _polish(lisintgs) {
+    return lisintgs.map(listing => {
+      listing.id = buildHash(listing.id, this._providerId, this._job.id);
+      listing.providerName = this._providerMetaInformation.name;
+      listing.providerId = this._providerMetaInformation.id;
+      return listing;
+    });
+  }
+
+  async _addGeoCoordinates(listings) {
+    const updatedListings = await Promise.all(
+      listings.map((listing) => addGeoCoordinatesWithMapbox(listing))
+    );
+    return updatedListings;
   }
 
   _save(newListings) {

@@ -7,7 +7,7 @@ import { logObject, mockJobRuntime, providerConfig, validateListings } from '../
 import Listing from '../../models/Listing.js';
 
 const DEBUG = false;
-const providerToRun = []; // define which providers to run or leave empty for all
+const providerToRun = ["kleinanzeigen"]; // define which providers to run or leave empty for all
 
 describe('#Provider Integration Tests', () => {
   const providers = Object.fromEntries(
