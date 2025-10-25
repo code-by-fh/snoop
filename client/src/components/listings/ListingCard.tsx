@@ -3,6 +3,7 @@ import React from 'react';
 import { Listing } from '../../types';
 import { formatDate, formatPrice } from '@/utils/formatters';
 import { useFavorite } from '@/hooks/useFavorite';
+import FavoriteButton from '../common/FavoriteButton';
 
 interface ListingCardProps {
   listing: Listing;
@@ -14,18 +15,12 @@ const ListingCard: React.FC<ListingCardProps> = ({ listing }) => {
   return (
     <div className="relative bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-md dark:hover:shadow-lg transition-transform hover:scale-[1.02]">
 
-      {/* Favorite Button */}
-      <button
-        onClick={() => toggleFavorite(listing.id)}
-        disabled={loading}
-        className={`absolute top-2 right-2 p-2 rounded-full shadow-md z-10 transition
-          ${favorited
-            ? 'bg-yellow-400 text-black hover:bg-yellow-500 dark:bg-yellow-400 dark:hover:bg-yellow-500'
-            : 'bg-white text-gray-400 hover:bg-gray-100 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
-          }`}
-      >
-        {favorited ? <Star className="w-5 h-5" /> : <StarOff className="w-5 h-5" />}
-      </button>
+      <FavoriteButton
+        isFavorite={favorited}
+        onToggle={() => toggleFavorite(listing.id)}
+        loading={loading}
+        className="absolute top-2 right-2"
+      />
 
       {/* Image / Placeholder */}
       <div className="relative h-48 bg-gray-200 dark:bg-gray-700">

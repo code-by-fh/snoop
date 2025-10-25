@@ -3,6 +3,7 @@ import { formatDate, formatPrice } from '@/utils/formatters';
 import { Calendar, Home, MapPin, Star, StarOff } from 'lucide-react';
 import React from 'react';
 import { Listing } from '../../types';
+import FavoriteButton from '../common/FavoriteButton';
 
 interface ListingsListViewProps {
   listings: Listing[];
@@ -19,17 +20,12 @@ const ListingsListView: React.FC<ListingsListViewProps> = ({ listings }) => {
             key={listing.id}
             className="relative bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md dark:hover:shadow-lg transition-shadow"
           >
-            <button
-              onClick={() => toggleFavorite(listing.id)}
-              disabled={loading}
-              className={`absolute top-2 left-2 p-2 rounded-full shadow-md z-10 transition
-                ${favorited
-                  ? 'bg-yellow-400 text-black hover:bg-yellow-500 dark:bg-yellow-400 dark:hover:bg-yellow-500'
-                  : 'bg-white text-gray-400 hover:bg-gray-100 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'}
-              `}
-            >
-              {favorited ? <Star className="w-5 h-5" /> : <StarOff className="w-5 h-5" />}
-            </button>
+            <FavoriteButton
+              isFavorite={favorited}
+              onToggle={() => toggleFavorite(listing.id)}
+              loading={loading}
+              className="absolute top-2 left-2"
+            />
 
             <div className="flex flex-col sm:flex-row">
               <div className="flex-shrink-0 w-full sm:w-60 h-48 sm:h-auto">

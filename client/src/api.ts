@@ -76,7 +76,6 @@ export const sendTestNotification = (adapterId: string, fields?: Record<string, 
 export const getProviders = () => api.get('/providers');
 
 // Favorite-related API methods
-export const getFavorites = () => api.get<Listing[]>('/favorites');
 export const addFavorite = (listingId: string) => api.post(`/favorites/${listingId}`);
 export const removeFavorite = (listingId: string) => api.delete(`/favorites/${listingId}`);
 

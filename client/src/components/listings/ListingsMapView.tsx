@@ -4,6 +4,7 @@ import { Listing } from "../../types";
 import Map from "../map/Map";
 import { formatPrice } from "@/utils/formatters";
 import { useFavorite } from '@/hooks/useFavorite';
+import FavoriteButton from "../common/FavoriteButton";
 
 interface ListingsMapViewProps {
   listings: Listing[];
@@ -50,18 +51,12 @@ const ListingDetailSidebar: React.FC<ListingDetailSidebarProps> = ({ listing, on
 
   return (
     <div className={`bg-white dark:bg-gray-800 ${mobile ? "rounded-t-lg shadow-lg relative" : "h-full flex flex-col relative"}`}>
-      <button
-        onClick={() => toggleFavorite(listing.id)}
-        disabled={loading}
-        className={`absolute top-3 right-12 p-2 rounded-full shadow-md z-10 transition
-          bg-white text-gray-400 hover:bg-gray-100 dark:bg-gray-700 dark:text-gray-900 dark:hover:bg-gray-600
-          ${favorited
-            ? 'bg-yellow-400 text-black hover:bg-yellow-500 dark:bg-yellow-400 dark:hover:bg-yellow-500'
-            : 'bg-white text-gray-400 hover:bg-gray-100 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'}
-          `}
-      >
-        {favorited ? <Star className="w-5 h-5" /> : <StarOff className="w-5 h-5" />}
-      </button>
+      <FavoriteButton
+        isFavorite={favorited}
+        onToggle={() => toggleFavorite(listing.id)}
+        loading={loading}
+        className="absolute top-[80px] left-[20px]"
+      />
       <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
         <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{listing.title}</h2>
         <button
