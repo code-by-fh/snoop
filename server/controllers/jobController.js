@@ -42,7 +42,6 @@ export const getJobs = async (req, res) => {
   }
 };
 
-
 export const getJobById = async (req, res) => {
   try {
     const filter = req.user.role === 'admin' ? {} : { user: req.user.id };
@@ -99,19 +98,17 @@ export const updateJob = async (req, res) => {
   }
 };
 
-
-
 export const deleteJob = async (req, res) => {
   try {
     const filter = req.user.role === 'admin' ? {} : { user: req.user.id };
-    const job = await Job.findById(req.params.id, filter)
+    const job = await Job.getJob(req.params.id, filter)
 
     if (!job) {
       return res.status(404).json({ message: 'Job not found' });
     }
 
-    await Listing.deleteMany({ job: job.id })
-    await job.deleteOne();
+    await Listing.deleteMany({ jobId: job.id })
+    await Job.deleteOne({ _id: job.id });
 
     res.status(200).send();
   } catch (error) {
