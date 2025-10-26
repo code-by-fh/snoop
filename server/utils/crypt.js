@@ -1,11 +1,7 @@
-import dotenv from 'dotenv';
-dotenv.config();
 import crypto from 'crypto';
 
-if(!process.env.TRACKING_SECRET_KEY) throw new Error('Missing TRACKING_SECRET_KEY');
-
 const ALGORITHM = 'aes-256-cbc';
-const SECRET_KEY = crypto.createHash('sha256').update(process.env.TRACKING_SECRET_KEY).digest();
+const SECRET_KEY = crypto.createHash('sha256').update(process.env.TRACKING_SECRET_KEY || 'mysecret').digest();
 const IV_LENGTH = 16;
 
 export function encrypt(text) {
