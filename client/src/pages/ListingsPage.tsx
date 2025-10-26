@@ -235,97 +235,98 @@ const ListingsPage: React.FC = () => {
             <Filter className="w-4 h-4" />
           </button>
         </div>
+      </div>
 
-        {filterOpen && (
-          <div className="bg-gray-50 p-4 rounded-lg border border-gray-300 dark:bg-gray-800 dark:border-gray-700 space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-7 gap-4">
-              <input
-                type="number"
-                name="minPrice"
-                value={filters.minPrice}
-                onChange={handleFilterChange}
-                placeholder="Min €"
-                className="block w-full px-3 py-2 border border-gray-300 rounded-md bg-white placeholder-gray-500 focus:outline-none focus:ring-1 sm:text-sm dark:bg-gray-700 dark:text-gray-200"
-              />
-              <input
-                type="number"
-                name="maxPrice"
-                value={filters.maxPrice}
-                onChange={handleFilterChange}
-                placeholder="Max €"
-                className="block w-full px-3 py-2 border border-gray-300 rounded-md bg-white placeholder-gray-500 focus:outline-none focus:ring-1 sm:text-sm dark:bg-gray-700 dark:text-gray-200"
-              />
-              <input
-                type="number"
-                name="minRooms"
-                value={filters.minRooms}
-                onChange={handleFilterChange}
-                placeholder="Min rooms"
-                className="block w-full px-3 py-2 border border-gray-300 rounded-md bg-white placeholder-gray-500 focus:outline-none focus:ring-1 sm:text-sm dark:bg-gray-700 dark:text-gray-200"
-              />
-              <input
-                type="number"
-                name="minArea"
-                value={filters.minArea}
-                onChange={handleFilterChange}
-                placeholder="Min m²"
-                className="block w-full px-3 py-2 border border-gray-300 rounded-md bg-white placeholder-gray-500 focus:outline-none focus:ring-1 sm:text-sm dark:bg-gray-700 dark:text-gray-200"
-              />
-              <input
-                type="text"
-                name="location"
-                value={filters.location}
-                onChange={handleFilterChange}
-                placeholder="City, district..."
-                className="block w-full px-3 py-2 border border-gray-300 rounded-md bg-white placeholder-gray-500 focus:outline-none focus:ring-1 sm:text-sm dark:bg-gray-700 dark:text-gray-200"
-              />
-              <MultiSelect
-                options={providers}
-                value={selectedProviders}
-                onChange={setSelectedProviders}
-                labelledBy="Select Providers"
-                hasSelectAll={true}
-                className={`${multiSelectTheme} block w-full px-3 border border-gray-300 rounded-md bg-white placeholder-gray-500 focus:outline-none focus:ring-1 sm:text-sm dark:bg-gray-700 dark:text-gray-200`}
-                overrideStrings={{
-                  selectSomeItems: "Select Providers...",
-                  allItemsAreSelected: "All selected",
-                  selectAll: "Select All",
-                  search: "Search",
-                  clearSelected: "Clear All",
-                  noOptions: "No options"
-                }}
-              />
-              <button
-                onClick={() => {
-                  setFilters({
-                    minPrice: '',
-                    maxPrice: '',
-                    minRooms: '',
-                    minArea: '',
-                    location: '',
-                    showFavorites: 'all',
-                    sortBy: 'date',
-                    sortOrder: 'desc',
-                    searchTerm: '',
-                    viewState: 'all'
-                  });
-                  setSelectedProviders([]);
-                  setPage(1);
-                }}
-                className="flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 hover:text-gray-900
+      {filterOpen && (
+        <div className="bg-gray-50 p-4 rounded-lg border border-gray-300 dark:bg-gray-800 dark:border-gray-700 space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-7 gap-4">
+            <input
+              type="number"
+              name="minPrice"
+              value={filters.minPrice}
+              onChange={handleFilterChange}
+              placeholder="Min €"
+              className="block w-full px-3 py-2 border border-gray-300 rounded-md bg-white placeholder-gray-500 focus:outline-none focus:ring-1 sm:text-sm dark:bg-gray-700 dark:text-gray-200"
+            />
+            <input
+              type="number"
+              name="maxPrice"
+              value={filters.maxPrice}
+              onChange={handleFilterChange}
+              placeholder="Max €"
+              className="block w-full px-3 py-2 border border-gray-300 rounded-md bg-white placeholder-gray-500 focus:outline-none focus:ring-1 sm:text-sm dark:bg-gray-700 dark:text-gray-200"
+            />
+            <input
+              type="number"
+              name="minRooms"
+              value={filters.minRooms}
+              onChange={handleFilterChange}
+              placeholder="Min rooms"
+              className="block w-full px-3 py-2 border border-gray-300 rounded-md bg-white placeholder-gray-500 focus:outline-none focus:ring-1 sm:text-sm dark:bg-gray-700 dark:text-gray-200"
+            />
+            <input
+              type="number"
+              name="minArea"
+              value={filters.minArea}
+              onChange={handleFilterChange}
+              placeholder="Min m²"
+              className="block w-full px-3 py-2 border border-gray-300 rounded-md bg-white placeholder-gray-500 focus:outline-none focus:ring-1 sm:text-sm dark:bg-gray-700 dark:text-gray-200"
+            />
+            <input
+              type="text"
+              name="location"
+              value={filters.location}
+              onChange={handleFilterChange}
+              placeholder="City, district..."
+              className="block w-full px-3 py-2 border border-gray-300 rounded-md bg-white placeholder-gray-500 focus:outline-none focus:ring-1 sm:text-sm dark:bg-gray-700 dark:text-gray-200"
+            />
+            <MultiSelect
+              options={providers}
+              value={selectedProviders}
+              onChange={setSelectedProviders}
+              labelledBy="Select Providers"
+              hasSelectAll={true}
+              className={`${multiSelectTheme} block w-full px-3 border border-gray-300 rounded-md bg-white placeholder-gray-500 focus:outline-none focus:ring-1 sm:text-sm dark:bg-gray-700 dark:text-gray-200`}
+              overrideStrings={{
+                selectSomeItems: "Select Providers...",
+                allItemsAreSelected: "All selected",
+                selectAll: "Select All",
+                search: "Search",
+                clearSelected: "Clear All",
+                noOptions: "No options"
+              }}
+            />
+            <button
+              onClick={() => {
+                setFilters({
+                  minPrice: '',
+                  maxPrice: '',
+                  minRooms: '',
+                  minArea: '',
+                  location: '',
+                  showFavorites: 'all',
+                  sortBy: 'date',
+                  sortOrder: 'desc',
+                  searchTerm: '',
+                  viewState: 'all'
+                });
+                setSelectedProviders([]);
+                setPage(1);
+              }}
+              className="flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 hover:text-gray-900
              dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-700 dark:hover:text-white
              transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                title="Reset Filters"
-              >
-                <X className="w-4 h-4 mr-2" />
-                Reset
-              </button>
-
-            </div>
+              title="Reset Filters"
+            >
+              <X className="w-4 h-4 mr-2" />
+              Reset
+            </button>
 
           </div>
-        )}
-      </div>
+
+        </div>
+      )}
+
 
 
       <div className="space-y-6">
