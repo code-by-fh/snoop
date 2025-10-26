@@ -1,12 +1,12 @@
 import { useFavorite } from '@/hooks/useFavorite';
 import { formatPrice } from "@/utils/formatters";
-import { ExternalLink, MapPin, X } from "lucide-react";
+import { MapPin, X } from "lucide-react";
 import React, { useState } from "react";
 import { Listing } from "../../types";
 import FavoriteButton from "../common/FavoriteButton";
-import Map from "../map/Map";
-import ViewedButton from '../common/ViewedButton';
 import ViewDetailsButton from '../common/ViewDetailsButton';
+import ViewedButton from '../common/ViewedButton';
+import Map from "../map/Map";
 
 interface ListingsMapViewProps {
   listings: Listing[];
@@ -53,20 +53,12 @@ const ListingDetailSidebar: React.FC<ListingDetailSidebarProps> = ({ listing, on
 
   return (
     <div
-      className={`bg-white dark:bg-gray-900 ${mobile
-        ? "rounded-t-2xl shadow-2xl relative overflow-hidden"
-        : "h-full flex flex-col relative rounded-2xl shadow-xl"
-        } transition-all duration-300`}
+      className={`relative bg-white dark:bg-gray-800 rounded-xl shadow-sm border overflow-hidden transition-all duration-300
+        ${mobile
+          ? "rounded-t-2xl shadow-2xl relative overflow-hidden"
+          : "h-full flex flex-col relative rounded-2xl shadow-xl"
+        } `}
     >
-      {/* Favorite Button */}
-      <FavoriteButton
-        isFavorite={favorited}
-        onToggle={() => toggleFavorite(listing.id)}
-        loading={loading}
-        className="absolute top-[130px] left-[27px]"
-      />
-
-      <ViewedButton viewed={listing.viewed || false} className="absolute top-[130px] right-[27px]"  listingId={listing.id}/>
 
       {/* Header */}
       <div className="flex items-center justify-between p-5 border-b border-gray-100 dark:border-gray-700">
@@ -92,6 +84,15 @@ const ListingDetailSidebar: React.FC<ListingDetailSidebarProps> = ({ listing, on
         {/* Image */}
         {listing.imageUrl && (
           <div className="relative group rounded-xl overflow-hidden">
+            <FavoriteButton
+              isFavorite={favorited}
+              onToggle={() => toggleFavorite(listing.id)}
+              loading={loading}
+              className="absolute top-[15px] left-[15px]"
+            />
+
+            <ViewedButton viewed={listing.viewed || false} className="absolute top-[15px] right-[15px]" listingId={listing.id} />
+
             <img
               src={listing.imageUrl}
               alt={listing.title}

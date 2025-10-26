@@ -16,7 +16,7 @@ const ListingCard: React.FC<ListingCardProps> = ({ listing }) => {
 
   return (
     <div
-      className={`relative bg-white dark:bg-gray-800 rounded-xl shadow-sm border overflow-hidden transition-transform hover:scale-[1.01] `}
+      className={`relative bg-white dark:bg-gray-800 rounded-xl shadow-sm border overflow-hidden transition-transform hover:scale-[1.01]`}
     >
       {/* Favorite Button */}
       <FavoriteButton

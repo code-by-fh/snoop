@@ -1,7 +1,7 @@
 import crypto from 'crypto';
 
 const ALGORITHM = 'aes-256-cbc';
-const SECRET_KEY = crypto.createHash('sha256').update(process.env.LISTING_SECRET_KEY || 'mysecret').digest();
+const SECRET_KEY = crypto.createHash('sha256').update(process.env.TRACKING_SECRET_KEY || 'mysecret').digest();
 const IV_LENGTH = 16;
 
 export function encrypt(text) {
