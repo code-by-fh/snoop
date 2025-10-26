@@ -1,3 +1,5 @@
+import dotenv from 'dotenv';
+dotenv.config();
 import crypto from 'crypto';
 
 if(!process.env.TRACKING_SECRET_KEY) throw new Error('Missing TRACKING_SECRET_KEY');
