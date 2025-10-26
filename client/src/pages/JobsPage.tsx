@@ -1,3 +1,4 @@
+import ErrorInfo from '@/components/common/ErrorInfo';
 import SearchInput from '@/components/common/SearchInput';
 import ListingsViewToggle from '@/components/common/ViewToggle';
 import JobToggleSwitch from '@/components/jobs/JobToggleSwitch';
@@ -13,6 +14,8 @@ import JobGridView from '../components/jobs/JobGridView';
 import JobListView from '../components/jobs/JobListView';
 import { useViewPreference } from '../hooks/useViewPreference';
 import { Job } from '../types';
+import LoadingPlaceholder from '@/components/common/LoadingPlaceholder';
+import HeaderWithAction from '@/components/common/HeaderWithAction';
 
 const socket = io(import.meta.env.VITE_WS_URL || 'http://localhost:5000', {
   path: '/ws',
@@ -153,33 +156,19 @@ const JobsPage: React.FC = () => {
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
   if (isLoading) {
+    return <LoadingPlaceholder title='Loading Jobs...' />
+  }
+
+  if (error) {
     return (
-      <div className="flex justify-center items-center h-screen">
-        <p className="text-lg text-gray-600 mt-4 animate-pulse">Loading...</p>
-      </div>
-    );
+      <ErrorInfo error={error} />
+    )
   }
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-            Crawl Jobs – Showing {filteredJobs.length} Results
-          </h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-1">
-            Manage, search, and filter your job listings with ease.
-          </p>
-        </div>
-      </div>
 
-      {/* Error Display */}
-      {error && (
-        <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded">
-          <p className="text-sm text-red-700">{error}</p>
-        </div>
-      )}
+      <HeaderWithAction title={`Crawl Jobs – Showing ${filteredJobs.length} Results`} description="Manage, search, and filter your job listings with ease." />
 
       {/* Search & Filter */}
       <div className="sticky top-0 z-20 py-2 border-b border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row gap-2 items-center bg-white dark:bg-gray-900">

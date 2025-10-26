@@ -1,3 +1,7 @@
+import ErrorInfo from '@/components/common/ErrorInfo';
+import NoContentInfo from '@/components/common/NoContentInfo';
+import JobErrorPanel from '@/components/jobs/JobErrorPanel';
+import { format, formatDistanceToNow } from 'date-fns';
 import { ArrowLeft } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -7,8 +11,7 @@ import {
 } from 'recharts';
 import { getJobStats } from '../api';
 import { JobStatistics } from '../types/statistic';
-import { format, formatDistanceToNow } from 'date-fns';
-import JobErrorPanel from '@/components/jobs/JobErrorPanel';
+import LoadingPlaceholder from '@/components/common/LoadingPlaceholder';
 
 const JobStatisticsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -39,31 +42,16 @@ const JobStatisticsPage: React.FC = () => {
   }, [id]);
 
   if (isLoading) {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-      </div>
-    );
+    return <LoadingPlaceholder title='Loading Job Statistics...' />
   }
 
   if (error) {
-    return (
-      <div className="bg-red-50 dark:bg-red-900/30 border-l-4 border-red-500 dark:border-red-400 p-4 rounded">
-        <div className="flex">
-          <div className="flex-shrink-0">
-            <svg className="h-5 w-5 text-red-400 dark:text-red-300" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-            </svg>
-          </div>
-          <div className="ml-3">
-            <p className="text-sm text-red-700 dark:text-red-300">{error}</p>
-          </div>
-        </div>
-      </div>
-    );
+    return <ErrorInfo error={error} />
   }
 
-  if (!stats) return null;
+  if (!stats) {
+    return <NoContentInfo />
+  };
 
   const COLORS = ['#1E40AF', '#0D9488', '#F97316', '#8B5CF6', '#EF4444', '#3B82F6'];
 

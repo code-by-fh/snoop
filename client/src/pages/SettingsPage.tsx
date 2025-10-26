@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { getSettings, putSettings } from '../api';
-import { toast } from 'react-hot-toast';
+import ErrorInfo from '@/components/common/ErrorInfo';
+import HeaderWithAction from '@/components/common/HeaderWithAction';
 import { Edit } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { toast } from 'react-hot-toast';
+import { getSettings, putSettings } from '../api';
 
 const SettingsPage: React.FC = () => {
   const [queryInterval, setQueryInterval] = useState<number>(60);
@@ -51,19 +53,17 @@ const SettingsPage: React.FC = () => {
     }
   };
 
+  if (error) {
+    return <ErrorInfo error={error} />
+  };
+
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-            Application Settings
-          </h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-1">
-            Manage and customize your application configuration
-          </p>
-        </div>
 
+      <HeaderWithAction
+        title="Application Settings"
+        description="Manage and customize your application configuration"
+        actionElement=
         {!isEditing ? (
           <button
             onClick={() => setIsEditing(true)}
@@ -73,7 +73,7 @@ const SettingsPage: React.FC = () => {
             Edit
           </button>
         ) : null}
-      </div>
+      />
 
       {/* Form */}
       <form

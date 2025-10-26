@@ -1,10 +1,12 @@
 import { getUserProfile, updateUserProfile } from '@/api';
+import LoadingPlaceholder from '@/components/common/LoadingPlaceholder';
 import { ApiError } from '@/types/common';
 import { Edit, Eye, EyeOff, Loader2, User as UserIcon } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import PasswordModal from '../components/modals/PasswordModal';
 import { User, UserUpdate } from '../types/user';
+import HeaderWithAction from '@/components/common/HeaderWithAction';
 
 const AccountPage: React.FC = () => {
     const [user, setUser] = useState<User | null>(null);
@@ -73,11 +75,7 @@ const AccountPage: React.FC = () => {
 
 
     if (loading) {
-        return (
-            <div className="flex items-center justify-center h-64">
-                <Loader2 className="animate-spin w-6 h-6 text-gray-500" />
-            </div>
-        );
+        return <LoadingPlaceholder title='Loading Settings...' />
     }
 
     if (!user) {
@@ -86,12 +84,7 @@ const AccountPage: React.FC = () => {
 
     return (
         <div className="space-y-6">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <div>
-                    <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">User Profile</h1>
-                    <p className="text-gray-600 dark:text-gray-400 mt-1">Manage your account details</p>
-                </div>
-            </div>
+            <HeaderWithAction title="User Profile" description="Manage your account details" />
 
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden p-8 space-y-6">
                 <div className="flex items-center space-x-4">

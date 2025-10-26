@@ -1,3 +1,4 @@
+import ErrorInfo from '@/components/common/ErrorInfo';
 import { ArrowLeft } from 'lucide-react';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -22,6 +23,10 @@ const NewJobPage: React.FC = () => {
       setIsLoading(false);
     }
   };
+
+  if (error) {
+    return <ErrorInfo error={error} />
+  }
 
   return (
     <div className="space-y-6">

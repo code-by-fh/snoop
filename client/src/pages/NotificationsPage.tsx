@@ -1,8 +1,10 @@
+import ErrorInfo from '@/components/common/ErrorInfo';
+import HeaderWithAction from '@/components/common/HeaderWithAction';
+import { Send } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
-import { getAvailableNotificationAdapters, sendTestNotification } from '../api';
-import { NotificationAdapter, AdapterFieldConfig } from '../types';
-import { AlertCircle, Send } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { getAvailableNotificationAdapters, sendTestNotification } from '../api';
+import { AdapterFieldConfig, NotificationAdapter } from '../types';
 
 const NotificationsPage: React.FC = () => {
   const [notificationAdapters, setNotificationAdapters] = useState<NotificationAdapter[]>([]);
@@ -55,26 +57,15 @@ const NotificationsPage: React.FC = () => {
     }
   };
 
+  if (error) {
+    return <ErrorInfo error={error} />
+  };
+
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-            Notification Adapters
-          </h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-1">
-            Manage and test your notification channels.
-          </p>
-        </div>
-      </div>
 
-      {error && (
-        <div className="flex items-center space-x-2 bg-red-50 dark:bg-red-900/30 p-3 rounded-md border border-red-300 dark:border-red-700">
-          <AlertCircle className="h-5 w-5 text-red-500" />
-          <p className="text-sm text-red-700 dark:text-red-200">{error}</p>
-        </div>
-      )}
-
+      <HeaderWithAction title="Notifications" description="Manage and test your notification channels." />
+      
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {notificationAdapters.map(adapter => (
           <div

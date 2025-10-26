@@ -19,8 +19,6 @@ const ViewedButton: React.FC<ViewedButtonProps> = ({
     const [viewed, setViewed] = useState(initialViewed);
     const [loading, setLoading] = useState(false);
 
-    console.log(viewed);
-
     const handleClick = async () => {
         if (viewed || loading) return;
 

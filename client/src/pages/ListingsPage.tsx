@@ -1,13 +1,16 @@
+import ErrorInfo from '@/components/common/ErrorInfo';
+import HeaderWithAction from '@/components/common/HeaderWithAction';
+import LoadingPlaceholder from '@/components/common/LoadingPlaceholder';
+import NoContentInfo from '@/components/common/NoContentInfo';
 import SearchInput from '@/components/common/SearchInput';
 import ListingsViewToggle from '@/components/common/ViewToggle';
 import ListingsGridView from '@/components/listings/ListingsGridView';
 import ListingsListView from '@/components/listings/ListingsListView';
 import ListingsMapView from '@/components/listings/ListingsMapView';
 import { isAppDarkMode, onAppDarkModeChange } from '@/utils/theme';
-import { BarChart3, Eye, EyeOff, Filter, Grid3X3, List, Map, Plus, SortAsc, SortDesc, Star, StarOff, X } from 'lucide-react';
+import { Eye, EyeOff, Filter, Grid3X3, List, Map, SortAsc, SortDesc, Star, StarOff, X } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { MultiSelect } from 'react-multi-select-component';
-import { Link } from 'react-router-dom';
 import { getListings } from '../api';
 import { useViewPreference } from '../hooks/useViewPreference';
 import { Listing } from '../types';
@@ -80,16 +83,22 @@ const ListingsPage: React.FC = () => {
     setPage(1);
   };
 
+  if (error) {
+    return <ErrorInfo error={error} />
+  }
+
+  if (isLoading) {
+    return <LoadingPlaceholder title='Loading Listings...' />
+  }
+
+  if (listings.length === 0) {
+    return <NoContentInfo />
+  }
+
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-            Property Listings – Showing {totalListings} Results
-          </h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-1">Explore and filter property listings.</p>
-        </div>
-      </div>
+
+      <HeaderWithAction title={`Property Listings – Showing ${totalListings} Results`} description="Explore and filter property listings." />
 
       <div className="sticky top-0 z-20 bg-white dark:bg-gray-900 py-2 border-b border-gray-200 dark:border-gray-700 flex flex-col xl:flex-row gap-2 items-center">
         <ListingsViewToggle
@@ -226,150 +235,105 @@ const ListingsPage: React.FC = () => {
             <Filter className="w-4 h-4" />
           </button>
         </div>
-      </div>
 
-      {filterOpen && (
-        <div className="bg-gray-50 p-4 rounded-lg border border-gray-300 dark:bg-gray-800 dark:border-gray-700 space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-7 gap-4">
-            <input
-              type="number"
-              name="minPrice"
-              value={filters.minPrice}
-              onChange={handleFilterChange}
-              placeholder="Min €"
-              className="block w-full px-3 py-2 border border-gray-300 rounded-md bg-white placeholder-gray-500 focus:outline-none focus:ring-1 sm:text-sm dark:bg-gray-700 dark:text-gray-200"
-            />
-            <input
-              type="number"
-              name="maxPrice"
-              value={filters.maxPrice}
-              onChange={handleFilterChange}
-              placeholder="Max €"
-              className="block w-full px-3 py-2 border border-gray-300 rounded-md bg-white placeholder-gray-500 focus:outline-none focus:ring-1 sm:text-sm dark:bg-gray-700 dark:text-gray-200"
-            />
-            <input
-              type="number"
-              name="minRooms"
-              value={filters.minRooms}
-              onChange={handleFilterChange}
-              placeholder="Min rooms"
-              className="block w-full px-3 py-2 border border-gray-300 rounded-md bg-white placeholder-gray-500 focus:outline-none focus:ring-1 sm:text-sm dark:bg-gray-700 dark:text-gray-200"
-            />
-            <input
-              type="number"
-              name="minArea"
-              value={filters.minArea}
-              onChange={handleFilterChange}
-              placeholder="Min m²"
-              className="block w-full px-3 py-2 border border-gray-300 rounded-md bg-white placeholder-gray-500 focus:outline-none focus:ring-1 sm:text-sm dark:bg-gray-700 dark:text-gray-200"
-            />
-            <input
-              type="text"
-              name="location"
-              value={filters.location}
-              onChange={handleFilterChange}
-              placeholder="City, district..."
-              className="block w-full px-3 py-2 border border-gray-300 rounded-md bg-white placeholder-gray-500 focus:outline-none focus:ring-1 sm:text-sm dark:bg-gray-700 dark:text-gray-200"
-            />
-            <MultiSelect
-              options={providers}
-              value={selectedProviders}
-              onChange={setSelectedProviders}
-              labelledBy="Select Providers"
-              hasSelectAll={true}
-              className={`${multiSelectTheme} block w-full px-3 border border-gray-300 rounded-md bg-white placeholder-gray-500 focus:outline-none focus:ring-1 sm:text-sm dark:bg-gray-700 dark:text-gray-200`}
-              overrideStrings={{
-                selectSomeItems: "Select Providers...",
-                allItemsAreSelected: "All selected",
-                selectAll: "Select All",
-                search: "Search",
-                clearSelected: "Clear All",
-                noOptions: "No options"
-              }}
-            />
-            <button
-              onClick={() => {
-                setFilters({
-                  minPrice: '',
-                  maxPrice: '',
-                  minRooms: '',
-                  minArea: '',
-                  location: '',
-                  showFavorites: 'all',
-                  sortBy: 'date',
-                  sortOrder: 'desc',
-                  searchTerm: '',
-                  viewState: 'all'
-                });
-                setSelectedProviders([]);
-                setPage(1);
-              }}
-              className="flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 hover:text-gray-900
+        {filterOpen && (
+          <div className="bg-gray-50 p-4 rounded-lg border border-gray-300 dark:bg-gray-800 dark:border-gray-700 space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-7 gap-4">
+              <input
+                type="number"
+                name="minPrice"
+                value={filters.minPrice}
+                onChange={handleFilterChange}
+                placeholder="Min €"
+                className="block w-full px-3 py-2 border border-gray-300 rounded-md bg-white placeholder-gray-500 focus:outline-none focus:ring-1 sm:text-sm dark:bg-gray-700 dark:text-gray-200"
+              />
+              <input
+                type="number"
+                name="maxPrice"
+                value={filters.maxPrice}
+                onChange={handleFilterChange}
+                placeholder="Max €"
+                className="block w-full px-3 py-2 border border-gray-300 rounded-md bg-white placeholder-gray-500 focus:outline-none focus:ring-1 sm:text-sm dark:bg-gray-700 dark:text-gray-200"
+              />
+              <input
+                type="number"
+                name="minRooms"
+                value={filters.minRooms}
+                onChange={handleFilterChange}
+                placeholder="Min rooms"
+                className="block w-full px-3 py-2 border border-gray-300 rounded-md bg-white placeholder-gray-500 focus:outline-none focus:ring-1 sm:text-sm dark:bg-gray-700 dark:text-gray-200"
+              />
+              <input
+                type="number"
+                name="minArea"
+                value={filters.minArea}
+                onChange={handleFilterChange}
+                placeholder="Min m²"
+                className="block w-full px-3 py-2 border border-gray-300 rounded-md bg-white placeholder-gray-500 focus:outline-none focus:ring-1 sm:text-sm dark:bg-gray-700 dark:text-gray-200"
+              />
+              <input
+                type="text"
+                name="location"
+                value={filters.location}
+                onChange={handleFilterChange}
+                placeholder="City, district..."
+                className="block w-full px-3 py-2 border border-gray-300 rounded-md bg-white placeholder-gray-500 focus:outline-none focus:ring-1 sm:text-sm dark:bg-gray-700 dark:text-gray-200"
+              />
+              <MultiSelect
+                options={providers}
+                value={selectedProviders}
+                onChange={setSelectedProviders}
+                labelledBy="Select Providers"
+                hasSelectAll={true}
+                className={`${multiSelectTheme} block w-full px-3 border border-gray-300 rounded-md bg-white placeholder-gray-500 focus:outline-none focus:ring-1 sm:text-sm dark:bg-gray-700 dark:text-gray-200`}
+                overrideStrings={{
+                  selectSomeItems: "Select Providers...",
+                  allItemsAreSelected: "All selected",
+                  selectAll: "Select All",
+                  search: "Search",
+                  clearSelected: "Clear All",
+                  noOptions: "No options"
+                }}
+              />
+              <button
+                onClick={() => {
+                  setFilters({
+                    minPrice: '',
+                    maxPrice: '',
+                    minRooms: '',
+                    minArea: '',
+                    location: '',
+                    showFavorites: 'all',
+                    sortBy: 'date',
+                    sortOrder: 'desc',
+                    searchTerm: '',
+                    viewState: 'all'
+                  });
+                  setSelectedProviders([]);
+                  setPage(1);
+                }}
+                className="flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 hover:text-gray-900
              dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-700 dark:hover:text-white
              transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              title="Reset Filters"
-            >
-              <X className="w-4 h-4 mr-2" />
-              Reset
-            </button>
+                title="Reset Filters"
+              >
+                <X className="w-4 h-4 mr-2" />
+                Reset
+              </button>
 
-          </div>
-
-        </div>
-      )}
-
-      {error && (
-        <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded">
-          <div className="flex">
-            <div className="flex-shrink-0">
-              <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                <path
-                  fillRule="evenodd"
-                  d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                  clipRule="evenodd"
-                />
-              </svg>
             </div>
-            <div className="ml-3">
-              <p className="text-sm text-red-700">{error}</p>
-            </div>
-          </div>
-        </div>
-      )}
 
-      {/* Listings */}
-      {isLoading ? (
-        <div className="flex flex-col items-center justify-center h-[70vh] text-center space-y-4">
-          <div className="flex items-center justify-center">
-            <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
           </div>
-          <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100">Loading listings...</h2>
-          <p className="text-gray-600 dark:text-gray-400">Please wait while we fetch the latest data.</p>
-        </div>
-      ) : listings.length === 0 ? (
-        <div className="flex flex-col items-center justify-center h-[70vh] text-center space-y-4">
-          <BarChart3 className="w-12 h-12 text-gray-400" />
-          <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100">
-            No Listings available yet
-          </h2>
-          <p className="text-gray-600 dark:text-gray-400 max-w-md">
-            You haven’t run any crawl jobs yet. Start by creating a new one to collect listings and see your analytics here.
-          </p>
-          <Link
-            to="/jobs/new"
-            className="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow transition-colors"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Create New Crawl Job
-          </Link>
-        </div>
-      ) : (
-        <div className="space-y-6">
-          {viewMode === 'grid' && <ListingsGridView listings={listings} />}
-          {viewMode === 'list' && <ListingsListView listings={listings} />}
-          {viewMode === 'map' && <ListingsMapView listings={listings} />}
-        </div>
-      )}
+        )}
+      </div>
+
+
+      <div className="space-y-6">
+        {viewMode === 'grid' && <ListingsGridView listings={listings} />}
+        {viewMode === 'list' && <ListingsListView listings={listings} />}
+        {viewMode === 'map' && <ListingsMapView listings={listings} />}
+      </div>
+
 
       {/* Pagination */}
       {totalPages > 1 && (

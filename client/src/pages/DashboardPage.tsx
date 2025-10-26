@@ -1,10 +1,12 @@
+import ErrorInfo from '@/components/common/ErrorInfo';
+import HeaderWithAction from '@/components/common/HeaderWithAction';
+import LoadingPlaceholder from '@/components/common/LoadingPlaceholder';
 import {
   BarChart3,
-  TrendingUp,
-  Globe2,
   Clock4,
+  Globe2,
   Plus,
-  LayoutDashboard,
+  TrendingUp
 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -36,19 +38,11 @@ const DashboardPage: React.FC = () => {
   }, []);
 
   if (isLoading) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <p className="text-lg text-gray-600 mt-4 animate-pulse">Loading...</p>
-      </div>
-    );
+    return <LoadingPlaceholder title='Loading Statistics...' />
   }
 
   if (error) {
-    return (
-      <div className="bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 p-4 rounded">
-        <p className="text-sm text-red-700 dark:text-red-400">{error}</p>
-      </div>
-    );
+    return <ErrorInfo error={error} />
   }
 
   if (!stats || stats.totalJobs === 0) {
@@ -74,22 +68,19 @@ const DashboardPage: React.FC = () => {
 
   return (
     <div className="space-y-10">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
-        <div className="flex items-center gap-2">
-          <LayoutDashboard className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-            Analytics Dashboard
-          </h1>
-        </div>
-        <Link
-          to="/jobs/new"
-          className="btn-primary w-full sm:w-auto flex items-center justify-center"
-        >
-          <Plus className="w-4 h-4 mr-2" />
-          New Crawl Job
-        </Link>
-      </div>
+      <HeaderWithAction
+        title="Analytics Dashboard"
+        description="In this dashboard, you can see the analytics of your crawl jobs."
+        actionElement={
+          <Link
+            to="/jobs/new"
+            className="btn-primary w-full sm:w-auto flex items-center justify-center"
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            New Crawl Job
+          </Link>
+        } />
+
 
       {/* Overview */}
       <section>

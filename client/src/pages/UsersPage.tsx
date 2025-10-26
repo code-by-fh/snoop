@@ -1,3 +1,5 @@
+import HeaderWithAction from '@/components/common/HeaderWithAction';
+import LoadingPlaceholder from '@/components/common/LoadingPlaceholder';
 import { ApiError } from '@/types/common';
 import { PlusCircle } from 'lucide-react';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -81,29 +83,27 @@ const UsersPage: React.FC = () => {
     }
   };
 
+  if (loading) {
+    return <LoadingPlaceholder title='Loading Users...' />
+  };
+
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">User Management</h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-1">Effortlessly manage your user accounts</p>
-        </div>
-        <button
-          onClick={handleCreateClick}
-          className="btn-primary w-full sm:w-auto flex items-center justify-center"
-        >
-          <PlusCircle className="w-5 h-5 mr-2" />
-          Create New User
-        </button>
-      </div>
+      <HeaderWithAction
+        title="User Management"
+        description="Effortlessly manage your user accounts"
+        actionElement={
+          <button
+            onClick={handleCreateClick}
+            className="btn-primary flex items-center justify-center"
+          >
+            <PlusCircle className="w-5 h-5 mr-2" />
+            Create New User
+          </button>
+        }
+      />
 
-      {loading && (
-        <div className="text-center text-gray-500 dark:text-gray-300">Loading users...</div>
-      )}
-
-      {!loading && (
-        <UserTable users={users} onEdit={handleEditClick} onDelete={handleDeleteClick} />
-      )}
+      <UserTable users={users} onEdit={handleEditClick} onDelete={handleDeleteClick} />
 
       <UserFormModal
         isOpen={isFormModalOpen}
