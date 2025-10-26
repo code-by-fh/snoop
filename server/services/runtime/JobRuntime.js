@@ -3,6 +3,7 @@ import { buildHash } from '#utils/utils.js';
 import Job from "../../models/Job.js";
 import Listing from "../../models/Listing.js";
 import * as notify from '../../notification/notify.js';
+import { getTrackingUrl } from '../../tracking/listing.js';
 import { addGeoCoordinatesWithMapbox } from "../mapboxGeo.js";
 import Extractor from './extractor/extractor.js';
 import jobEvents from './JobEvents.js';
@@ -100,6 +101,7 @@ class JobRuntime {
     return lisintgs.map(listing => {
       listing.providerName = this._providerMetaInformation.name;
       listing.providerId = this._providerMetaInformation.id;
+      listing.trackingUrl = getTrackingUrl(listing.id, this._job.user);
       return listing;
     });
   }

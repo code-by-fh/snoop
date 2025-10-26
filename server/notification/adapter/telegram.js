@@ -28,7 +28,7 @@ export const send = async ({ serviceName, listings, notificationAdapters, jobNam
   const promises = chunks.map((chunk) => {
     let message = `<i>${jobName}</i> (${serviceName}) found <b>${listings.length}</b> new listings:\n\n`;
     message += chunk.map(
-      (o) => `<a href='${o.link}'><b>${shorten(o.title.replace(/\*/g, ""), 45).trim()}</b></a>\n` + [o.address, o.price, o.size].join(" | ") + "\n\n"
+      (o) => `<a href='${o.trackingUrl}'><b>${shorten(o.title.replace(/\*/g, ""), 45).trim()}</b></a>\n` + [o.address, o.price, o.size].join(" | ") + "\n\n"
     );
     /**
      * This is to not break the rate limit. It is to only send 1 message per second

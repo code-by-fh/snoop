@@ -40,7 +40,7 @@ export const send = ({ serviceName, listings, notificationAdapters }) => {
                   },
                   {
                     type: "text",
-                    text: `${payload.link}`,
+                    text: `${payload.trackingUrl}`,
                   },
                 ],
               },

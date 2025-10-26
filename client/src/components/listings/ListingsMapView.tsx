@@ -5,6 +5,8 @@ import React, { useState } from "react";
 import { Listing } from "../../types";
 import FavoriteButton from "../common/FavoriteButton";
 import Map from "../map/Map";
+import ViewedButton from '../common/ViewedButton';
+import ViewDetailsButton from '../common/ViewDetailsButton';
 
 interface ListingsMapViewProps {
   listings: Listing[];
@@ -61,8 +63,10 @@ const ListingDetailSidebar: React.FC<ListingDetailSidebarProps> = ({ listing, on
         isFavorite={favorited}
         onToggle={() => toggleFavorite(listing.id)}
         loading={loading}
-        className="absolute top-[120px] left-[23px]"
+        className="absolute top-[130px] left-[27px]"
       />
+
+      <ViewedButton viewed={listing.viewed || false} className="absolute top-[130px] right-[27px]"  listingId={listing.id}/>
 
       {/* Header */}
       <div className="flex items-center justify-between p-5 border-b border-gray-100 dark:border-gray-700">
@@ -136,16 +140,7 @@ const ListingDetailSidebar: React.FC<ListingDetailSidebarProps> = ({ listing, on
           )}
         </div>
 
-        {/* Link */}
-        <a
-          href={listing.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center justify-center w-full py-2.5 mt-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 rounded-lg shadow-md transition"
-        >
-          <ExternalLink className="w-4 h-4 mr-2" />
-          View Listing
-        </a>
+        <ViewDetailsButton url={listing.trackingUrl} />
       </div>
     </div>
 

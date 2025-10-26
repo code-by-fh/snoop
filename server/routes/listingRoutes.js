@@ -2,7 +2,7 @@ import express from 'express';
 import {
   createListing,
   deleteListing,
-  getListings
+  getListings,
 } from '../controllers/listingController.js';
 
 const router = express.Router();

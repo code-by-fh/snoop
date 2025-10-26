@@ -2,7 +2,9 @@ import logger from '#utils/logger.js';
 import Favorite from '../models/Favorite.js';
 import Job from '../models/Job.js';
 import Listing from '../models/Listing.js';
+import ListingView from '../models/ListingView.js';
 import { getAvailableProviders } from '../provider/index.js';
+import { getTrackingUrl } from '../tracking/listing.js';
 
 const providersMap = getAvailableProviders();
 
@@ -68,12 +70,13 @@ export const getListings = async (req, res) => {
       sortBy = 'date',
       sortOrder = 'desc',
       providerIds,
-      showFavorites,
+      showFavorites = 'all', // 'all' | 'favorites' | 'nonfavorites'
+      viewState = 'all'      // 'all' | 'viewed' | 'unviewed'
     } = req.query;
 
     const jobFilter = req.user.role === 'admin' ? {} : { user: req.user.id };
     const jobs = await Job.find(jobFilter);
-    const jobIds = jobs.map((job) => job.id.toString());
+    const jobIds = jobs.map(job => job.id.toString());
 
     if (!jobs.length) {
       return res.json({ listings: [], total: 0, page: 1, totalPages: 0, providers: [] });
@@ -99,15 +102,37 @@ export const getListings = async (req, res) => {
       ];
     }
 
-    const favorites = await Favorite.find({ userId: req.user.id });
-    const favoriteListingIds = favorites.map(fav => fav.listingId);
-    if (showFavorites === true || showFavorites === 'true') {
-      filter._id = { $in: favoriteListingIds };
+    const [favorites, viewedListings] = await Promise.all([
+      Favorite.find({ userId: req.user.id }),
+      ListingView.find({ userId: req.user.id }).select('listingId')
+    ]);
+
+    const favoriteIds = favorites.map(fav => fav.listingId.toString());
+    const viewedIds = viewedListings.map(v => v.listingId.toString());
+
+    const idFilters = [];
+
+    if (showFavorites === 'favorites') {
+      idFilters.push({ $in: favoriteIds });
+    } else if (showFavorites === 'nonfavorites') {
+      idFilters.push({ $nin: favoriteIds });
+    }
+
+    if (viewState === 'viewed') {
+      idFilters.push({ $in: viewedIds });
+    } else if (viewState === 'unviewed') {
+      idFilters.push({ $nin: viewedIds });
+    }
+
+    if (idFilters.length > 0) {
+      filter._id = mergeCombinedFilters(idFilters);
     }
 
     const skip = (parseInt(page) - 1) * parseInt(limit);
-
-    const sortOptions = sortBy === 'price' ? { price: sortOrder === 'asc' ? 1 : -1 } : { createdAt: sortOrder === 'asc' ? 1 : -1 };
+    const sortOptions =
+      sortBy === 'price'
+        ? { price: sortOrder === 'asc' ? 1 : -1 }
+        : { createdAt: sortOrder === 'asc' ? 1 : -1 };
 
     const [listings, total, allProviderIds] = await Promise.all([
       Listing.find(filter).skip(skip).limit(parseInt(limit)).sort(sortOptions),
@@ -119,21 +144,26 @@ export const getListings = async (req, res) => {
       .filter(Boolean)
       .map((id) => ({
         providerId: id,
-        providerName: providersMap[id]?.metaInformation?.name || providersMap[id]?.metaInformation?.id || id,
+        providerName:
+          providersMap[id]?.metaInformation?.name ||
+          providersMap[id]?.metaInformation?.id ||
+          id,
       }))
       .sort((a, b) => a.providerName.localeCompare(b.providerName));
 
-    const listingsWithFavorites = listings.map(listing => ({
+    const extendedListings = listings.map(listing => ({
       ...listing.toObject(),
-      isFavorite: favoriteListingIds.includes(listing._id.toString()),
+      isFavorite: favoriteIds.includes(listing.id),
+      viewed: viewedIds.includes(listing.id),
+      trackingUrl: getTrackingUrl(listing.id, req.user.id),
     }));
 
     res.json({
-      listings: listingsWithFavorites,
+      listings: extendedListings,
       total,
       page: parseInt(page),
       totalPages: Math.ceil(total / parseInt(limit)),
-      providers
+      providers,
     });
   } catch (error) {
     logger.error(error, 'Error getting listings:');
@@ -141,6 +171,32 @@ export const getListings = async (req, res) => {
   }
 };
 
+function mergeCombinedFilters(idFilters) {
+  let includeIds = null;
+  let excludeIds = null;
+
+  for (const f of idFilters) {
+    if (f.$in) {
+      includeIds = includeIds
+        ? includeIds.filter((id) => f.$in.includes(id))
+        : [...f.$in];
+    } else if (f.$nin) {
+      excludeIds = excludeIds
+        ? [...new Set([...excludeIds, ...f.$nin])]
+        : [...f.$nin];
+    }
+  }
+
+  if (includeIds && excludeIds) {
+    return { $in: includeIds.filter((id) => !excludeIds.includes(id)) };
+  } else if (includeIds) {
+    return { $in: includeIds };
+  } else if (excludeIds) {
+    return { $nin: excludeIds };
+  } else {
+    return {};
+  }
+}
 
 export const deleteListing = async (req, res) => {
   try {
@@ -152,14 +208,12 @@ export const deleteListing = async (req, res) => {
 
     const job = await Job.findById(listing.job);
 
-    // Verify user owns the job or is an admin
     if (job.user.toString() !== req.user.id && req.user.role !== 'admin') {
       return res.status(403).json({ message: 'Not authorized' });
     }
 
     await listing.deleteOne();
 
-    // Decrement job listings count
     await Job.findByIdAndUpdate(listing.job, {
       $inc: {
         totalListings: -1,
@@ -172,3 +226,4 @@ export const deleteListing = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+

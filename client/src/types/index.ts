@@ -70,12 +70,14 @@ export interface Listing {
   description?: string;
   imageUrl?: string;
   url: string;
+  trackingUrl: string;
   job: string | Job;
   providerId: string;
   providerName: string;
   isFavorite?: boolean;
   createdAt: string;
   updatedAt: string;
+  viewed?: boolean;
 }
 
 export interface ListingsApiResponse {

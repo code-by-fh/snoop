@@ -41,7 +41,7 @@ export const send = async ({ serviceName, listings, notificationAdapters }) => {
         const size = getDefaultOrUnknown(payload.size);
         const description = getDefaultOrUnknown(payload.description);
 
-        const msg = `${serviceName} | ${payload.title}\n\nAdresse: ${address} \nPreis: ${price} \nWohnfläche: ${size} \n\n${payload.url}`;
+        const msg = `${serviceName} | ${payload.title}\n\nAdresse: ${address} \nPreis: ${price} \nWohnfläche: ${size} \n\n${payload.trackingUrl}`;
         form.append("message", msg);
 
         const res = await fetch('https://api.pushover.net/1/messages.json', {

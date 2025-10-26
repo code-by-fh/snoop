@@ -1,6 +1,5 @@
 import logger from '#utils/logger.js';
 import Favorite from '../models/Favorite.js';
-import Listing from '../models/Listing.js';
 
 export const addFavorite = async (req, res) => {
     try {

@@ -44,7 +44,7 @@ export const getListings = (params?: {
   sortOrder?: string,
   searchTerm?: string,
   providerIds?: string[];
-  showFavorites?: boolean
+  showFavorites?: string
 }) => api.get<ListingsApiResponse>('/listings', { params });
 export const createListing = (listingData: Partial<Listing>) => api.post<Listing>('/listings', listingData);
 export const deleteListing = (id: string) => api.delete(`/listings/${id}`);
@@ -79,5 +79,8 @@ export const getProviders = () => api.get('/providers');
 // Favorite-related API methods
 export const addFavorite = (listingId: string) => api.post(`/favorites/${listingId}`);
 export const removeFavorite = (listingId: string) => api.delete(`/favorites/${listingId}`);
+
+// tracking API methods
+export const registerView = (listingId: string) => api.get(`/track/listing/${listingId}`);
 
 export default api;
