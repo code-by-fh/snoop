@@ -13,18 +13,20 @@ import { requestLogger } from './middleware/requestLogger.js';
 import Settings from "./models/Settings.js";
 import { initDatabase } from './seed/init.js';
 import { startRuntime } from './services/runtime/scheduler.js';
+import { initTracking } from './tracking/index.js';
 
 // Import routes
 import adminSettingsRoutes from './routes/adminSettingsRoutes.js';
 import adminUserRoutes from './routes/adminUserRoutes.js';
 import authRoutes from './routes/authRoutes.js';
+import favoritesRoutes from './routes/favoriteRoutes.js';
 import healthRouter from "./routes/healthRouter.js";
 import jobRoutes from './routes/jobRoutes.js';
 import listingRoutes from './routes/listingRoutes.js';
-import favoritesRoutes from './routes/favoriteRoutes.js';
 import notificationAdapterRoutes from './routes/notificationAdapterRoutes.js';
 import providerRoutes from './routes/providerRoutes.js';
 import statsRoutes from './routes/statsRoutes.js';
+import trackingRoutes from './routes/trackingRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import { setupSocketServer } from './socketServer.js';
 
@@ -47,6 +49,7 @@ const settings = await Settings.findOne({})
   });
 
 await startRuntime(settings);
+initTracking(process.env.API_BASE_URL || `http://localhost:${settings.port}`);
 
 const app = express();
 
@@ -63,6 +66,7 @@ app.use('/api/jobs', authMiddleware, jobRoutes);
 app.use('/api/notificationAdapters', notificationAdapterRoutes);
 app.use('/api/providers', providerRoutes);
 app.use('/api/listings', authMiddleware, listingRoutes);
+app.use('/api/track', trackingRoutes);
 app.use('/api/favorites', authMiddleware, favoritesRoutes);
 app.use('/api/statistics', authMiddleware, statsRoutes);
 app.use('/api/admin/users', adminUserRoutes);

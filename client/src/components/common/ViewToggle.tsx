@@ -27,7 +27,9 @@ const ListingsViewToggle: React.FC<ListingsViewToggleProps> = ({
           <button
             key={mode}
             onClick={() => onViewChange(mode, localStorageKey)}
-            className={`flex-1 xl:flex-none inline-flex items-center justify-center rounded-md px-2 xl:px-3 sm:py-1 py-2 text-xs sm:text-sm font-medium transition-all ${currentView === mode
+            className={
+              `flex-1 xl:flex-none inline-flex items-center justify-center rounded-md px-2 xl:px-3 sm:py-1 py-2 text-xs sm:text-sm font-medium transition-all 
+              ${currentView === mode
               ? 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 shadow-sm'
               : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700'
               }`}

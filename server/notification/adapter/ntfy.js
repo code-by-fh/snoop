@@ -14,7 +14,7 @@ export const send = ({ serviceName, listings, notificationAdapters, jobName }) =
         title: newListing.title,
         tags: [serviceName, jobName],
         priority: parseInt(priority),
-        click: newListing.link,
+        click: newListing.trackingUrl,
       }),
     });
   });

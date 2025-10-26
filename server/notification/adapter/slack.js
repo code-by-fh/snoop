@@ -15,7 +15,7 @@ export const send = ({ serviceName, listings, notificationAdapters, jobName }) =
           fallback: payload.title,
           color: "#36a64f",
           title: "Link to Exposé",
-          title_link: payload.link,
+          title_link: payload.trackingUrl,
           fields: [
             {
               title: "Price",

@@ -4,6 +4,8 @@ import { Calendar, Home, MapPin } from 'lucide-react';
 import React from 'react';
 import { Listing } from '../../types';
 import FavoriteButton from '../common/FavoriteButton';
+import ViewDetailsButton from '../common/ViewDetailsButton';
+import ViewedButton from '../common/ViewedButton';
 
 interface ListingCardProps {
   listing: Listing;
@@ -13,14 +15,18 @@ const ListingCard: React.FC<ListingCardProps> = ({ listing }) => {
   const { favorited, toggleFavorite, loading } = useFavorite(listing.isFavorite || false);
 
   return (
-    <div className="relative bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-md dark:hover:shadow-lg transition-transform hover:scale-[1.02]">
-
+    <div
+      className={`relative bg-white dark:bg-gray-800 rounded-xl shadow-sm border overflow-hidden transition-transform hover:scale-[1.01]`}
+    >
+      {/* Favorite Button */}
       <FavoriteButton
         isFavorite={favorited}
         onToggle={() => toggleFavorite(listing.id)}
         loading={loading}
         className="absolute top-2 left-2"
       />
+
+      <ViewedButton viewed={listing.viewed || false} listingId={listing.id} className="absolute top-2 right-2" />
 
       {/* Image / Placeholder */}
       <div className="relative h-48 bg-gray-200 dark:bg-gray-700">
@@ -70,14 +76,7 @@ const ListingCard: React.FC<ListingCardProps> = ({ listing }) => {
             <span>Added {formatDate(listing.createdAt)}</span>
           </div>
 
-          <a
-            href={listing.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-sm font-medium text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition"
-          >
-            View Details
-          </a>
+          <ViewDetailsButton url={listing.trackingUrl} />
         </div>
       </div>
     </div>

@@ -4,7 +4,7 @@ import ListingsGridView from '@/components/listings/ListingsGridView';
 import ListingsListView from '@/components/listings/ListingsListView';
 import ListingsMapView from '@/components/listings/ListingsMapView';
 import { isAppDarkMode, onAppDarkModeChange } from '@/utils/theme';
-import { BarChart3, Filter, Grid3X3, List, Map, Plus, SortAsc, SortDesc, Star, X } from 'lucide-react';
+import { BarChart3, Eye, EyeOff, Filter, Grid3X3, List, Map, Plus, SortAsc, SortDesc, Star, StarOff, X } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { MultiSelect } from 'react-multi-select-component';
 import { Link } from 'react-router-dom';
@@ -23,10 +23,11 @@ const ListingsPage: React.FC = () => {
     minRooms: '',
     minArea: '',
     location: '',
-    showFavorites: false,
+    showFavorites: 'all' as 'all' | 'favorites' | 'nonfavorites',
     sortBy: 'date',
     sortOrder: 'desc',
     searchTerm: '',
+    viewState: 'all'
   });
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -109,19 +110,75 @@ const ListingsPage: React.FC = () => {
         />
 
         <div className="grid grid-cols-2 xl:flex xl:flex-row gap-2 w-full xl:w-auto rounded-md border border-gray-300  bg-white dark:bg-gray-800 p-1">
-          <button
-            onClick={() =>
-              setFilters((prev) => ({ ...prev, showFavorites: !prev.showFavorites }))
-            }
-            className={`flex-1 xl:flex-none inline-flex items-center justify-center gap-2 rounded-md px-2 xl:px-3 sm:py-1 py-2 text-xs sm:text-sm font-medium transition-all
-      ${filters.showFavorites
-                ? 'bg-yellow-100 dark:bg-yellow-900 text-yellow-700 dark:text-yellow-300 shadow-sm'
-                : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700'}`}
-            title="Show only favorites"
-          >
-            <Star className="w-4 h-4" />
-            <span>Favorites</span>
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() =>
+                setFilters((prev) => ({
+                  ...prev,
+                  viewState: prev.viewState === 'viewed' ? 'all' : 'viewed',
+                }))
+              }
+              className={`flex-1 xl:flex-none inline-flex items-center justify-center gap-2 rounded-md px-2 xl:px-3 sm:py-1 py-2 text-xs sm:text-sm font-medium transition-all
+    ${filters.viewState === 'viewed'
+                  ? 'bg-yellow-100 dark:bg-yellow-900 text-yellow-700 dark:text-yellow-300 shadow-sm'
+                  : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700'
+                }`}
+              title={filters.viewState === 'viewed' ? 'Showing viewed listings' : 'Show only viewed listings'}
+            >
+              <Eye className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() =>
+                setFilters((prev) => ({
+                  ...prev,
+                  viewState: prev.viewState === 'unviewed' ? 'all' : 'unviewed',
+                }))
+              }
+              className={`flex-1 xl:flex-none inline-flex items-center justify-center gap-2 rounded-md px-2 xl:px-3 sm:py-1 py-2 text-xs sm:text-sm font-medium transition-all
+    ${filters.viewState === 'unviewed'
+                  ? 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 shadow-sm'
+                  : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700'
+                }`}
+              title="Show only unviewed listings"
+            >
+              <EyeOff className="w-4 h-4" />
+            </button>
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() =>
+                setFilters((prev) => ({
+                  ...prev,
+                  showFavorites: prev.showFavorites === 'favorites' ? 'all' : 'favorites',
+                }))
+              }
+              className={`flex-1 xl:flex-none inline-flex items-center justify-center gap-2 rounded-md px-2 xl:px-3 sm:py-1 py-2 text-xs sm:text-sm font-medium transition-all
+      ${filters.showFavorites === 'favorites'
+                  ? 'bg-yellow-100 dark:bg-yellow-900 text-yellow-700 dark:text-yellow-300 shadow-sm'
+                  : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700'
+                }`}
+              title={filters.showFavorites === 'favorites' ? 'Showing favorites' : 'Show only favorites'}
+            >
+              <Star className="w-4 h-4" />
+            </button>
+
+            <button
+              onClick={() =>
+                setFilters((prev) => ({
+                  ...prev,
+                  showFavorites: prev.showFavorites === 'nonfavorites' ? 'all' : 'nonfavorites',
+                }))
+              }
+              className={`flex-1 xl:flex-none inline-flex items-center justify-center gap-2 rounded-md px-2 xl:px-3 sm:py-1 py-2 text-xs sm:text-sm font-medium transition-all
+      ${filters.showFavorites === 'nonfavorites'
+                  ? 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 shadow-sm'
+                  : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700'
+                }`}
+              title={filters.showFavorites === 'nonfavorites' ? 'Showing non-favorites' : 'Show only non-favorites'}
+            >
+              <StarOff className="w-4 h-4" />
+            </button>
+          </div>
 
           <button
             onClick={() => setFilters({ ...filters, sortBy: 'date' })}
@@ -238,10 +295,11 @@ const ListingsPage: React.FC = () => {
                   minRooms: '',
                   minArea: '',
                   location: '',
-                  showFavorites: false,
+                  showFavorites: 'all',
                   sortBy: 'date',
                   sortOrder: 'desc',
                   searchTerm: '',
+                  viewState: 'all'
                 });
                 setSelectedProviders([]);
                 setPage(1);

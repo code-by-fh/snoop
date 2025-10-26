@@ -4,6 +4,8 @@ import { Calendar, ExternalLink, Home, MapPin } from 'lucide-react';
 import React from 'react';
 import { Listing } from '../../types';
 import FavoriteButton from '../common/FavoriteButton';
+import ViewedButton from '../common/ViewedButton';
+import ViewDetailsButton from '../common/ViewDetailsButton';
 
 interface ListingsListViewProps {
   listings: Listing[];
@@ -18,7 +20,7 @@ const ListingsListView: React.FC<ListingsListViewProps> = ({ listings }) => {
         return (
           <div
             key={listing.id}
-            className="relative bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md dark:hover:shadow-lg transition-shadow"
+            className="relative bg-white dark:bg-gray-800 rounded-xl shadow-sm border overflow-hidden transition-transform hover:scale-[1.01] "
           >
             <FavoriteButton
               isFavorite={favorited}
@@ -26,6 +28,8 @@ const ListingsListView: React.FC<ListingsListViewProps> = ({ listings }) => {
               loading={loading}
               className="absolute top-2 left-2"
             />
+
+            <ViewedButton viewed={listing.viewed || false} listingId={listing.id} className="absolute top-2 left-[200px]" />
 
             <div className="flex flex-col sm:flex-row">
               <div className="flex-shrink-0 w-full sm:w-60 h-48 sm:h-auto">
@@ -85,15 +89,8 @@ const ListingsListView: React.FC<ListingsListViewProps> = ({ listings }) => {
                       </span>
                     </div>
 
-                    <a
-                      href={listing.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 rounded-md hover:bg-blue-100 dark:bg-blue-900/30 dark:text-blue-400 dark:hover:bg-blue-900/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition"
-                    >
-                      <ExternalLink className="w-4 h-4 mr-2" />
-                      View Details
-                    </a>
+                    <ViewDetailsButton url={listing.trackingUrl} />
+
                   </div>
                 </div>
               </div>

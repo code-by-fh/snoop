@@ -6,7 +6,7 @@ export const send = async ({ serviceName, listings, notificationAdapters, jobNam
 
   let message = `### *${jobName}* (${serviceName}) found **${listings.length}** new listings:\n\n`;
   message += `| Title | Address | Size | Price |\n|:----|:----|:----|:----|\n`;
-  message += listings.map((o) => `| [${o.title}](${o.link}) | ` + [o.address, o.size.replace(/2m/g, "$m^2$"), o.price].join(" | ") + " |\n");
+  message += listings.map((o) => `| [${o.title}](${o.trackingUrl}) | ` + [o.address, o.size.replace(/2m/g, "$m^2$"), o.price].join(" | ") + " |\n");
   return fetch(webhook, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
