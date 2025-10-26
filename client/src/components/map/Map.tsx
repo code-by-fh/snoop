@@ -18,6 +18,7 @@ const Map: React.FC<MapProps> = ({ listings, onSelect, selectedListing }) => {
   const [mapStyle, setMapStyle] = useState<"light" | "dark" | "satellite">(
     isAppDarkMode() ? "dark" : "light"
   );
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const mapStyles = {
     light: "mapbox://styles/mapbox/light-v11",
@@ -34,7 +35,9 @@ const Map: React.FC<MapProps> = ({ listings, onSelect, selectedListing }) => {
 
   useEffect(() => {
     if (!mapContainerRef.current) return;
+
     mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN!;
+
     const map = new mapboxgl.Map({
       container: mapContainerRef.current,
       style: mapStyles[mapStyle],
@@ -50,6 +53,17 @@ const Map: React.FC<MapProps> = ({ listings, onSelect, selectedListing }) => {
     );
 
     map.on("load", () => setIsMapLoaded(true));
+
+    map.on("error", (e) => {
+      const msg = e?.error?.message || "";
+
+      if (msg.includes("Failed to fetch") || msg.includes("Unauthorized")) {
+        setErrorMessage("Failed to fetch map data. Please check your Mapbox token.");
+      } else {
+        console.error("Mapbox error:", e.error);
+      }
+    });
+
     mapRef.current = map;
     return () => map.remove();
   }, []);
@@ -80,8 +94,7 @@ const Map: React.FC<MapProps> = ({ listings, onSelect, selectedListing }) => {
           className={`flex items-center justify-center w-8 h-8 rounded-full shadow-lg border-2
             ${listing.isFavorite
               ? "bg-yellow-400 text-black border-yellow-300"
-              : "bg-gray-600 border-gray-300"}
-          `}
+              : "bg-gray-600 border-gray-300"}`}
           title={listing.title}
         >
           <Home size={16} className="text-white" />
@@ -95,10 +108,8 @@ const Map: React.FC<MapProps> = ({ listings, onSelect, selectedListing }) => {
       el.addEventListener("click", (e) => {
         e.stopPropagation();
         map.flyTo({
-          center: [
-            listing.location?.lng ?? 0,
-            listing.location?.lat ?? 0,
-          ], zoom: 8,
+          center: [listing.location?.lng ?? 0, listing.location?.lat ?? 0],
+          zoom: 8,
           speed: 1.2,
           curve: 1.2,
         });
@@ -156,10 +167,19 @@ const Map: React.FC<MapProps> = ({ listings, onSelect, selectedListing }) => {
     });
   }, [selectedListing]);
 
+  if (errorMessage) {
+    return (
+      <div className="absolute top-3 left-3 bg-red-100 text-red-800 dark:bg-red-800/90 dark:text-red-100 px-4 py-2 rounded-md shadow-lg z-20">
+        {errorMessage}
+      </div>
+    )
+  }
+
   return (
     <div className="relative h-full w-full rounded-lg shadow-md">
       <div ref={mapContainerRef} className="h-full w-full rounded-lg" />
-      <div className="absolute top-3 left-3 bg-white/90 dark:bg-gray-800/90 rounded-lg shadow-lg p-2 flex space-x-2 z-10">
+
+      <div className="absolute top-3 right-3 bg-white/90 dark:bg-gray-800/90 rounded-lg shadow-lg p-2 flex space-x-2 z-10">
         {(["light", "dark", "satellite"] as const).map((style) => (
           <button
             key={style}

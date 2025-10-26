@@ -81,36 +81,20 @@ async function getListings(url) {
     });
 }
 
-async function isListingActive(link) {
-  const result = await fetch(convertImmoscoutListingToMobileListing(link), {
-    headers: {
-      'User-Agent': 'ImmoScout_27.3_26.0_._',
-    },
-  });
-
-  if (result.status === 200) {
-    return 1;
-  }
-
-  if (result.status === 404) {
-    return 0;
-  }
-
-  logger.warn('Unknown status for immoscout listing', link);
-  return -1;
-}
-
 function nullOrEmpty(val) {
   return val == null || val.length === 0;
 }
+
 function normalize(o) {
   const title = nullOrEmpty(o.title) ? 'NO TITLE FOUND' : o.title.replace('NEU', '');
   const id = buildHash(o.id, o.price);
   return Object.assign(o, { id, title });
 }
+
 function applyBlacklist(o) {
   return !isOneOf(o.title, appliedBlackList);
 }
+
 const config = {
   url: null,
   crawlFields: {
@@ -128,11 +112,13 @@ const config = {
   filter: applyBlacklist,
   getListings: getListings,
 };
+
 export const init = (sourceConfig, blacklist) => {
   config.enabled = sourceConfig.enabled;
   config.url = convertWebToMobile(sourceConfig.url);
   appliedBlackList = blacklist || [];
 };
+
 export const metaInformation = {
   name: 'Immoscout',
   baseUrl: 'https://www.immobilienscout24.de/',

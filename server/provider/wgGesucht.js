@@ -3,15 +3,6 @@ import utils, { buildHash } from '../utils/utils.js';
 
 let appliedBlackList = [];
 
-function extractUrlFromStyleAttribute(style) {
-  if (style && style.includes("url(")) {
-    return style.match(/url\((.*?)\)/)[1];
-  } else {
-    LOG.warn("No background image URL found.");
-    return null;
-  }
-}
-
 function normalize(o) {
   const id = buildHash(o.id, o.price);
   const url = `${metaInformation.baseUrl}${o.url}`;
@@ -31,7 +22,7 @@ function applyBlacklist(o) {
 
 const config = {
   url: null,
-  crawlContainer: '#main_column .wgg_card',
+  crawlContainer: '#main_column .offer_list_item:not(.premium_user_extra_list .offer_list_item)',
   sortByDateParam: 'sort_column=0&sort_order=0',
   waitForSelector: 'body',
   crawlFields: {
@@ -41,7 +32,7 @@ const config = {
     size: '.middle .text-right | removeNewline |trim',
     title: '.truncate_title a | removeNewline |trim',
     url: '.truncate_title a@href',
-    imageUrl: ".row img@src"
+    imageUrl: ".row img@src",
   },
   normalize: normalize,
   filter: applyBlacklist,

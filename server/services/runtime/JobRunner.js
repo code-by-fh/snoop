@@ -22,7 +22,7 @@ async function executeJob(job) {
     jobExecutions.push(() =>
       Promise.resolve()
         .then(() => providerModule.init(prov, job.blacklist))
-        .then(() => new JobRuntime(providerModule, job, prov.id, prov.listings.map(l => l.id)).execute())
+        .then(() => new JobRuntime(providerModule, job, prov._id, prov.listings.map(l => l.id)).execute())
         .then(() => Job.getJob(job.id))
         .then(addOrUpdateCommonAttributes)
         .then(async (updatedJob) => {

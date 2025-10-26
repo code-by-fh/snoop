@@ -32,6 +32,8 @@ export interface Provider {
   name: string;
   url: string;
   baseUrl: string;
+  providerId: string;
+  providerName: string;
 }
 
 export interface NotificationAdapter {
@@ -92,9 +94,4 @@ export interface Settings {
   port: number;
   workingHoursFrom: string;
   workingHoursTo: string;
-}
-
-export interface Provider {
-  providerId: string;
-  providerName: string;
 }

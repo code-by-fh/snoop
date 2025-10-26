@@ -46,18 +46,15 @@ const ListingSchema = new mongoose.Schema({
 });
 
 ListingSchema.statics.saveListings = async function (newListings, jobId) {
-  const savedListings = [];
-
-  for (const listingData of newListings) {
+  const operations = newListings.map(async (listingData) => {
     const filter = { _id: listingData.id || uuidv4(), jobId };
     const update = { ...listingData, jobId };
     const options = { upsert: true, new: true, setDefaultsOnInsert: true };
 
-    const listing = await this.findOneAndUpdate(filter, update, options);
-    savedListings.push(listing);
-  }
+    return this.findOneAndUpdate(filter, update, options);
+  });
 
-  return savedListings;
+  return Promise.all(operations);
 };
 
 ListingSchema.statics.markAsViewed = async function (listingId, userId) {

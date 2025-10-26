@@ -80,7 +80,7 @@ class JobRuntime {
 
   _normalize(listings) {
     return listings.map(this._providerConfig.normalize).map(listing => {
-      listing.id = buildHash(listing.id, this._providerId, this._job.id);
+      listing.id = buildHash(listing.id, this._providerId, this._job.id, listing.url);
       return listing;
     })
   }
@@ -113,16 +113,16 @@ class JobRuntime {
     return updatedListings;
   }
 
-  _save(newListings) {
-    if (newListings.length > 0) {
-      return Listing.saveListings(newListings, this._job.id)
-        .then(savedListings => Job.addListingsIds(savedListings.map(l => l.id), this._job.id, this._providerId))
-        .then(() => newListings);
+  async _save(listings) {
+    if (listings.length > 0) {
+      await Job.addListingsIds(listings.map(l => l.id), this._job.id, this._providerId)
+      await Listing.saveListings(listings, this._job.id)
+      return listings;
     }
-    return newListings;
+    return listings;
   }
 
-  _filterBySimilarListings(listings) {
+  async _filterBySimilarListings(listings) {
     const filteredList = listings.filter((listing) => {
       const similar = similarityCache.hasSimilarEntries(this._job.id, listing.title);
       if (similar) {

@@ -7,11 +7,15 @@ services:
     ports:
       - "5000:5000"
     environment:
+      - LOG_LEVEL=info
+      - NODE_ENV=production
       - MONGODB_URI=mongodb://snoop-mongodb:27017/snoop
       - MONGO_DB_DEBUG=false
       - JWT_SECRET=your_super_secret_key_that_is_long_and_complex_123!@#
-      - LOG_LEVEL=info
-      - NODE_ENV=production
+      - TRACKING_SECRET_KEY=your_tracking_secret_key
+      - WHATS_APP_API_URL=your_whats_app_api_url
+      - WHATS_APP_API_TOKEN=your_whats_app_api_token
+      - MAPBOX_ACCESS_TOKEN=your_mapbox_access_token
     networks:
       - snoop
 
@@ -27,6 +31,7 @@ services:
       - ASSET_DIR=/dist
       - SNOOP_API_URL=http://localhost:5000/api
       - SNOOP_WS_URL=http://localhost:5000
+      - SNOOP_MAPBOX_ACCESS_TOKEN=your_mapbox_access_token
     networks:
       - snoop
     depends_on:

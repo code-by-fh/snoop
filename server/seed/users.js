@@ -3,7 +3,7 @@ import { SEED_CONFIG } from './config.js';
 
 export const adminUser = {
     username: 'admin',
-    email: 'admin@snnop.com',
+    email: 'admin@snoop.com',
     password: 'Password123!',
     role: 'admin'
   }

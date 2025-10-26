@@ -21,6 +21,7 @@ const JobSchema = new mongoose.Schema({
     required: true
   },
   providers: [{
+    _id: { type: String, default: uuidv4 },
     id: String,
     listings: [{
       type: mongoose.Schema.Types.String,
@@ -91,12 +92,13 @@ JobSchema.statics.updateLastRun = async function (jobId, startTime, providerId) 
   return now;
 };
 
-
-JobSchema.statics.addListingsIds = async function (listingIds, jobId, providerId) {
+JobSchema.statics.addListingsIds = async function (listingIds, jobId, providerObjectId) {
   const result = await this.updateOne(
-    { _id: jobId, 'providers.id': providerId },
-    { $addToSet: { 'providers.$.listings': { $each: listingIds } } }
+    { _id: jobId },
+    { $addToSet: { "providers.$[elem].listings": { $each: listingIds } } },
+    { arrayFilters: [{ "elem._id": providerObjectId }] }
   );
+
   return result.modifiedCount > 0;
 };
 

@@ -62,22 +62,18 @@ export const updateJob = async (req, res) => {
       return res.status(404).json({ message: 'Job not found' });
     }
 
-    const allowedFields = ['name', 'blacklistTerms', 'isActive'];
-
-    for (const field of allowedFields) {
+    for (const field of ['name', 'blacklistTerms', 'isActive']) {
       if (Object.prototype.hasOwnProperty.call(req.body, field)) {
         job[field] = req.body[field];
       }
     }
 
     if (Array.isArray(req.body.providers)) {
-      job.providers = req.body.providers.map(newProvider => {
-        const existing = job.providers.find(p => p.id === newProvider.id);
-        return {
-          ...(existing || {}),
-          ...newProvider,
-          listings: existing?.listings ?? []
-        };
+      job.providers = req.body.providers.map((newProvider) => {
+        const existing = job.providers.find(p => p._id === newProvider._id);
+        return existing
+          ? { ...existing.toObject(), ...newProvider, listings: existing.listings ?? [] }
+          : { ...newProvider, listings: [] };
       });
     }
 
