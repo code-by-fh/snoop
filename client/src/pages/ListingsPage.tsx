@@ -121,10 +121,6 @@ const ListingsPage: React.FC = () => {
     return <LoadingPlaceholder title='Loading Listings...' />
   }
 
-  if (listings.length === 0) {
-    return <NoContentInfo />
-  }
-
   return (
     <div className="space-y-6">
 
@@ -357,14 +353,16 @@ const ListingsPage: React.FC = () => {
         </div>
       )}
 
-
-
-      <div className="space-y-6">
-        {viewMode === 'grid' && <ListingsGridView listings={listings} openActionModal={openActionModal} />}
-        {viewMode === 'list' && <ListingsListView listings={listings} openActionModal={openActionModal} />}
-        {viewMode === 'map' && <ListingsMapView listings={listings} openActionModal={openActionModal} />}
-      </div>
-
+      {
+        listings.length === 0 ? (
+          <NoContentInfo />
+        ) :
+          <div className="space-y-6">
+            {viewMode === 'grid' && <ListingsGridView listings={listings} openActionModal={openActionModal} />}
+            {viewMode === 'list' && <ListingsListView listings={listings} openActionModal={openActionModal} />}
+            {viewMode === 'map' && <ListingsMapView listings={listings} openActionModal={openActionModal} />}
+          </div>
+      }
 
       {/* Pagination */}
       {totalPages > 1 && (
