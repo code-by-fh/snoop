@@ -3,6 +3,7 @@ import { formatPrice } from "@/utils/formatters";
 import { MapPin, X } from "lucide-react";
 import React, { useState } from "react";
 import { Listing } from "../../types";
+import DeleteButton from '../common/DeleteButton';
 import FavoriteButton from "../common/FavoriteButton";
 import ViewDetailsButton from '../common/ViewDetailsButton';
 import ViewedButton from '../common/ViewedButton';
@@ -10,9 +11,10 @@ import Map from "../map/Map";
 
 interface ListingsMapViewProps {
   listings: Listing[];
+  openActionModal: (listing: Listing) => void;
 }
 
-const ListingsMapView: React.FC<ListingsMapViewProps> = ({ listings }) => {
+const ListingsMapView: React.FC<ListingsMapViewProps> = ({ listings, openActionModal }) => {
   const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
 
   return (
@@ -27,7 +29,7 @@ const ListingsMapView: React.FC<ListingsMapViewProps> = ({ listings }) => {
           className={`hidden md:block bg-white dark:bg-gray-800 border-l border-gray-200 dark:border-gray-700 transform transition-transform duration-300 ease-in-out ${selectedListing ? "w-96 translate-x-0" : "w-0 translate-x-full"}`}
         >
           {selectedListing && (
-            <ListingDetailSidebar listing={selectedListing} onClose={() => setSelectedListing(null)} />
+            <ListingDetailSidebar listing={selectedListing} onClose={() => setSelectedListing(null)} openActionModal={openActionModal} />
           )}
         </div>
       </div>
@@ -35,7 +37,7 @@ const ListingsMapView: React.FC<ListingsMapViewProps> = ({ listings }) => {
         className={`md:hidden fixed inset-x-0 bottom-0 z-50 transform transition-transform duration-300 ease-in-out ${selectedListing ? "translate-y-0" : "translate-y-full"}`}
       >
         {selectedListing && (
-          <ListingDetailSidebar listing={selectedListing} onClose={() => setSelectedListing(null)} mobile />
+          <ListingDetailSidebar listing={selectedListing} onClose={() => setSelectedListing(null)} mobile openActionModal={openActionModal} />
         )}
       </div>
     </div>
@@ -46,9 +48,10 @@ interface ListingDetailSidebarProps {
   listing: Listing;
   onClose: () => void;
   mobile?: boolean;
+  openActionModal: (listing: Listing) => void;
 }
 
-const ListingDetailSidebar: React.FC<ListingDetailSidebarProps> = ({ listing, onClose, mobile = false }) => {
+const ListingDetailSidebar: React.FC<ListingDetailSidebarProps> = ({ listing, onClose, mobile = false, openActionModal }) => {
   const { favorited, toggleFavorite, loading } = useFavorite(listing.isFavorite || false);
 
   return (
@@ -141,7 +144,11 @@ const ListingDetailSidebar: React.FC<ListingDetailSidebarProps> = ({ listing, on
           )}
         </div>
 
-        <ViewDetailsButton url={listing.trackingUrl} />
+        <div className="flex flex-col mt-4 pt-3 border-t border-gray-100 dark:border-gray-700 space-y-2">
+          <DeleteButton onDelete={() => openActionModal(listing)} />
+          <ViewDetailsButton url={listing.trackingUrl} />
+        </div>
+
       </div>
     </div>
 

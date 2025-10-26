@@ -1,5 +1,5 @@
-import React from 'react';
 import { AlertTriangle, CheckCircle2, Info, X } from 'lucide-react';
+import React from 'react';
 
 interface ConfirmationModalProps {
   isOpen: boolean;
@@ -10,6 +10,7 @@ interface ConfirmationModalProps {
   confirmText?: string;
   cancelText?: string;
   variant?: 'confirmation' | 'warning' | 'alert';
+  actionElements?: React.ReactNode;
 }
 
 const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
@@ -21,6 +22,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   confirmText = 'Confirm',
   cancelText = 'Cancel',
   variant = 'confirmation',
+  actionElements,
 }) => {
   if (!isOpen) return null;
 
@@ -59,14 +61,22 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
           <p className="text-gray-600 dark:text-gray-300">{message}</p>
         </div>
 
+        {actionElements && (
+          <div className="mt-6 flex justify-end space-x-3">
+            {actionElements}
+          </div>
+        )}
+
         {/* Actions */}
         <div className="mt-6 flex justify-end space-x-3">
-          <button
-            onClick={onClose}
-            className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-1 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
-          >
-            {cancelText}
-          </button>
+          {!actionElements &&
+            <button
+              onClick={onClose}
+              className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-1 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
+            >
+              {cancelText}
+            </button>
+          }
           {onConfirm && (
             <button
               onClick={onConfirm}

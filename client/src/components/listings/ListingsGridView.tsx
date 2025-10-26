@@ -1,24 +1,26 @@
 import { useFavorite } from '@/hooks/useFavorite';
 import { formatDate, formatPrice } from '@/utils/formatters';
-import { Calendar, Home, MapPin } from 'lucide-react';
+import { Calendar, Home, MapPin, X } from 'lucide-react';
 import React from 'react';
 import { Listing } from '../../types';
 import FavoriteButton from '../common/FavoriteButton';
 import ViewDetailsButton from '../common/ViewDetailsButton';
 import ViewedButton from '../common/ViewedButton';
+import DeleteButton from '../common/DeleteButton';
 
 interface ListingsGridViewProps {
   listings: Listing[];
+  openActionModal: (listing: Listing) => void;
 }
 
-const ListingsGridView: React.FC<ListingsGridViewProps> = ({ listings }) => {
+const ListingsGridView: React.FC<ListingsGridViewProps> = ({ listings, openActionModal }) => {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6 gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
       {listings.map((listing) => {
         const { favorited, toggleFavorite, loading } = useFavorite(listing.isFavorite || false);
         return (
           <div className={`relative bg-white dark:bg-gray-800 rounded-xl shadow-sm border overflow-hidden transition-transform hover:scale-[1.01]`} key={listing.id}>
-            
+
             {/* Favorite Button */}
             <FavoriteButton
               isFavorite={favorited}
@@ -46,7 +48,7 @@ const ListingsGridView: React.FC<ListingsGridViewProps> = ({ listings }) => {
 
             {/* Content */}
             <div className="p-4">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 line-clamp-2">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 line-clamp-2 min-h-[4rem]">
                 {listing.title}
               </h3>
 
@@ -70,14 +72,16 @@ const ListingsGridView: React.FC<ListingsGridViewProps> = ({ listings }) => {
               <p className="mt-3 text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
                 {listing.description}
               </p>
+              <div className="flex justify-center items-center text-sm text-gray-600 dark:text-gray-300 mt-3 space-x-2">
+                <Calendar className="w-4 h-4 text-gray-400 dark:text-gray-500" />
+                <span>Added {formatDate(listing.createdAt)}</span>
+              </div>
 
-              <div className="mt-4 pt-3 border-t border-gray-100 dark:border-gray-700 flex justify-between items-center">
-                <div className="flex items-center text-xs text-gray-500 dark:text-gray-400">
-                  <Calendar className="w-3 h-3 mr-1" />
-                  <span>Added {formatDate(listing.createdAt)}</span>
+              <div className="flex flex-col sm:col-span-1 mt-4 pt-3 border-t border-gray-100 dark:border-gray-700">
+                <div className="flex justify-between items-center space-x-2">
+                  <DeleteButton onDelete={() => openActionModal(listing)} />
+                  <ViewDetailsButton url={listing.trackingUrl} />
                 </div>
-
-                <ViewDetailsButton url={listing.trackingUrl} />
               </div>
             </div>
           </div>

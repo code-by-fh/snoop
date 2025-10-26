@@ -7,13 +7,15 @@ import ListingsViewToggle from '@/components/common/ViewToggle';
 import ListingsGridView from '@/components/listings/ListingsGridView';
 import ListingsListView from '@/components/listings/ListingsListView';
 import ListingsMapView from '@/components/listings/ListingsMapView';
+import ConfirmationModal from '@/components/modals/ConfirmationModal';
 import { isAppDarkMode, onAppDarkModeChange } from '@/utils/theme';
 import { Eye, EyeOff, Filter, Grid3X3, List, Map, SortAsc, SortDesc, Star, StarOff, X } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { MultiSelect } from 'react-multi-select-component';
-import { getListings } from '../api';
+import { deleteListing, getListings } from '../api';
 import { useViewPreference } from '../hooks/useViewPreference';
 import { Listing } from '../types';
+import toast from 'react-hot-toast';
 
 const ListingsPage: React.FC = () => {
   const [listings, setListings] = useState<Listing[]>([]);
@@ -39,6 +41,34 @@ const ListingsPage: React.FC = () => {
   const [providers, setProviders] = useState<{ label: string; value: string }[]>([]);
   const [selectedProviders, setSelectedProviders] = useState<{ label: string; value: string }[]>([]);
   const [multiSelectTheme, setMultiSelectTheme] = useState(isAppDarkMode() ? "dark" : "light");
+  const [isActionModalOpen, setIsActionModalOpen] = useState(false);
+  const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
+
+  const openActionModal = (listing: Listing) => {
+    setSelectedListing(listing);
+    setIsActionModalOpen(true);
+  };
+
+  const closeActionModal = () => {
+    setSelectedListing(null);
+    setIsActionModalOpen(false);
+  };
+
+  const handleDeleteListing = async () => {
+    if (!selectedListing) return;
+
+    try {
+      setIsLoading(true);
+      await deleteListing(selectedListing.id);
+      setListings(listings.filter(l => l.id !== selectedListing.id));
+      toast.success('Listing deleted successfully');
+    } catch (err) {
+      toast.error('Failed to delete listing');
+    } finally {
+      closeActionModal();
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
     const cleanup = onAppDarkModeChange((dark) => {
@@ -330,9 +360,9 @@ const ListingsPage: React.FC = () => {
 
 
       <div className="space-y-6">
-        {viewMode === 'grid' && <ListingsGridView listings={listings} />}
-        {viewMode === 'list' && <ListingsListView listings={listings} />}
-        {viewMode === 'map' && <ListingsMapView listings={listings} />}
+        {viewMode === 'grid' && <ListingsGridView listings={listings} openActionModal={openActionModal} />}
+        {viewMode === 'list' && <ListingsListView listings={listings} openActionModal={openActionModal} />}
+        {viewMode === 'map' && <ListingsMapView listings={listings} openActionModal={openActionModal} />}
       </div>
 
 
@@ -358,6 +388,14 @@ const ListingsPage: React.FC = () => {
           </button>
         </div>
       )}
+      <ConfirmationModal
+        isOpen={isActionModalOpen}
+        onClose={closeActionModal}
+        onConfirm={handleDeleteListing}
+        title="Delete Listing"
+        message="Do you want to delete this listing?"
+        variant="alert"
+      />
     </div>
   );
 };

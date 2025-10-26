@@ -206,7 +206,11 @@ export const deleteListing = async (req, res) => {
       return res.status(404).json({ message: 'Listing not found' });
     }
 
-    const job = await Job.findById(listing.job);
+    const job = await Job.findById(listing.jobId);
+
+    if (!job) {
+      return res.status(404).json({ message: 'Associated job not found' });
+    }
 
     if (job.user.toString() !== req.user.id && req.user.role !== 'admin') {
       return res.status(403).json({ message: 'Not authorized' });
@@ -214,16 +218,24 @@ export const deleteListing = async (req, res) => {
 
     await listing.deleteOne();
 
-    await Job.findByIdAndUpdate(listing.job, {
-      $inc: {
-        totalListings: -1,
-        newListings: -1
-      }
+    await Favorite.deleteMany({ listingId: listing._id });
+    await ListingView.deleteMany({ listingId: listing._id });
+
+    const updatedProviders = job.providers.map((provider) => ({
+      ...provider.toObject(),
+      listings: provider.listings.filter((id) => id.toString() !== listing._id.toString()),
+    }));
+
+    await Job.findByIdAndUpdate(job._id, {
+      $set: { providers: updatedProviders },
+      $inc: { totalListings: -1, newListings: -1 },
     });
 
     res.json({ message: 'Listing deleted successfully' });
   } catch (error) {
+    logger.error(error, 'Error deleting listing:');
     res.status(500).json({ message: error.message });
   }
 };
+
 
