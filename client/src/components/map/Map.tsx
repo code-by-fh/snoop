@@ -179,7 +179,7 @@ const Map: React.FC<MapProps> = ({ listings, onSelect, selectedListing }) => {
     <div className="relative h-full w-full rounded-lg shadow-md">
       <div ref={mapContainerRef} className="h-full w-full rounded-lg" />
 
-      <div className="absolute top-3 right-3 bg-white/90 dark:bg-gray-800/90 rounded-lg shadow-lg p-2 flex space-x-2 z-10">
+      <div className="absolute top-3 left-3 bg-white/90 dark:bg-gray-800/90 rounded-lg shadow-lg p-2 flex space-x-2 z-10">
         {(["light", "dark", "satellite"] as const).map((style) => (
           <button
             key={style}
