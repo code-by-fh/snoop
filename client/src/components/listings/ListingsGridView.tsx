@@ -48,7 +48,7 @@ const ListingsGridView: React.FC<ListingsGridViewProps> = ({ listings, openActio
 
             {/* Content */}
             <div className="p-4">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 line-clamp-2 min-h-[4rem]">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 line-clamp-2 min-h-[3.5rem]">
                 {listing.title}
               </h3>
 
@@ -68,10 +68,6 @@ const ListingsGridView: React.FC<ListingsGridViewProps> = ({ listings, openActio
                   <span>{listing.size} m² • {listing.rooms} rooms</span>
                 </div>
               </div>
-
-              <p className="mt-3 text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
-                {listing.description}
-              </p>
               <div className="flex justify-center items-center text-sm text-gray-600 dark:text-gray-300 mt-3 space-x-2">
                 <Calendar className="w-4 h-4 text-gray-400 dark:text-gray-500" />
                 <span>Added {formatDate(listing.createdAt)}</span>
