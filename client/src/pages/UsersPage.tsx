@@ -1,3 +1,4 @@
+import ErrorInfo from '@/components/common/ErrorInfo';
 import HeaderWithAction from '@/components/common/HeaderWithAction';
 import LoadingPlaceholder from '@/components/common/LoadingPlaceholder';
 import { ApiError } from '@/types/common';
@@ -65,6 +66,9 @@ const UsersPage: React.FC = () => {
       setIsFormModalOpen(false);
     } catch (err: any) {
       setError(err?.response?.data as ApiError);
+      toast.error(err?.response?.data?.message || 'Failed to save user');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -77,6 +81,7 @@ const UsersPage: React.FC = () => {
       toast('User deleted successfully!', { icon: '🗑️' });
     } catch (err: any) {
       setError(err?.response?.data as ApiError);
+      toast.error(err?.response?.data?.message || 'Failed to delete user');
     } finally {
       setIsConfirmModalOpen(false);
       setUserToDeleteId(null);
@@ -86,6 +91,7 @@ const UsersPage: React.FC = () => {
   if (loading) {
     return <LoadingPlaceholder title='Loading Users...' />
   };
+
 
   return (
     <div className="space-y-6">
@@ -102,6 +108,9 @@ const UsersPage: React.FC = () => {
           </button>
         }
       />
+      {
+        error && <ErrorInfo error={error.message} />
+      }
 
       <UserTable users={users} onEdit={handleEditClick} onDelete={handleDeleteClick} />
 
@@ -110,7 +119,7 @@ const UsersPage: React.FC = () => {
         onClose={() => setIsFormModalOpen(false)}
         onSave={handleSaveUser}
         user={currentUser}
-        apiError={error ? `${error.error}` : null}
+        apiError={error ? `${error.message}` : null}
       />
 
       <ConfirmationModal

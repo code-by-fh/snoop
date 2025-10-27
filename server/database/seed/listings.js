@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker';
-import { buildHash } from '../utils/utils.js';
+import { buildHash } from '#utils/utils.js';
 
 const today = new Date();
 

@@ -74,7 +74,7 @@ const UserFormModal: React.FC<UserFormModalProps> = ({ isOpen, onClose, onSave, 
 
         {(error || apiError) && (
           <pre className="mb-4 rounded-md bg-red-100 p-3 text-sm text-red-700 dark:bg-red-900 dark:text-red-200">
-            {error || apiError}
+            {error || apiError || "An error occurred. Please try again."}
           </pre>
         )}
 

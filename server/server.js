@@ -6,12 +6,10 @@ import cors from 'cors';
 import express from 'express';
 import helmet from 'helmet';
 import http from 'http';
-import mongoose from 'mongoose';
+import { initDatabase } from './database/initializer.js';
 import authMiddleware from './middleware/authMiddleware.js';
 import { errorHandler } from "./middleware/errorHandler.js";
 import { requestLogger } from './middleware/requestLogger.js';
-import Settings from "./models/Settings.js";
-import { initDatabase } from './seed/init.js';
 import { startRuntime } from './services/runtime/scheduler.js';
 import { initTracking } from './tracking/index.js';
 
@@ -30,23 +28,7 @@ import trackingRoutes from './routes/trackingRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import { setupSocketServer } from './socketServer.js';
 
-// Connect to MongoDB
-mongoose.connect(process.env.MONGODB_URI)
-  .then(() => logger.info('MongoDB connected successfully'))
-  .catch((err) => logger.error(err, 'MongoDB connection error:'));
-
-if (process.env.NODE_ENV !== 'production' && process.env.MONGO_DB_DEBUG === 'true') {
-  mongoose.set('debug', true);
-}
-
-await initDatabase();
-
-const settings = await Settings.findOne({})
-  .then((settings) => settings.toJSON())
-  .catch((err) => {
-    logger.error(err, 'Error fetching settings:');
-    return null;
-  });
+const settings = await initDatabase();
 
 await startRuntime(settings);
 initTracking(process.env.API_BASE_URL || `http://localhost:${settings.port}`);

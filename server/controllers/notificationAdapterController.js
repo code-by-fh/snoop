@@ -1,24 +1,24 @@
 import { getAvailableNotificators } from "../notification/adapter/index.js";
 import logger from "#utils/logger.js";
+import { isDemo } from "#utils/demoHandler.js";
 
 export const getAvailableNotificationAdapters = async (req, res) => {
-  try {
-    const notificators = getAvailableNotificators();
-    let configs = Object.values(notificators).map(provider => provider.config);
+    try {
+        const notificators = getAvailableNotificators();
+        let configs = Object.values(notificators).map(provider => provider.config);
 
-    if (!req.user || req.user.role !== 'admin') {
-      configs = configs.filter(config => config.id !== 'console');
+        if (!req.user || req.user.role !== 'admin') {
+            configs = configs.filter(config => config.id !== 'console');
+        }
+
+        res.status(200).json(configs);
+    } catch (error) {
+        logger.error(error, "Error fetching notification adapters");
+        res.status(500).json({ message: 'Failed to fetch adapters', error: error.message });
     }
-
-    res.status(200).json(configs);
-  } catch (error) {
-    logger.error(error, "Error fetching notification adapters");
-    res.status(500).json({ message: 'Failed to fetch adapters', error: error.message });
-  }
 };
 
 export const sendTestNotification = async (req, res) => {
-
     const { adapterId } = req.params;
     const adapterConfig = req.body;
 

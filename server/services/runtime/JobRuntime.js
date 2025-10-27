@@ -9,6 +9,7 @@ import Extractor from './extractor/extractor.js';
 import jobEvents from './JobEvents.js';
 import urlModifier from "./queryStringMutator.js";
 import * as similarityCache from "./similarity-check/similarityCache.js";
+import { isDemo, demoRuntime } from "#utils/demoHandler.js";
 
 class JobRuntime {
   /**
@@ -28,6 +29,10 @@ class JobRuntime {
   }
 
   execute() {
+    if (isDemo()) {
+      return demoRuntime({ emitSocketEvent: this._emitSocketEvent.bind(this), jobId: this._job?.id })
+    }
+
     logger.info(`Starting '${this._providerId}' job '${this._job.id}'`);
     return (
       //modify the url to make sure search order is correctly set

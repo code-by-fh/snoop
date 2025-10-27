@@ -47,14 +47,11 @@ const SettingsPage: React.FC = () => {
       toast.success('Settings saved successfully!');
       setIsEditing(false);
     } catch (err: any) {
+      setError(err.response?.data?.message || 'Failed to save settings');
       toast.error(err.response?.data?.message || 'Failed to save settings');
     } finally {
       setIsLoading(false);
     }
-  };
-
-  if (error) {
-    return <ErrorInfo error={error} />
   };
 
   return (
@@ -74,6 +71,10 @@ const SettingsPage: React.FC = () => {
           </button>
         ) : null}
       />
+
+      {error && (
+        <ErrorInfo error={error} />
+      )}
 
       {/* Form */}
       <form

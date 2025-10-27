@@ -4,13 +4,14 @@
   "private": true,
   "type": "module",
   "imports": {
-    "#utils/*": "./utils/*"
+    "#utils/*": "./utils/*",
+    "#models/*": "./models/*"
   },
   "scripts": {
     "start": "node server.js",
     "lint": "eslint .",
     "dev": "nodemon server.js",
-    "seed": "node seed/index.js",
+    "seed": "node database/seed/index.js",
     "test": "mocha --loader=esmock --timeout 3000000 test/**/*.test.js"
   },
   "dependencies": {

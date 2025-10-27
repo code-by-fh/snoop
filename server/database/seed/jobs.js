@@ -9,7 +9,7 @@ export function generateJobs(userId, providerConfig) {
 
   return {
       name: `${providerConfig.id} - Seeded`,
-      isActive: false,
+      isActive: process.env.IS_DEMO === 'true' ? Math.random() < 0.5 : false, // random active status for demo
       user: userId,
       providers,
       notificationAdapters: [

@@ -6,28 +6,15 @@ import { generateListings } from './listings.js';
 import { generateUsers } from './users.js';
 
 import logger from '#utils/logger.js';
-import Job from '../models/Job.js';
-import Listing from '../models/Listing.js';
-import Settings from '../models/Settings.js';
-import User from '../models/User.js';
+import Settings from '#models/Settings.js';
+import User from '#models/User.js';
+import Listing from '#models/Listing.js';
+import Job from '#models/Job.js';
 
 dotenv.config();
 
-async function seedDatabase() {
+export async function seedDatabase() {
     try {
-        await mongoose.connect(process.env.MONGODB_URI);
-        logger.info('Connected to MongoDB.');
-
-        await Promise.all([
-            Listing.deleteMany({}),
-            Job.deleteMany({}),
-            User.deleteMany({})
-        ]);
-
-        if (await Settings.countDocuments() === 0) {
-            await Settings.create({});
-            logger.info('Default settings created.');
-        }
 
         const users = await User.create(generateUsers());
         logger.info(`Created ${users.length} users`);
@@ -63,11 +50,8 @@ async function seedDatabase() {
 
 
         logger.info('✅ Database seeding complete!');
-        await mongoose.disconnect();
     } catch (err) {
         logger.error(err, 'Seeding failed:');
         process.exit(1);
     }
 }
-
-seedDatabase();
