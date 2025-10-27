@@ -20,10 +20,10 @@ export const initDatabase = async () => {
         }
 
         if (process.env.IS_DEMO === 'true') {
-            // await mongoose.connection.dropDatabase();
-            // logger.warn('⚠️ Database dropped for demo mode purposes');
-            // await seedDatabase();
-            // logger.info('🌱 Database seeding completed');
+            await mongoose.connection.dropDatabase();
+            logger.warn('⚠️ Database dropped for demo mode purposes');
+            await seedDatabase();
+            logger.info('🌱 Database seeding completed');
         } else {
             if (await User.countDocuments() === 0) {
                 await User.create(adminUser);

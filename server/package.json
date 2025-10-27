@@ -11,7 +11,7 @@
     "start": "node server.js",
     "lint": "eslint .",
     "dev": "nodemon server.js",
-    "seed": "node database/seed/index.js",
+    "seed": "node database/seed/seed.js",
     "test": "mocha --loader=esmock --timeout 3000000 test/**/*.test.js"
   },
   "dependencies": {
