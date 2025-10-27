@@ -12,6 +12,7 @@ import { errorHandler } from "./middleware/errorHandler.js";
 import { requestLogger } from './middleware/requestLogger.js';
 import { startRuntime } from './services/runtime/scheduler.js';
 import { initTracking } from './tracking/index.js';
+import { initCron } from './services/cron/index.js';
 
 // Import routes
 import adminSettingsRoutes from './routes/adminSettingsRoutes.js';
@@ -29,9 +30,9 @@ import userRoutes from './routes/userRoutes.js';
 import { setupSocketServer } from './socketServer.js';
 
 const settings = await initDatabase();
-
 await startRuntime(settings);
 initTracking(process.env.API_BASE_URL || `http://localhost:${settings.port}`);
+initCron();
 
 const app = express();
 

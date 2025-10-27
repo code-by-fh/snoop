@@ -1,15 +1,13 @@
 import dotenv from 'dotenv';
-import mongoose from 'mongoose';
 import { SEED_CONFIG } from './config.js';
 import { generateJobs as generateJob } from './jobs.js';
 import { generateListings } from './listings.js';
 import { generateUsers } from './users.js';
 
-import logger from '#utils/logger.js';
-import Settings from '#models/Settings.js';
-import User from '#models/User.js';
-import Listing from '#models/Listing.js';
 import Job from '#models/Job.js';
+import Listing from '#models/Listing.js';
+import User from '#models/User.js';
+import logger from '#utils/logger.js';
 
 dotenv.config();
 
