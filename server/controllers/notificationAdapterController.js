@@ -1,6 +1,5 @@
-import { getAvailableNotificators } from "../notification/adapter/index.js";
 import logger from "#utils/logger.js";
-import { isDemo } from "#utils/demoHandler.js";
+import { getAvailableNotificators } from "../notification/adapter/index.js";
 
 export const getAvailableNotificationAdapters = async (req, res) => {
     try {
