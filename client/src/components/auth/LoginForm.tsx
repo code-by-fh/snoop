@@ -6,7 +6,7 @@ import { useAuth } from '../../context/AuthContext';
 import ThemeSwitcher from '../ThemeSwitcher';
 
 const LoginForm: React.FC = () => {
-  const isDemo = import.meta.env.VITE_IS_DEMO || false;
+  const isDemo = import.meta.env.VITE_IS_DEMO === 'true' || false;
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
