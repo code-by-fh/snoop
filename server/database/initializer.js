@@ -28,6 +28,11 @@ export const initDatabase = async () => {
                 await c.deleteMany({});
             }
             logger.warn('⚠️ All collections cleared for demo mode purposes');
+
+            await mongoose.connection.db.dropIndexes('users').catch(() => { });
+            await mongoose.connection.db.collection('users').createIndex({ username: 1 }, { unique: true });
+
+            // 🌱 Seeding
             await seedDatabase();
             logger.info('🌱 Database seeding completed');
         } else {
