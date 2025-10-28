@@ -32,6 +32,7 @@ services:
       - SNOOP_API_URL=http://localhost:5000/api
       - SNOOP_WS_URL=http://localhost:5000
       - SNOOP_MAPBOX_ACCESS_TOKEN=your_mapbox_access_token
+      - SNOOP_IS_DEMO=false
     networks:
       - snoop
     depends_on:
