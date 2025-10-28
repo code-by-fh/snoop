@@ -21,6 +21,7 @@ import { useAuth } from '../context/AuthContext';
 import ThemeSwitcher from './ThemeSwitcher';
 
 const Layout: React.FC = () => {
+  const isDemo = import.meta.env.VITE_IS_DEMO || false;
   const { user, logout } = useAuth();
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -52,10 +53,26 @@ const Layout: React.FC = () => {
   const toggleSidebarCollapse = () => setIsCollapsed(!isCollapsed);
 
   return (
-    <div className="flex h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+    <div
+      className={`
+    flex bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100
+    ${isDemo
+          ? 'mt-8 h-[calc(100vh-2rem)] md:h-[calc(100vh-2rem)]'
+          : 'h-screen'
+        }
+  `}
+    >
+      {isDemo && (
+        <div className="fixed top-0 left-0 w-full z-50 bg-yellow-400 dark:bg-yellow-600 text-gray-900 dark:text-gray-900 text-center py-2 px-4 font-semibold shadow-md">
+          ⚠️ This is a demo version. Please use at your own risk.
+        </div>
+      )}
+
+
       {/* Mobile Header */}
       {isMobile && (
-        <header className="fixed top-0 left-0 right-0 z-50 bg-white dark:bg-gray-800 shadow-md border-b border-gray-200 dark:border-gray-700 px-4 py-3 flex items-center justify-between">
+        <header
+          className={`fixed left-0 right-0 z-40 bg-white dark:bg-gray-800 shadow-md border-b border-gray-200 dark:border-gray-700 px-4 py-3 flex items-center justify-between transition-all ${isMobile ? 'mt-8' : ''}`}>
           <img src={Logo} alt="SNOOP Logo" className="h-10 w-auto" />
           <div className="flex items-center space-x-3">
             <ThemeSwitcher collapsed />
@@ -69,6 +86,7 @@ const Layout: React.FC = () => {
         </header>
       )}
 
+
       {/* Mobile Overlay */}
       {isMobile && isMobileMenuOpen && (
         <div className="fixed inset-0 z-40 bg-black bg-opacity-50" onClick={closeMobileMenu} />
@@ -77,10 +95,10 @@ const Layout: React.FC = () => {
       {/* Sidebar */}
       <aside
         className={`
-          fixed md:relative top-0 left-0 h-full z-50 bg-gray-50 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700
-          flex flex-col transition-all duration-300
-          ${isMobile ? `w-full transform ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}` : isCollapsed ? 'w-20' : 'w-64'}
-        `}
+      fixed md:relative top-0 left-0 h-full z-40 bg-gray-50 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700
+      flex flex-col transition-all duration-300
+      ${isMobile ? `w-full transform ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} ${isDemo ? 'mt-8' : ''}` : isCollapsed ? 'w-20' : 'w-64'}
+    `}
       >
         {/* Logo */}
         <div className="flex items-center justify-center p-4 border-b border-gray-100 dark:border-gray-700">
@@ -163,7 +181,7 @@ const Layout: React.FC = () => {
       </aside>
 
       {/* Main Content */}
-      <div className={`flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-900 ${isMobile ? 'pt-16' : ''}`}>
+      <div className={`flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-900 ${isMobile ? `pt-16 ${isDemo ? 'mt-8' : ''}` : ''}`}>
         <div className="p-4 md:p-8">
           <Outlet />
         </div>
@@ -172,7 +190,7 @@ const Layout: React.FC = () => {
       <Toaster
         position="bottom-right"
         gutter={8}
-        toastOptions={{ duration: 3000, className: 'modern-toast', }}
+        toastOptions={{ duration: 3000, className: 'modern-toast' }}
       />
     </div>
   );

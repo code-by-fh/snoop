@@ -6,6 +6,7 @@ import { useAuth } from '../../context/AuthContext';
 import ThemeSwitcher from '../ThemeSwitcher';
 
 const LoginForm: React.FC = () => {
+  const isDemo = import.meta.env.VITE_IS_DEMO || false;
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -44,26 +45,42 @@ const LoginForm: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-100 via-white to-indigo-200 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="fixed bottom-6 right-6 z-50">
-        <ThemeSwitcher collapsed />
+<div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-indigo-100 via-white to-indigo-200 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-12 px-4 sm:px-6 lg:px-8">
+  {/* Demo Hinweis */}
+  {isDemo && (
+    <div className="w-full max-w-md mb-6 p-4 rounded-xl bg-yellow-200 dark:bg-yellow-600 text-gray-900 dark:text-gray-100 border border-yellow-400 dark:border-yellow-500 shadow-md text-center">
+      <p className="font-semibold mb-2">⚠️ Demo Mode Active</p>
+      <p className="text-sm mb-2">You can log in using the following demo accounts:</p>
+      <ul className="text-sm space-y-1">
+        <li>• <span className="font-medium">admin</span> / Password123!</li>
+        <li>• <span className="font-medium">user</span> / Password123!</li>
+      </ul>
+    </div>
+  )}
+
+  <div className="fixed bottom-6 right-6 z-50">
+    <ThemeSwitcher collapsed />
+  </div>
+
+  <div className="max-w-md w-full space-y-8 bg-white/80 dark:bg-gray-800/80 backdrop-blur-md p-10 rounded-3xl shadow-2xl border border-gray-100 dark:border-gray-700">
+    {/* Logo + Überschrift */}
+    <div className="text-center">
+      <div className="flex justify-center mb-4">
+        <img src={Logo} alt="SNOOP Logo" className="h-12 w-auto transition-all duration-300" />
       </div>
-      <div className="max-w-md w-full space-y-8 bg-white/80 dark:bg-gray-800/80 backdrop-blur-md p-10 rounded-3xl shadow-2xl border border-gray-100 dark:border-gray-700">
-        <div className="text-center">
-          <div className="flex justify-center mb-4">
-            <img src={Logo} alt="SNOOP Logo" className="h-12 w-auto transition-all duration-300" />
-          </div>
-          <h2 className="text-3xl font-extrabold text-gray-900 dark:text-gray-100">Welcome back</h2>
-          <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">Please sign in to continue</p>
+      <h2 className="text-3xl font-extrabold text-gray-900 dark:text-gray-100">Welcome back</h2>
+      <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">Please sign in to continue</p>
+    </div>
+
+    {error && (
+      <div className="bg-red-50 dark:bg-red-900/30 border-l-4 border-red-500 p-4 rounded-lg shadow-sm animate-shake">
+        <div className="flex items-center">
+          <AlertCircle className="h-5 w-5 text-red-500 mr-2" />
+          <p className="text-sm text-red-700 dark:text-red-300">{error}</p>
         </div>
-        {error && (
-          <div className="bg-red-50 dark:bg-red-900/30 border-l-4 border-red-500 p-4 rounded-lg shadow-sm animate-shake">
-            <div className="flex items-center">
-              <AlertCircle className="h-5 w-5 text-red-500 mr-2" />
-              <p className="text-sm text-red-700 dark:text-red-300">{error}</p>
-            </div>
-          </div>
-        )}
+      </div>
+    )}
+
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-5">
             <div className="relative">

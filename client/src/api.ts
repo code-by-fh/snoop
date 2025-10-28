@@ -46,7 +46,6 @@ export const getListings = (params?: {
   providerIds?: string[];
   showFavorites?: string
 }) => api.get<ListingsApiResponse>('/listings', { params });
-export const createListing = (listingData: Partial<Listing>) => api.post<Listing>('/listings', listingData);
 export const deleteListing = (id: string) => api.delete(`/listings/${id}`);
 
 // Setting-related API methods

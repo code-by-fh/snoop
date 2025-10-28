@@ -8,53 +8,6 @@ import { getTrackingUrl } from '../tracking/listing.js';
 
 const providersMap = getAvailableProviders();
 
-export const createListing = async (req, res) => {
-  try {
-    const {
-      title,
-      price,
-      location,
-      area,
-      rooms,
-      description,
-      imageUrl,
-      url,
-      source,
-      job
-    } = req.body;
-
-    const jobExists = await Job.findOne({
-      _id: job,
-      user: req.user.id
-    });
-
-    if (!jobExists) {
-      return res.status(404).json({ message: 'Job not found' });
-    }
-
-    const listing = new Listing({
-      title,
-      price,
-      location,
-      area,
-      rooms,
-      description,
-      imageUrl,
-      url,
-      source,
-      job
-    });
-
-    await listing.save();
-
-    await Job.findByIdAndUpdate(job);
-
-    res.status(201).json(listing);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-};
-
 export const getListings = async (req, res) => {
   try {
     const {

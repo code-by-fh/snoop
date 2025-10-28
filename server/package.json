@@ -4,13 +4,14 @@
   "private": true,
   "type": "module",
   "imports": {
-    "#utils/*": "./utils/*"
+    "#utils/*": "./utils/*",
+    "#models/*": "./models/*"
   },
   "scripts": {
     "start": "node server.js",
     "lint": "eslint .",
     "dev": "nodemon server.js",
-    "seed": "node seed/index.js",
+    "seed": "node database/seed/seed.js",
     "test": "mocha --loader=esmock --timeout 3000000 test/**/*.test.js"
   },
   "dependencies": {
@@ -29,6 +30,7 @@
     "jsonwebtoken": "^9.0.2",
     "marked": "^15.0.12",
     "mongoose": "^7.5.3",
+    "node-cron": "^4.2.1",
     "node-fetch": "^3.3.2",
     "node-mailjet": "^6.0.8",
     "puppeteer": "^24.11.1",

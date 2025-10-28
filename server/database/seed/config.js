@@ -1,4 +1,4 @@
-import { getAvailableProviders } from '../provider/index.js';
+import { getAvailableProviders } from '../../provider/index.js';
 
 const providersMap = getAvailableProviders();
 

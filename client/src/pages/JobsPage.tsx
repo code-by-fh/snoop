@@ -159,12 +159,6 @@ const JobsPage: React.FC = () => {
     return <LoadingPlaceholder title='Loading Jobs...' />
   }
 
-  if (error) {
-    return (
-      <ErrorInfo error={error} />
-    )
-  }
-
   return (
     <div className="space-y-6">
 
@@ -220,6 +214,10 @@ const JobsPage: React.FC = () => {
           New Job
         </Link>
       </div>
+
+      {error && (
+        <ErrorInfo error={error} />
+      )}
 
       {/* Job Content */}
       {filteredJobs.length === 0 ? (

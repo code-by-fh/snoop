@@ -55,7 +55,6 @@ const JobForm: React.FC<JobFormProps> = ({ onSubmit, isLoading, error, initialDa
   });
 
   const handleFormSubmit = (data: Job) => {
-    toast('Job saved...Let\'s go!', { icon: '💾' });
     onSubmit({ ...data, blacklistTerms });
   };
 

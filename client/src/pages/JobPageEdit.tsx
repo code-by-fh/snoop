@@ -6,6 +6,7 @@ import { getJobById, updateJob } from '../api';
 import JobForm from '../components/jobs/JobForm';
 import { Job } from '../types';
 import LoadingPlaceholder from '@/components/common/LoadingPlaceholder';
+import toast from 'react-hot-toast';
 
 const EditJobPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -48,6 +49,7 @@ const EditJobPage: React.FC = () => {
       setError(null);
       await updateJob(id, data);
       navigate('/jobs');
+      toast.success('Job updated successfully!');
     } catch (err: any) {
       setError(err.message || 'Failed to update job');
     } finally {
@@ -57,10 +59,6 @@ const EditJobPage: React.FC = () => {
 
   if (isLoading) {
     return <LoadingPlaceholder title='Loading Job Details...' />
-  }
-
-  if (error) {
-    return <ErrorInfo error={error} />
   }
 
   if (!job) {
