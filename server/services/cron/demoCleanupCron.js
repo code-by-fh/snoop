@@ -11,7 +11,10 @@ export function cleanupDemoAtMidnight() {
 
 async function cleanup() {
     logger.info('🌱 Cleaning up demo data at midnight...');
-    await mongoose.connection.dropDatabase();
+    const collections = await mongoose.connection.db.collections();
+    for (const c of collections) {
+        await mongoose.connection.db.dropCollection(c.collectionName).catch(() => { });
+    }
     await seedDatabase();
     logger.info('🌱 Demo data cleaned up.');
 }

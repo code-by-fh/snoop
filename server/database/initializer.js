@@ -25,7 +25,7 @@ export const initDatabase = async () => {
         if (process.env.IS_DEMO === 'true') {
             const collections = await mongoose.connection.db.collections();
             for (const c of collections) {
-                await c.deleteMany({});
+                await mongoose.connection.db.dropCollection(c.collectionName).catch(() => { });
             }
             logger.warn('⚠️ All collections cleared for demo mode purposes');
             await seedDatabase();
