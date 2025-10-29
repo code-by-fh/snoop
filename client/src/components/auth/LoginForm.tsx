@@ -1,12 +1,12 @@
 import { AlertCircle, Eye, EyeOff, Lock, User } from 'lucide-react';
 import React, { useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Logo from '../../assets/logo.png';
 import { useAuth } from '../../context/AuthContext';
 import ThemeSwitcher from '../ThemeSwitcher';
 
 const LoginForm: React.FC = () => {
-  const isDemo = import.meta.env.VITE_IS_DEMO;
+  const isDemo = import.meta.env.VITE_IS_DEMO === 'true';
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -15,7 +15,6 @@ const LoginForm: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation();
 
   const validateForm = (): boolean => {
     if (!username.trim()) {
@@ -36,8 +35,7 @@ const LoginForm: React.FC = () => {
     setIsLoading(true);
     try {
       await login(username, password);
-      const origin = location.state?.from?.pathname || '/dashboard';
-      navigate(origin, { replace: true });
+      navigate('/dashboard', { replace: true });
     } catch (err: any) {
       setError(err.message || 'Authentication failed');
     } finally {
@@ -94,6 +92,7 @@ const LoginForm: React.FC = () => {
               <input
                 id="username"
                 name="username"
+                autoFocus
                 required
                 className="appearance-none block w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg placeholder-gray-400 dark:placeholder-gray-500 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-all"
                 placeholder="Enter your username"
