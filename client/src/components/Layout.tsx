@@ -21,7 +21,8 @@ import { useAuth } from '../context/AuthContext';
 import ThemeSwitcher from './ThemeSwitcher';
 
 const Layout: React.FC = () => {
-  const isDemo = import.meta.env.VITE_IS_DEMO === 'true' || false;
+  const isDemo = import.meta.env.VITE_IS_DEMO;
+  
   const { user, logout } = useAuth();
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
