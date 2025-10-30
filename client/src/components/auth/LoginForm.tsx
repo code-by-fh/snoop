@@ -1,4 +1,4 @@
-import { AlertCircle, Eye, EyeOff, Lock, User } from 'lucide-react';
+import { AlertCircle, ArrowRightToLine, Eye, EyeOff, Lock, User } from 'lucide-react';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Logo from '../../assets/logo.png';
@@ -51,13 +51,31 @@ const LoginForm: React.FC = () => {
         <div className="w-full max-w-md mb-6 p-4 rounded-xl bg-yellow-200 dark:bg-yellow-600 text-gray-900 dark:text-gray-100 border border-yellow-400 dark:border-yellow-500 shadow-md text-center">
           <p className="font-semibold mb-2">⚠️ Demo Mode Active</p>
           <p className="text-sm mb-2">You can log in using the following demo accounts:</p>
-          <ul className="text-sm space-y-1">
-            <li>• <span className="font-medium">admin</span> / Password123!</li>
-            <li>• <span className="font-medium">user</span> / Password123!</li>
+          <ul className="text-sm space-y-2">
+            {[
+              { user: 'admin', pass: 'Password123!' },
+              { user: 'user', pass: 'Password123!' }
+            ].map((account) => (
+              <li key={account.user} className="flex justify-between items-center">
+                <span className="font-bold text-xl">{account.user} : {account.pass}</span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setUsername(account.user);
+                    setPassword(account.pass);
+                  }}
+                  className="flex items-center space-x-2 px-3 py-1 rounded-lg bg-blue-500 dark:bg-blue-700 text-white font-medium hover:bg-blue-600 dark:hover:bg-blue-800 transition-all shadow-md"
+                >
+                  {/* Optional: Icon */}
+                  <ArrowRightToLine/>
+                  <span>Autofill</span>
+                </button>
+              </li>
+            ))}
+
           </ul>
         </div>
       )}
-
       <div className="fixed bottom-6 right-6 z-50">
         <ThemeSwitcher collapsed />
       </div>
@@ -176,11 +194,11 @@ const LoginForm: React.FC = () => {
       </div>
       {trackingEnabled && (
         <div
-          className={`w-full max-w-md p-4 mt-10 rounded-xl bg-yellow-200 dark:bg-yellow-600 text-gray-900 dark:text-gray-100 border border-yellow-400 dark:border-yellow-500 shadow-md text-center`}
+          className={`w-full max-w-md p-4 mt-10 rounded-xl opacity-15 dark:opacity-10 bg-yellow-200 dark:bg-yellow-600 text-gray-900 dark:text-gray-100 border border-yellow-400 dark:border-yellow-500 shadow-md text-center`}
         >
-          <p className="font-semibold mb-2">⚡ Tracking Enabled</p>
+          <p className="font-semibold mb-2">Tracking Enabled</p>
           <p className="text-sm">
-            We record <strong>which pages you visit</strong> and <strong>which buttons or features you interact with</strong>.
+            We will record <strong>which pages you visit</strong> and <strong>which buttons or features you interact with</strong>.
             <br /><strong>No</strong> personal data (like passwords, emails, or full search queries) is collected. <br />This helps us improve the app and demo experience.
           </p>
         </div>
