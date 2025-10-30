@@ -16,6 +16,7 @@ services:
       - WHATS_APP_API_URL=your_whats_app_api_url
       - WHATS_APP_API_TOKEN=your_whats_app_api_token
       - MAPBOX_ACCESS_TOKEN=your_mapbox_access_token
+      - IS_DEMO=false
     networks:
       - snoop
 
