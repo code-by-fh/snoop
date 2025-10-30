@@ -18,17 +18,33 @@
     "scraper",
     "immonet",
     "immowelt",
-    "immobilienscout24"
+    "immobilienscout24",
+    "self-hosted",
+    "open-source",
+    "free",
+    "rental",
+    "flats",
+    "houses",
+    "apartments",
+    "rentals",
+    "flats for rent",
+    "houses for rent",
+    "apartments for rent",
+    "rentals for rent",
+    "flats for sale",
+    "houses for sale",
+    "apartments for sale",
+    "rentals for sale"
   ],
   "bugs": {
-    "url": "https://github.com/Doublelayer/snoop/issues"
+    "url": "https://github.com/code-by-fh/snoop/issues"
   },
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Doublelayer/snoop.git"
+    "url": "https://github.com/code-by-fh/snoop.git"
   },
-  "homepage": "https://github.com/Doublelayer/snoop#readme",
+  "homepage": "https://github.com/code-by-fh/snoop#readme",
   "scripts": {
     "start": "concurrently -k -n BACKEND,FRONTEND -c cyan,green \"npm --prefix server run start\" \"npm --prefix client run start\"",
     "dev": "concurrently -k -n BACKEND,FRONTEND -c cyan,green \"npm --prefix server run dev\" \"npm --prefix client run dev\""
