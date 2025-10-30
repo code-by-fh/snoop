@@ -140,7 +140,7 @@ const JobCard: React.FC<JobCardProps> = ({ job, onDelete, onJobRun, onToggleActi
                     btn-icon 
                     transition-colors duration-200
                     ${isJobRunning
-                ? 'bg-green-200 text-green-400 dark:bg-green-900/20 dark:text-green-700 cursor-not-allowed opacity-60 hover:bg-green-200 dark:hover:bg-green-900/20'
+                ? 'bg-green-200 text-green-400 dark:bg-green-900/20 dark:text-green-700 cursor-not-allowed opacity-90 hover:bg-green-200 dark:hover:bg-green-900/20'
                 : 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300 hover:bg-green-200 dark:hover:bg-green-800'}
                   `}>
             <Play className="w-5 h-5" />

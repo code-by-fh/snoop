@@ -5,7 +5,9 @@ export const isFailed = (status: JobStatus) => {
 };
 
 export const isRunning = (status: JobStatus) => {
-  return status && status.toLowerCase() === "running";
+  return status
+    && status.toLowerCase() !== "finished"
+    && status.toLowerCase() !== undefined;
 };
 
 export const isFinished = (status: JobStatus) => {

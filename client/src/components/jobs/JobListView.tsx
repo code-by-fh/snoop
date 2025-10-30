@@ -1,3 +1,5 @@
+import { useAuth } from '@/context/AuthContext';
+import { isRunning } from '@/utils/job';
 import { format, formatDistanceToNow } from 'date-fns';
 import { ArrowUpDown, BarChart2, ChevronDown, ChevronUp, Edit, Play, Trash2 } from 'lucide-react';
 import React, { useState } from 'react';
@@ -6,7 +8,6 @@ import { Job } from '../../types';
 import JobStatusBadge from './JobStatusBadge';
 import JobToggleSwitch from './JobToggleSwitch';
 import NotificationIndicators from './NotificationIndicators';
-import { useAuth } from '@/context/AuthContext';
 
 interface JobListViewProps {
   jobs: Job[];
@@ -88,6 +89,7 @@ const JobListView: React.FC<JobListViewProps> = ({ jobs, onDelete, onJobRun, onT
             const jobOwner = user?.id === job.user;
             const ownerClass = !jobOwner ? "bg-yellow-50 dark:bg-yellow-900/20" : "";
             const failedClass = job.status === "failed" ? "ring-2 ring-red-200 dark:ring-red-400" : "";
+            const isJobRunning = isRunning(job.status);
 
             return (
               <tr
@@ -123,7 +125,7 @@ const JobListView: React.FC<JobListViewProps> = ({ jobs, onDelete, onJobRun, onT
                   <div className="text-xs text-gray-400">{formatDistanceToNow(new Date(job.createdAt), { addSuffix: true })}</div>
                 </td>
                 <td className={`px-2 py-4 text-sm ${isInactive ? "text-gray-400" : "text-gray-700 dark:text-gray-300"}`}>
-                  <div>{job.lastRun ? format(new Date(job.lastRun), 'MMM dd, yyyy'): "-"}</div>
+                  <div>{job.lastRun ? format(new Date(job.lastRun), 'MMM dd, yyyy') : "-"}</div>
                   <div className="text-xs text-gray-400">{formatDistanceToNow(new Date(job.updatedAt), { addSuffix: true })}</div>
                 </td>
                 <td className={`px-2 py-4 text-sm`}>
@@ -147,12 +149,18 @@ const JobListView: React.FC<JobListViewProps> = ({ jobs, onDelete, onJobRun, onT
                     >
                       <Edit className="w-3.5 h-3.5" />
                     </button>
+
                     <button
+                      disabled={isJobRunning || false}
                       onClick={() => onJobRun(job.id)}
-                      className={`btn-icon bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300 hover:bg-green-200 dark:hover:bg-green-800`}
-                      title="Run job now"
-                    >
-                      <Play className="w-3.5 h-3.5" />
+                      className={`
+                    btn-icon 
+                    transition-colors duration-200
+                    ${isJobRunning
+                          ? 'bg-green-200 text-green-400 dark:bg-green-900/20 dark:text-green-700 cursor-not-allowed opacity-60 hover:bg-green-200 dark:hover:bg-green-900/20'
+                          : 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300 hover:bg-green-200 dark:hover:bg-green-800'}
+                  `}>
+                      <Play className="w-5 h-5" />
                     </button>
                     <button
                       onClick={() => handleViewStatisticsClick(job.id)}
