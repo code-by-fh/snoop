@@ -1,6 +1,6 @@
 import { Job } from "@/types";
 
-const trackingEnabled = import.meta.env.VITE_TRACKING_ENABLED === 'true';
+const trackingEnabled = import.meta.env.VITE_TRACKING_ENABLED?.trim() === 'true';
 
 export const trackEditJob = (data: Job) => {
     track("edit_job", createJobPayload(data))

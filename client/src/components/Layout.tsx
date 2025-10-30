@@ -21,7 +21,7 @@ import { useAuth } from '../context/AuthContext';
 import ThemeSwitcher from './ThemeSwitcher';
 
 const Layout: React.FC = () => {
-  const isDemo = import.meta.env.VITE_IS_DEMO === 'true';
+  const isDemo = import.meta.env.VITE_IS_DEMO?.trim() === 'true';
 
   const { user, logout } = useAuth();
   const location = useLocation();

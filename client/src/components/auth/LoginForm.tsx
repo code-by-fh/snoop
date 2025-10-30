@@ -6,8 +6,8 @@ import { useAuth } from '../../context/AuthContext';
 import ThemeSwitcher from '../ThemeSwitcher';
 
 const LoginForm: React.FC = () => {
-  const isDemo = import.meta.env.VITE_IS_DEMO === 'true';
-  const trackingEnabled = import.meta.env.VITE_TRACKING_ENABLED === 'true';
+  const isDemo = import.meta.env.VITE_IS_DEMO?.trim() === 'true';
+  const trackingEnabled = import.meta.env.VITE_TRACKING_ENABLED?.trim() === 'true';
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
