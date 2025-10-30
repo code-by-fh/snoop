@@ -1,4 +1,5 @@
 import ErrorInfo from '@/components/common/ErrorInfo';
+import { trackCreateJob } from '@/hooks/track';
 import { ArrowLeft } from 'lucide-react';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -15,6 +16,7 @@ const NewJobPage: React.FC = () => {
     try {
       setIsLoading(true);
       setError(null);
+      trackCreateJob(data);
       await createJob(data);
       navigate('/jobs');
     } catch (err: any) {

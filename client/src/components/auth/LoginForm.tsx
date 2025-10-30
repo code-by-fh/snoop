@@ -7,6 +7,7 @@ import ThemeSwitcher from '../ThemeSwitcher';
 
 const LoginForm: React.FC = () => {
   const isDemo = import.meta.env.VITE_IS_DEMO === 'true';
+  const trackingEnabled = import.meta.env.VITE_TRACKING_ENABLED === 'true';
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -171,7 +172,19 @@ const LoginForm: React.FC = () => {
             </button>
           </div>
         </form>
+
       </div>
+      {trackingEnabled && (
+        <div
+          className={`w-full max-w-md p-4 mt-10 rounded-xl bg-yellow-200 dark:bg-yellow-600 text-gray-900 dark:text-gray-100 border border-yellow-400 dark:border-yellow-500 shadow-md text-center`}
+        >
+          <p className="font-semibold mb-2">⚡ Tracking Enabled</p>
+          <p className="text-sm">
+            We record <strong>which pages you visit</strong> and <strong>which buttons or features you interact with</strong>.
+            <br /><strong>No</strong> personal data (like passwords, emails, or full search queries) is collected. <br />This helps us improve the app and demo experience.
+          </p>
+        </div>
+      )}
     </div>
   );
 };

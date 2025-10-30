@@ -1,12 +1,12 @@
-import ErrorInfo from '@/components/common/ErrorInfo';
+import LoadingPlaceholder from '@/components/common/LoadingPlaceholder';
+import { trackEditJob } from '@/hooks/track';
 import { ArrowLeft } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getJobById, updateJob } from '../api';
 import JobForm from '../components/jobs/JobForm';
 import { Job } from '../types';
-import LoadingPlaceholder from '@/components/common/LoadingPlaceholder';
-import toast from 'react-hot-toast';
 
 const EditJobPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -47,6 +47,7 @@ const EditJobPage: React.FC = () => {
     try {
       setIsSaving(true);
       setError(null);
+      trackEditJob(data)
       await updateJob(id, data);
       navigate('/jobs');
       toast.success('Job updated successfully!');

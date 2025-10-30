@@ -34,6 +34,9 @@ services:
       - SNOOP_WS_URL=http://localhost:5000
       - SNOOP_MAPBOX_ACCESS_TOKEN=your_mapbox_access_token
       - SNOOP_IS_DEMO=false
+      - SNOOP_TRACKING_ENABLED=false
+      - SNOOP_TRACKING_URL=tracking-url
+      - SNOOP_TRACKING_SITE_ID=tracking-site-id
     networks:
       - snoop
     depends_on:
