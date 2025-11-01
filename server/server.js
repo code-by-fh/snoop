@@ -10,13 +10,15 @@ import { initDatabase } from './database/initializer.js';
 import authMiddleware from './middleware/authMiddleware.js';
 import { errorHandler } from "./middleware/errorHandler.js";
 import { requestLogger } from './middleware/requestLogger.js';
-import { startRuntime } from './services/runtime/scheduler.js';
-import { initTracking } from './tracking/index.js';
 import { initCron } from './services/cron/index.js';
+import { startRuntime } from './services/runtime/scheduler.js';
+import { setupSocketServer } from './socketServer.js';
+import { initTracking } from './tracking/index.js';
 
 // Import routes
 import adminSettingsRoutes from './routes/adminSettingsRoutes.js';
 import adminUserRoutes from './routes/adminUserRoutes.js';
+import appMetaRoute from "./routes/appMetaRoute.js";
 import authRoutes from './routes/authRoutes.js';
 import favoritesRoutes from './routes/favoriteRoutes.js';
 import healthRouter from "./routes/healthRouter.js";
@@ -27,7 +29,6 @@ import providerRoutes from './routes/providerRoutes.js';
 import statsRoutes from './routes/statsRoutes.js';
 import trackingRoutes from './routes/trackingRoutes.js';
 import userRoutes from './routes/userRoutes.js';
-import { setupSocketServer } from './socketServer.js';
 
 const settings = await initDatabase();
 await startRuntime(settings);
@@ -56,6 +57,7 @@ app.use('/api/admin/users', adminUserRoutes);
 app.use('/api/me', userRoutes);
 app.use('/api/admin/settings', adminSettingsRoutes);
 app.use("/health", healthRouter);
+app.use("/api/app-meta", appMetaRoute);
 
 app.use(errorHandler);
 

@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React, { createContext, useContext, useEffect, useReducer } from 'react';
-import { AuthState } from '../types/auth';
+import { AuthState, SignupResponse } from '../types/auth';
 import { User } from '../types/user';
 
 const initialState: AuthState = {
@@ -76,8 +76,8 @@ const authReducer = (state: AuthState, action: AuthAction): AuthState => {
 };
 
 interface AuthContextType extends AuthState {
-  login: (email: string, password: string) => Promise<void>;
-  signup: (username: string, email: string, password: string) => Promise<void>;
+  login: (identifier: string, password: string) => Promise<void>;
+  signup: (username: string, email: string, password: string) => Promise<SignupResponse>;
   logout: () => void;
 }
 
@@ -114,9 +114,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     loadUser();
   }, [state.token]);
 
-  const login = async (username: string, password: string) => {
+  const login = async (identifier: string, password: string) => {
     try {
-      const response = await axios.post('/auth/login', { username, password });
+      const response = await axios.post('/auth/login', { identifier, password });
 
       axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
 
@@ -136,21 +136,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signup = async (username: string, email: string, password: string) => {
     try {
-      const response = await axios.post('/auth/signup', {
-        username,
-        email,
-        password
-      });
+      const response = await axios.post('/auth/signup', { username, email, password });
 
-      axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
+      if (response.data.token) {
+        axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
 
-      dispatch({
-        type: 'SIGNUP_SUCCESS',
-        payload: {
-          token: response.data.token,
-          user: response.data.user
-        }
-      });
+        dispatch({
+          type: 'SIGNUP_SUCCESS',
+          payload: { token: response.data.token, user: response.data.user }
+        });
+      }
+
+      return response.data;
     } catch (error: any) {
       const errorMessage = error.response?.data?.message || 'Signup failed. Please try again.';
       dispatch({ type: 'SIGNUP_FAILURE', payload: errorMessage });

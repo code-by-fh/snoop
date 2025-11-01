@@ -1,4 +1,6 @@
 import ErrorInfo from '@/components/common/ErrorInfo';
+import HeaderWithAction from '@/components/common/HeaderWithAction';
+import LoadingPlaceholder from '@/components/common/LoadingPlaceholder';
 import SearchInput from '@/components/common/SearchInput';
 import ListingsViewToggle from '@/components/common/ViewToggle';
 import JobToggleSwitch from '@/components/jobs/JobToggleSwitch';
@@ -14,8 +16,6 @@ import JobGridView from '../components/jobs/JobGridView';
 import JobListView from '../components/jobs/JobListView';
 import { useViewPreference } from '../hooks/useViewPreference';
 import { Job } from '../types';
-import LoadingPlaceholder from '@/components/common/LoadingPlaceholder';
-import HeaderWithAction from '@/components/common/HeaderWithAction';
 
 const socket = io(import.meta.env.VITE_WS_URL || 'http://localhost:5000', {
   path: '/ws',

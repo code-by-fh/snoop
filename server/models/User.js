@@ -26,7 +26,12 @@ const UserSchema = new mongoose.Schema({
     type: String,
     enum: ['user', 'admin'],
     default: 'user'
-  }
+  },
+  passwordResetToken: String,
+  passwordResetExpires: Date,
+  activationToken: { type: String },
+  activationTokenExpires: { type: Date },
+  isActive: { type: Boolean, default: false }
 }, {
   timestamps: true,
   versionKey: false,
@@ -35,6 +40,11 @@ const UserSchema = new mongoose.Schema({
       ret.id = ret._id;
       delete ret._id;
       delete ret.__v;
+      delete ret.password;
+      delete ret.passwordResetToken;
+      delete ret.passwordResetExpires;
+      delete ret.activationToken;
+      delete ret.activationTokenExpires;
       return ret;
     }
   }
@@ -48,7 +58,7 @@ const PASSWORD_POLICY = {
   requireSpecialChar: true,
 };
 
-function validatePassword(password) {
+export function validatePassword(password) {
   const errors = [];
 
   if (password.length < PASSWORD_POLICY.minLength)
@@ -65,7 +75,6 @@ function validatePassword(password) {
   return errors;
 }
 
-
 UserSchema.pre('save', async function (next) {
   if (!this.isModified('password')) return next();
 
@@ -81,7 +90,6 @@ UserSchema.pre('save', async function (next) {
   try {
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);
-    this.updated_at = Date.now();
     next();
   } catch (error) {
     next(error);
@@ -93,4 +101,3 @@ UserSchema.methods.comparePassword = async function (candidatePassword) {
 };
 
 export default mongoose.model('User', UserSchema);
-
