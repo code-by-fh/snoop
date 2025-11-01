@@ -5,6 +5,7 @@ export interface User {
   role: 'user' | 'admin';
   createdAt: string;
   updatedAt: string;
+  isActive: boolean;
 }
 
 export interface UserCreate {
@@ -12,6 +13,7 @@ export interface UserCreate {
   email: string;
   password: string;
   role: 'user' | 'admin';
+  isActive: boolean;
 }
 
 export interface UserUpdate {
@@ -20,4 +22,5 @@ export interface UserUpdate {
   password?: string;
   currentPassword?: string;
   role?: 'user' | 'admin';
+  isActive: boolean;
 }

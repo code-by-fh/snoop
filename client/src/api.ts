@@ -1,7 +1,8 @@
 import axios from 'axios';
-import { Job, Listing, ListingsApiResponse, NotificationAdapter, Settings } from './types';
+import { Job, ListingsApiResponse, NotificationAdapter, Settings } from './types';
 import { JobStatistics, Statistics } from './types/statistic';
 import { User } from './types/user';
+import { AppMeta } from './types/common';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
@@ -21,6 +22,9 @@ api.interceptors.request.use(
     return Promise.reject(error);
   }
 );
+
+// configuration API methods
+export const getAppMeta = () => api.get<AppMeta>('/app-meta');
 
 // Job-related API methods
 export const getJobs = (filters?: { isActive?: boolean | null; onlyMyJobs?: boolean | null }) => api.get<Job[]>('/jobs', { params: filters });
@@ -81,5 +85,10 @@ export const removeFavorite = (listingId: string) => api.delete(`/favorites/${li
 
 // tracking API methods
 export const registerView = (listingId: string) => api.get(`/track/listing/${listingId}`);
+
+// auth API methods
+export const requestPasswordReset = (email: string) => api.post(`/auth/password/reset`, { email });
+export const resetPassword = (token: string, password: string) => api.post(`/auth/password/reset/${token}`, { password });
+export const activateAccount = (token: string) => api.post('/auth/activate-account', { token });
 
 export default api;

@@ -28,7 +28,8 @@ export const createUser = async (req, res) => {
             username,
             email,
             password,
-            role: role || 'user'
+            role: role || 'user',
+            isActive: true
         });
 
         await newUser.save();
@@ -79,7 +80,7 @@ export const deleteUser = async (req, res) => {
 
 export const updateUser = async (req, res) => {
     try {
-        const { username, email, role, password } = req.body;
+        const { username, email, role, password, isActive } = req.body;
         const userId = req.params.id;
 
         let user = await User.findById(userId);
@@ -89,6 +90,7 @@ export const updateUser = async (req, res) => {
             if (email !== undefined) user.email = email;
             if (role !== undefined && req.user.role === 'admin' && user.id !== req.user.id) user.role = role;
             if (password !== undefined) user.password = password;
+            if (isActive !== undefined) user.isActive = isActive;
             await user.save();
         } else {
             user = new User({
@@ -97,6 +99,7 @@ export const updateUser = async (req, res) => {
                 email,
                 role,
                 password,
+                isActive
             });
             await user.save();
         }

@@ -54,15 +54,18 @@ const UsersPage: React.FC = () => {
     setIsConfirmModalOpen(true);
   };
 
-  const handleSaveUser = async (userData: UserCreate | UserUpdate) => {
+  const handleSaveUser = async (userData: UserCreate | UserUpdate, userId?: string) => {
     setError(null);
     try {
-      if (currentUser) {
-        await updateUser(currentUser.id, userData);
+      if (userId) {
+        await updateUser(userId, userData);
+        setUsers(prev =>
+          prev.map(u => (u.id === userId ? { ...u, ...userData } : u))
+        );
       } else {
-        await createUser(userData);
+        const created = await createUser(userData);
+        setUsers(prev => [...prev, created.data]);
       }
-      fetchUsers();
       setIsFormModalOpen(false);
     } catch (err: any) {
       setError(err?.response?.data as ApiError);
@@ -88,10 +91,14 @@ const UsersPage: React.FC = () => {
     }
   };
 
-  if (loading) {
-    return <LoadingPlaceholder title='Loading Users...' />
+  const handleToggleActive = (userId: string, newState: boolean) => {
+    const user = users.find(u => u.id === userId);
+    if (!user) return;
+
+    handleSaveUser({ ...user, isActive: newState }, user.id);
   };
 
+  if (loading) return <LoadingPlaceholder title="Loading Users..." />;
 
   return (
     <div className="space-y-6">
@@ -99,21 +106,20 @@ const UsersPage: React.FC = () => {
         title="User Management"
         description="Effortlessly manage your user accounts"
         actionElement={
-          <button
-            onClick={handleCreateClick}
-            className="btn-primary flex items-center justify-center"
-          >
+          <button onClick={handleCreateClick} className="btn-primary flex items-center justify-center">
             <PlusCircle className="w-5 h-5 mr-2" />
             Create New User
           </button>
         }
       />
-      {
-        error && <ErrorInfo error={error.message} />
-      }
-
-      <UserTable users={users} onEdit={handleEditClick} onDelete={handleDeleteClick} />
-
+      {error && <ErrorInfo error={error.message} />}
+      <UserTable
+        users={users}
+        onEdit={handleEditClick}
+        onDelete={handleDeleteClick}
+        onActionCompleted={fetchUsers}
+        onToggleActive={handleToggleActive}
+      />
       <UserFormModal
         isOpen={isFormModalOpen}
         onClose={() => setIsFormModalOpen(false)}
@@ -121,7 +127,6 @@ const UsersPage: React.FC = () => {
         user={currentUser}
         apiError={error ? `${error.message}` : null}
       />
-
       <ConfirmationModal
         isOpen={isConfirmModalOpen}
         onClose={() => setIsConfirmModalOpen(false)}
