@@ -52,7 +52,7 @@ export const login = async (req, res) => {
             return res.status(401).json({ message: 'Invalid username/email or password' });
         }
 
-        if (req.user?.role !== 'admin' && !user.isActive) {
+        if (user.role !== 'admin' && !user.isActive) {
             return res.status(403).json({ message: 'Account not activated.' });
         }
 
