@@ -17,8 +17,16 @@ services:
       - WHATS_APP_API_TOKEN=your_whats_app_api_token
       - MAPBOX_ACCESS_TOKEN=your_mapbox_access_token
       - IS_DEMO=false
+      - SMTP_HOST=${SMTP_HOST:-mailhog}
+      - SMTP_PORT=${SMTP_PORT:-1025}
+      - SMTP_USER=${SMTP_USER:-}
+      - SMTP_PASS=${SMTP_PASS:-}
+      - SNOOP_FRONTEND_BASE_URL=http://localhost:3000
     networks:
       - snoop
+    depends_on:
+      - mongodb
+      - mailhog # only for development
 
   frontend:
     build:
@@ -41,7 +49,7 @@ services:
       - snoop
     depends_on:
       - backend
-  
+
   mongodb:
     image: mongo:6.0
     container_name: snoop-mongodb
@@ -50,6 +58,15 @@ services:
       - "27017:27017"
     volumes:
       - mongo-data:/db
+    networks:
+      - snoop
+
+  mailhog:
+    image: mailhog/mailhog
+    container_name: snoop-mailhog
+    ports:
+      - "1025:1025" # SMTP Port
+      - "8025:8025" # Webinterface
     networks:
       - snoop
 

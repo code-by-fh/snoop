@@ -19,10 +19,11 @@ import Logo from '../assets/logo.png';
 import Logo_Small from '../assets/logo_small.png';
 import { useAuth } from '../context/AuthContext';
 import ThemeSwitcher from './ThemeSwitcher';
+import { useAppMeta } from '@/context/AppMetaContext';
 
 const Layout: React.FC = () => {
-  const isDemo = import.meta.env.VITE_IS_DEMO?.trim() === 'true';
-
+  
+  const { config } = useAppMeta();
   const { user, logout } = useAuth();
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -57,13 +58,13 @@ const Layout: React.FC = () => {
     <div
       className={`
     flex bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100
-    ${isDemo
+    ${config?.isDemoModeEnabled
           ? 'mt-8 h-[calc(100vh-2rem)] md:h-[calc(100vh-2rem)]'
           : 'h-screen'
         }
   `}
     >
-      {isDemo && (
+      {config?.isDemoModeEnabled && (
         <div className="fixed top-0 left-0 w-full z-50 bg-yellow-400 dark:bg-yellow-600 text-gray-900 dark:text-gray-900 text-center py-2 px-4 font-semibold shadow-md">
           ⚠️ This is a demo version. Please use at your own risk.
         </div>
@@ -98,7 +99,7 @@ const Layout: React.FC = () => {
         className={`
       fixed md:relative top-0 left-0 h-full z-40 bg-gray-50 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700
       flex flex-col transition-all duration-300
-      ${isMobile ? `w-full transform ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} ${isDemo ? 'mt-8' : ''}` : isCollapsed ? 'w-20' : 'w-64'}
+      ${isMobile ? `w-full transform ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} ${config?.isDemoModeEnabled ? 'mt-8' : ''}` : isCollapsed ? 'w-20' : 'w-64'}
     `}
       >
         {/* Logo */}
@@ -182,7 +183,7 @@ const Layout: React.FC = () => {
       </aside>
 
       {/* Main Content */}
-      <div className={`flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-900 ${isMobile ? `pt-16 ${isDemo ? 'mt-8' : ''}` : ''}`}>
+      <div className={`flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-900 ${isMobile ? `pt-16 ${config?.isDemoModeEnabled ? 'mt-8' : ''}` : ''}`}>
         <div className="p-4 md:p-8">
           <Outlet />
         </div>

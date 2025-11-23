@@ -2,11 +2,12 @@ import { faker } from '@faker-js/faker';
 import { SEED_CONFIG } from './config.js';
 
 export const adminUser = {
-    username: 'admin',
-    email: 'admin@snoop.com',
-    password: 'Password123!',
-    role: 'admin'
-  }
+  username: 'admin',
+  email: 'admin@snoop.com',
+  password: 'Password123!',
+  role: 'admin',
+  isActive: true
+}
 
 export function generateUsers() {
   const users = [];
@@ -17,7 +18,8 @@ export function generateUsers() {
     username: 'user',
     email: 'user@snnop.com',
     password: 'Password123!',
-    role: 'user'
+    role: 'user',
+    isActive: true
   });
 
   for (let i = 0; i < SEED_CONFIG.users - 1; i++) {
@@ -25,7 +27,8 @@ export function generateUsers() {
       username: faker.internet.username(),
       email: faker.internet.email(),
       password: "Password123!",
-      role: 'user'
+      role: 'user',
+      isActive: true
     });
   }
 

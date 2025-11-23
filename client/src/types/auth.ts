@@ -7,3 +7,7 @@ export interface AuthState {
   isLoading: boolean;
   error: string | null;
 }
+
+export interface SignupResponse {
+  message: string;
+}

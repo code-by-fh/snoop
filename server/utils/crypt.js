@@ -20,3 +20,24 @@ export function decrypt(encryptedText) {
   decrypted += decipher.final('utf8');
   return decrypted;
 }
+
+
+export function generateActivationKey() {
+  return crypto.randomBytes(32).toString('hex');
+}
+
+export function createHashedToken(token) {
+  return crypto.createHash('sha256').update(token).digest('hex');
+}
+
+export function createToken(expiresInHours) {
+  const plainToken = crypto.randomBytes(32).toString('hex');
+  const hashedToken = createHashedToken(plainToken);
+
+  let expires = null;
+  if (expiresInHours) {
+    expires = new Date(Date.now() + expiresInHours * 60 * 60 * 1000);
+  }
+
+  return { plainToken, hashedToken, expires };
+}
