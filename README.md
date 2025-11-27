@@ -31,6 +31,14 @@ Whether you're searching for properties or managing listings as an admin — **S
 - **User Management**: Secure authentication & role-based access  
 - **API Integration**: RESTful backend for all operations  
 - **Responsive Design**: Works seamlessly across devices  
+- **Unlimited Jobs**: Create as many search jobs as you want, each with its own configuration and provider selection  
+- **Multi-Provider Support**: Use any supported real estate platforms within your jobs (e.g., Immonet, Immowelt, etc.)  
+- **Flexible Notifications**: Send new listings through a variety of notifiers such as Slack, Telegram, Pushover, Email, and more  
+- **Job Controls**: Jobs can be easily activated or deactivated at any time  
+- **Job Statistics**: Every job includes detailed insights and activity statistics  
+- **Listing Management**: Mark listings as *favorites* or *seen* to keep track of your search  
+- **Multiple Views**: Switch between list view, grid view, and map view for optimal browsing  
+- **Registration Options**: Either admin-managed user accounts or user self-registration with email confirmation
 
 ### Technical Highlights
 - **Frontend**: React, TypeScript, TailwindCSS  
@@ -191,6 +199,38 @@ When Snoop starts for the first time, it automatically creates a default adminis
 - Once changed, this default password cannot be restored automatically — please make sure to note the new one safely.
 - The default credentials are created only if no admin user exists in the database.
 
+## 👥 User Registration
+
+Snoop supports **two different user registration workflows**, allowing you to choose the method that best fits your environment or security requirements.
+
+### 🔐 1) Admin-Created Accounts  
+An administrator can manually create new user accounts within the system.  
+After creation, the admin must **activate** the account.  
+This approach is ideal for closed environments or teams that require controlled access.
+
+### 📧 2) User Self-Registration  
+Snoop also provides an optional self-registration flow where users can create an account themselves and activate it via **email confirmation**.
+
+To enable self-registration, the following environment variables must be configured:
+
+```env
+# Email / SMTP configuration
+SMTP_HOST=localhost
+SMTP_PORT=1025
+SMTP_USER=
+SMTP_PASS=
+
+# Enable self-registration
+SELF_REGISTRATION_ENABLED=true
+```
+
+⚠️ Important Notes:
+
+You are responsible for providing and configuring your own SMTP service (e.g., Mailhog, Mailtrap, Postfix, or any external provider).
+
+Self-registration will not work without a functioning mail server.
+
+If SELF_REGISTRATION_ENABLED=false or not defined, only admin-created accounts are allowed.
 
 ## 🧪 Testing
 
