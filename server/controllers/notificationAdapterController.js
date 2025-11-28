@@ -37,7 +37,7 @@ export const sendTestNotification = async (req, res) => {
                 size: "k.A.",
                 description: "This is a test notification sent by the system.",
                 link: "https://example.com",
-                image: "https://picsum.photos/200",
+                imageUrl: "https://picsum.photos/200",
             },
         ];
 

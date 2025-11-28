@@ -38,7 +38,13 @@ export const send = async ({ serviceName, listings, notificationAdapters }) => {
 
         if (payload.imageUrl || payload.lazyImage) {
           const imageBuffer = await getImageBuffer(payload.imageUrl || payload.lazyImage);
-          if (imageBuffer) form.append("attachment", imageBuffer, { filename: "image.jpg" });
+          if (imageBuffer) {
+            form.append(
+              "attachment",
+              new Blob([imageBuffer], { type: "image/jpeg" }),
+              "image.jpg"
+            );
+          }
         }
 
         const address = getDefaultOrUnknown(payload.address);
