@@ -41,13 +41,17 @@ export const sendTestNotification = async (req, res) => {
             },
         ];
 
+        Object.entries(adapterConfig).map(([key, field]) => {
+            adapter.config.fields[key].value = field;
+        })
+
         await adapter.send({
             serviceName: adapter.config.name,
             listings,
             notificationAdapters: [
                 {
                     id: adapterId,
-                    fields: adapterConfig.fields,
+                    fields: adapter.config.fields,
                 },
             ],
         });

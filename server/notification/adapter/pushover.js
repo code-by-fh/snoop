@@ -1,11 +1,13 @@
 import logger from "#utils/logger.js";
 import { Buffer } from "buffer";
-import FormData from "form-data";
 import { markdown2Html } from "../../services/markdown.js";
-import fetch from "node-fetch";
 
 function getDefaultOrUnknown(value) {
   return value || "k.A.";
+}
+
+function delay(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 async function getImageBuffer(url) {
@@ -24,8 +26,10 @@ export const send = async ({ serviceName, listings, notificationAdapters }) => {
   const { token, user, device } =
     notificationAdapters.find((adapter) => adapter.id === config.id).fields;
 
-  const results = await Promise.all(
-    listings.map(async (payload) => {
+  const results = [];
+
+  for (const payload of listings) {
+    const result = await (async () => {
       try {
         const form = new FormData();
         form.append("token", token.value.trim());
@@ -66,8 +70,11 @@ export const send = async ({ serviceName, listings, notificationAdapters }) => {
         logger.error(err, "Error while sending pushover notification");
         return { errors: [err.message] };
       }
-    })
-  );
+    })();
+
+    results.push(result);
+    await delay(1000);
+  }
 
   const errors = results
     .map((r) => (r.errors && r.errors.length > 0 ? r.errors.join(", ") : null))
