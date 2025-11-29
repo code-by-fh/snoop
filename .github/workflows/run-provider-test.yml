@@ -3,12 +3,12 @@ name: test
 on:
   push:
     tags:
-      - '*'
-    branches: [ main ]
+      - "*"
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
   schedule:
-    - cron: '0 6 * * *' # Daily at 6 AM UTC
+    - cron: "0 6 * * *" # Daily at 6 AM UTC
   workflow_dispatch:
 
 jobs:
@@ -41,7 +41,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: 'npm'
+          cache: "npm"
           cache-dependency-path: server/package-lock.json
 
       - name: Debug files
@@ -65,4 +65,33 @@ jobs:
             libgdk-pixbuf2.0-0
 
       - name: Run Puppeteer test
-        run: npm test
+        id: run-tests
+        run: |
+          npm test
+
+      - name: Upload provider status
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: provider-status
+          path: ./server/test/provider/status.json
+
+  update-gist:
+    needs: test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./server
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download provider status artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: provider-status
+          path: ./server/test/provider
+      - name: Push provider status to Gist
+        env:
+          GIST_ID: ${{ secrets.GIST_ID }}
+          GIST_TOKEN: ${{ secrets.GIST_TOKEN }}
+        run: node ./test/update-gist.js
