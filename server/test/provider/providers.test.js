@@ -13,7 +13,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const DEBUG = false;
-const providerToRun = ["regionalimmobilien24"]; // define which providers to run or leave empty for all
+const providerToRun = []; // define which providers to run or leave empty for all
 
 describe('#Provider Integration Tests', () => {
   const providers = Object.fromEntries(
