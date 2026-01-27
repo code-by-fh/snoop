@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.1.0",
   "description": "[S]earch & [N]avigate [O]ffers [O]n [P]latform",
-  "author": "Doublelayer",
+  "author": "orangecoding (original project), code-by-fh (downstream fork)",
   "keywords": [
     "snoop",
     "flat",

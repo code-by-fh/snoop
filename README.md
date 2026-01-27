@@ -1,7 +1,17 @@
+# 🔊 Origin & Attribution
+
+This project is based on [Fredy](https://github.com/orangecoding/fredy), created and maintained by [@orangecoding](https://github.com/orangecoding).
+
+The original idea, concept, and core crawling engine originate from Fredy. Significant parts of the initial codebase in this repository are derived from that project and remain the work of the original author.
+
+This repository started as a fork of Fredy and was later continued as a separate project with additional features and a different focus (e.g. frontend, dashboard, UX, and structural changes).
+The upstream project Fredy is fully acknowledged as the original source.
+
+Fredy is licensed under the MIT License, which allows reuse and modification. This notice exists to clearly attribute authorship and origin.
+
 # 🏠 Snoop – [S]earch & [N]avigate [O]ffers [O]n [P]latform
 
-**Snoop** is a modern, full-featured platform for property search, management, and analytics.  
-Inspired by [Fredy](https://github.com/orangecoding/fredy), it takes real estate automation to the next level — powered by a cutting-edge tech stack, refined UI, and extended functionality.
+**Snoop** is a modern, full-featured platform for property search, management, and analytics.
 
 Snoop scrapes multiple property services (Immonet, Immowelt, etc.) and sends new listings as soon as they appear.  
 The list of providers is easily extendable, and a clean web UI allows you to configure and manage your search jobs effortlessly.
