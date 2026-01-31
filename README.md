@@ -7,7 +7,7 @@ The original idea, concept, and core crawling engine originate from Fredy. Signi
 This repository started as a fork of Fredy and was later continued as a separate project with additional features and a different focus (e.g. frontend, dashboard, UX, and structural changes).
 The upstream project Fredy is fully acknowledged as the original source.
 
-Fredy is licensed under the MIT License, which allows reuse and modification. This notice exists to clearly attribute authorship and origin.
+Fredy is licensed under the Apache 2.0 , which allows reuse and modification. This notice exists to clearly attribute authorship and origin.
 
 # 🏠 Snoop – [S]earch & [N]avigate [O]ffers [O]n [P]latform
 
@@ -254,7 +254,7 @@ npm test
 
 ## 📄 License
 
-Distributed under the **MIT License**.  
+Distributed under the **Apache 2.0**.  
 See [`LICENSE`](LICENSE) for details.
 
 ---
