@@ -46,3 +46,4 @@ dist/
 coverage/
 jest-output/
 test-results/
+server/test/provider/status.json
